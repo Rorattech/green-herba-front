@@ -8,9 +8,11 @@ import AllProducts from "../components/all-products/AllProcuts";
 import { mockAllProducts, mockTopProducts } from "../mocks/products.mock";
 
 export default async function Home() {
-
   const data = await fetchHealth();
-  console.log(data);
+  if (data) {
+    console.log('Health check:', data);
+  }
+  
   return (
     <>
       <MainLayout>
