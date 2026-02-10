@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-import { Product } from '@/src-old/types/product';
+import { Product } from '@/src/types/product';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 

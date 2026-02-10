@@ -1,5 +1,5 @@
 "use client";
-import { Product } from '@/src-old/types/product';
+import { Product } from '@/src/types/product';
 import SectionHeader from '../section-header/SectionHeader';
 import ProductCard from '../product-card/ProductCard';
 import Image from 'next/image';

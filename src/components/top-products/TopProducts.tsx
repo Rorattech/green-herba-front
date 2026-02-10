@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import { Product } from '@/src-old/types/product';
+import { Product } from '@/src/types/product';
 import SectionHeader from '../section-header/SectionHeader';
 import ProductCard from '../product-card/ProductCard';
 import { Button } from '../ui/Button';
