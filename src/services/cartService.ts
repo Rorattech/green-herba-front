@@ -1,4 +1,4 @@
-import type { Product } from '../types';
+import type { Product } from '../types/product';
 
 export function addToCart(product: Product, quantity = 1) {
   // Example wrapper that would call backend/cart endpoints in future
