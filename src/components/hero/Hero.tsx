@@ -39,7 +39,7 @@ export default function Hero() {
   ];
 
   return (
-    <section className="relative h-[65vh] md:h-[80vh] w-full bg-green-700">
+    <section className="relative h-[65vh] md:h-[75vh] w-full bg-green-700">
       <Swiper
         modules={[Pagination, Autoplay, EffectFade]}
         effect="fade"

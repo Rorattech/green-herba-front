@@ -11,7 +11,11 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const Header = () => {
+interface HeaderProps {
+  onCartOpen: () => void;
+}
+
+export const Header = ({ onCartOpen }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -25,9 +29,9 @@ export const Header = () => {
 
       <div className="bg-gray-100 flex items-center justify-center">
         <div className="container flex items-center justify-between py-6 px-4 md:px-0">
-          
+
           <div className="flex lg:hidden flex-1">
-            <button 
+            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-green-800 cursor-pointer"
             >
@@ -37,14 +41,14 @@ export const Header = () => {
 
           <div className="flex-none lg:flex-1 flex justify-center lg:justify-start">
             <Link href="/" className="relative block w-[160px] h-[40px]">
-                <Image 
-                    src="/assets/logo.svg" 
-                    alt="Green Herba Pharma" 
-                    width={327}
-                    height={90}
-                    priority
-                    className="object-contain"
-                />
+              <Image
+                src="/assets/logo.svg"
+                alt="Green Herba Pharma"
+                width={327}
+                height={90}
+                priority
+                className="object-contain"
+              />
             </Link>
           </div>
 
@@ -64,7 +68,10 @@ export const Header = () => {
             <button className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer">
               <User size={22} strokeWidth={1.5} />
             </button>
-            <button className="hover:text-green-700 transition-colors cursor-pointer">
+            <button
+              onClick={onCartOpen}
+              className="hover:text-green-700 transition-colors cursor-pointer"
+            >
               <ShoppingBag size={22} strokeWidth={1.5} />
             </button>
           </div>
