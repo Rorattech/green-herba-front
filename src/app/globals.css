@@ -3,13 +3,13 @@
 @theme {
   /* Green Collection */
   --color-green-100: #F6F7EF;
-  --color-green-200: #E9F0CA;
+  --color-green-200: #81BB39;
   --color-green-300: #D2D8D0;
   --color-green-400: #BBC3B8;
   --color-green-500: #A5B0A2;
   --color-green-600: #45663C;
-  --color-green-700: #1C3A13;
-  --color-green-800: #162E0F;
+  --color-green-700: #153158;
+  --color-green-800: #082144;
 
   /* Gray Collection */
   --color-gray-100: #F9F9F9;
@@ -25,31 +25,45 @@
   --color-warning: #F6A429;
 
   /* Typography - Fonts */
-  --font-heading: var(--font-instrument-serif), serif;
+  --font-heading: var(--font-inter-tight), sans-serif;
   --font-body: var(--font-inter-tight), sans-serif;
   --font-mono: var(--font-fragment-mono), monospace;
 
-  /* Headings (Instrument Serif) */
-  --text-h1: 4.5rem;    /* 72px */
-  --text-h2: 3.5rem;    /* 56px */
-  --text-h3: 3rem;      /* 48px */
-  --text-h4: 2.5rem;    /* 40px */
-  --text-h5: 2rem;      /* 32px */
-  --text-h6: 1.5rem;    /* 24px */
+  /* Headings (Redução Proporcional) */
+  --text-h1: 4rem;
+  /* 64px */
+  --text-h2: 3rem;
+  /* 48px */
+  --text-h3: 2.5rem;
+  /* 40px */
+  --text-h4: 2rem;
+  /* 32px */
+  --text-h5: 1.75rem;
+  /* 28px */
+  --text-h6: 1.25rem;
+  /* 20px */
 
-  /* Sub-Headings (Fragment Mono) */
-  --text-sub-l: 1.25rem;  /* 20px */
-  --text-sub-m: 1rem;     /* 16px */
-  --text-sub-s: 0.75rem;  /* 12px */
+  /* Sub-Headings */
+  --text-sub-l: 1.125rem;
+  /* 18px */
+  --text-sub-m: 1rem;
+  /* 16px (Mantido para legibilidade) */
+  --text-sub-s: 0.75rem;
+  /* 12px */
 
-  /* Body Text (Inter Tight) */
-  --text-body-l: 1.25rem; /* 20px */
-  --text-body-m: 1rem;    /* 16px */
-  --text-body-s: 0.75rem; /* 12px */
+  /* Body Text */
+  --text-body-l: 1.125rem;
+  /* 18px */
+  --text-body-m: 1rem;
+  /* 16px (Padrão de leitura) */
+  --text-body-s: 0.875rem;
+  /* 14px (Aumentei levemente o S para acessibilidade) */
 
   /* Line Heights */
-  --leading-tight: 1.0;  /* Para Headings */
-  --leading-relaxed: 1.1; /* Para Sub-Headings e Body */
+  --leading-tight: 1.0;
+  /* Para Headings */
+  --leading-relaxed: 1.1;
+  /* Para Sub-Headings e Body */
 }
 
 @layer base {
@@ -57,8 +71,13 @@
     @apply font-body text-body-m bg-white text-black;
     line-height: var(--leading-relaxed);
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading tracking-tight;
     line-height: var(--leading-tight);
   }

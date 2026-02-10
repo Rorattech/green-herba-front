@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { ArrowRight, Search, ShoppingBag, User, Menu, X } from "lucide-react";
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import Image from 'next/image';
+import Link from 'next/link';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,10 +35,17 @@ export const Header = () => {
             </button>
           </div>
 
-          <div className="flex-none lg:flex-1 text-center lg:text-left">
-            <h2 className="text-h4 font-heading text-green-800 whitespace-nowrap">
-              Logo
-            </h2>
+          <div className="flex-none lg:flex-1 flex justify-center lg:justify-start">
+            <Link href="/" className="relative block w-[160px] h-[40px]">
+                <Image 
+                    src="/assets/logo.svg" 
+                    alt="Green Herba Pharma" 
+                    width={327}
+                    height={90}
+                    priority
+                    className="object-contain"
+                />
+            </Link>
           </div>
 
           <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
@@ -67,10 +76,10 @@ export const Header = () => {
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <nav className="flex flex-col p-6 gap-6">
-          <a href="#" className="text-h5 font-heading text-green-800 border-b border-gray-200 pb-4">
+          <a href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4">
             Produtos
           </a>
-          <a href="#" className="text-h5 font-heading text-green-800 border-b border-gray-200 pb-4">
+          <a href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4">
             Sobre
           </a>
           <a href="#" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4">
