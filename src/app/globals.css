@@ -1,48 +1,65 @@
 @import "tailwindcss";
 
 @theme {
+  /* Green Collection */
+  --color-green-100: #F6F7EF;
   --color-green-200: #E9F0CA;
+  --color-green-300: #D2D8D0;
   --color-green-400: #BBC3B8;
-  --color-green-500: #A0F13C;
+  --color-green-500: #A5B0A2;
+  --color-green-600: #45663C;
   --color-green-700: #1C3A13;
   --color-green-800: #162E0F;
 
-  --color-blue-600: #245599;
-  --color-blue-700: #132E55;
-  --color-blue-800: #082144;
-
+  /* Gray Collection */
   --color-gray-100: #F9F9F9;
   --color-gray-200: #EFEFEF;
-  --color-gray-300: #93979E;
-  --color-gray-400: #20242C;
-  --color-gray-500: #16181D;
-  --color-gray-600: #14161A;
-  --color-gray-700: #101216;
-  --color-gray-800: #0B0C0F;
+  --color-gray-300: #CFCFCF;
+  --color-gray-400: #AFAFAF;
 
-  --color-white: #ffffff;
+  /* Base Collection */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-success: #1CCA00;
+  --color-error: #EA201F;
+  --color-warning: #F6A429;
 
-  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui;
-  --font-body: var(--font-geist-mono), ui-monospace, monospace;
+  /* Typography - Fonts */
+  --font-heading: var(--font-instrument-serif), serif;
+  --font-body: var(--font-inter-tight), sans-serif;
+  --font-mono: var(--font-fragment-mono), monospace;
 
-  --text-heading-hg: 3rem;     /* 48px */
-  --text-heading-xl: 2rem;     /* 32px */
-  --text-heading-lg: 1.75rem;  /* 28px */
-  --text-heading-md: 1.5rem;   /* 24px */
-  --text-heading-sm: 1.25rem;  /* 20px */
-  --text-heading-xs: 1rem;     /* 16px */
+  /* Headings (Instrument Serif) */
+  --text-h1: 4.5rem;    /* 72px */
+  --text-h2: 3.5rem;    /* 56px */
+  --text-h3: 3rem;      /* 48px */
+  --text-h4: 2.5rem;    /* 40px */
+  --text-h5: 2rem;      /* 32px */
+  --text-h6: 1.5rem;    /* 24px */
 
-  --text-body-md: 1rem;        /* 16px */
-  --text-body-sm: 0.875rem;    /* 14px */
-  --text-body-xs: 0.75rem;     /* 12px */
+  /* Sub-Headings (Fragment Mono) */
+  --text-sub-l: 1.25rem;  /* 20px */
+  --text-sub-m: 1rem;     /* 16px */
+  --text-sub-s: 0.75rem;  /* 12px */
 
-  --leading-heading: 1.2;
-  --leading-body: 1.5;
+  /* Body Text (Inter Tight) */
+  --text-body-l: 1.25rem; /* 20px */
+  --text-body-m: 1rem;    /* 16px */
+  --text-body-s: 0.75rem; /* 12px */
+
+  /* Line Heights */
+  --leading-tight: 1.0;  /* Para Headings */
+  --leading-relaxed: 1.1; /* Para Sub-Headings e Body */
 }
 
 @layer base {
   body {
-    @apply font-body text-body-md bg-gray-100 text-gray-700;
-    line-height: var(--leading-body);
+    @apply font-body text-body-m bg-white text-black;
+    line-height: var(--leading-relaxed);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+    line-height: var(--leading-tight);
   }
 }

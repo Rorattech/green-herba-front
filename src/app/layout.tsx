@@ -1,26 +1,35 @@
-import { Inter, PT_Sans_Caption } from "next/font/google"
-import "./globals.css"
+import { Inter_Tight, Instrument_Serif, Fragment_Mono } from "next/font/google";
+import "./globals.css";
 
-export const inter = Inter({
+const interTight = Inter_Tight({
   subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500"],
-})
+  variable: "--font-inter-tight",
+  weight: ["400", "500", "700"],
+});
 
-export const ptSansCaption = PT_Sans_Caption({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-pt-sans-caption",
-  weight: ["700"],
-})
+  variable: "--font-instrument-serif",
+  weight: ["400"],
+});
+
+const fragmentMono = Fragment_Mono({
+  subsets: ["latin"],
+  variable: "--font-fragment-mono",
+  weight: ["400"],
+});
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${ptSansCaption.variable}`}>
-      <body>{children}</body>
+    <html 
+      lang="pt-BR" 
+      className={`${interTight.variable} ${instrumentSerif.variable} ${fragmentMono.variable}`}
+    >
+      <body className="antialiased">{children}</body>
     </html>
-  )
+  );
 }

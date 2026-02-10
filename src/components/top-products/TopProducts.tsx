@@ -7,9 +7,10 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import { Product } from '@/src/types/product';
+import { Product } from '@/src-old/types/product';
 import SectionHeader from '../section-header/SectionHeader';
 import ProductCard from '../product-card/ProductCard';
+import { Button } from '../ui/Button';
 
 export default function TopProducts({ products }: { products: Product[] }) {
   const progressRef = useRef<HTMLDivElement>(null);
@@ -57,12 +58,23 @@ export default function TopProducts({ products }: { products: Product[] }) {
           </div>
 
           <div className="flex gap-3">
-            <button className="prev-prod w-12 h-12 bg-green-200 text-green-800 rounded-full flex items-center justify-center hover:bg-green-700 hover:text-white transition-colors disabled:text-black disabled:hover:bg-green-200 cursor-pointer">
-              <ArrowLeft size={18} />
-            </button>
-            <button className="next-prod w-12 h-12 bg-green-200 text-green-800 rounded-full flex items-center justify-center hover:bg-green-700 hover:text-white transition-colors disabled:text-black disabled:hover:bg-green-200 cursor-pointer">
-              <ArrowRight size={18} />
-            </button>
+            <Button 
+              variant="primary" 
+              colorTheme="pistachio" 
+              isIconOnly 
+              className="prev-prod w-12 h-12"
+              aria-label="Previous product"
+              iconLeft={<ArrowLeft size={18} />}
+            />
+
+            <Button 
+              variant="primary" 
+              colorTheme="pistachio" 
+              isIconOnly 
+              className="next-prod w-12 h-12"
+              aria-label="Next product"
+              iconRight={<ArrowRight size={18} />}
+            />
           </div>
         </div>
       </div>

@@ -1,15 +1,19 @@
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-import { Product } from '@/src/types/product';
+import { Product } from '@/src-old/types/product';
+import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group flex flex-col items-center bg-transparent w-full">
-      <div className="relative aspect-4/5 w-full bg-gray-200 mb-3 flex items-center justify-center overflow-hidden">
-        {product.discount && (
-          <span className="absolute top-4 right-4 bg-[#f02d1b] text-white text-[11px] px-2.5 py-1.5 rounded-full z-10">
-            -{product.discount}%
-          </span>
+      <div className="relative aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden">
+        {product.badgeLabel && (
+          <div className="absolute top-6 right-6 z-10">
+            <Badge variant={product.badgeVariant}>
+              {product.badgeLabel}
+            </Badge>
+          </div>
         )}
         <div className="relative w-4/5 h-4/5">
           <Image 
@@ -21,32 +25,33 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      <h3 className="font-heading text-heading-md text-green-700 mb-2">
+      <h3 className="text-h6 text-green-800 mb-2">
         {product.name}
       </h3>
       
-      <div className="flex items-center gap-0.5 mb-2">
-        {[...Array(5)].map((_, i) => (
-          <Star 
-            key={i} 
-            size={14} 
-            fill="#eab308" 
-            className="text-[#eab308]" 
-          />
-        ))}
-        <span className="text-body-xs text-gray-300 ml-1.5 font-light">
+      <div className="flex items-center gap-1 mb-2">
+        <div className="flex items-center gap-0.5">
+          {[...Array(5)].map((_, i) => (
+            <Star 
+              key={i} 
+              size={12} 
+              className="fill-warning text-warning"
+            />
+          ))}
+        </div>
+        <span className="text-body-s font-medium text-green-600">
           ({product.reviewsCount || 123} reviews)
         </span>
       </div>
 
-      <div className="flex items-center gap-2 mb-6">
-        <span className="text-body-md font-bold text-green-700">R${product.price}</span>
-        <span className="text-[#f02d1b] line-through text-body-sm font-medium">R${product.oldPrice}</span>
+      <div className="flex items-center gap-1 mb-4">
+        <span className="text-body-m font-medium text-green-800">R${product.price}</span>
+        <span className="text-error line-through text-body-m font-medium">R${product.oldPrice}</span>
       </div>
 
-      <button className="w-full bg-green-200 text-green-700 py-4 rounded-full font-medium text-body-md hover:bg-green-700 hover:text-white transition-all duration-300">
-        Comprar
-      </button>
+      <Button variant="primary" colorTheme="pistachio" className="w-full">
+        Add to cart
+      </Button>
     </div>
   );
 }

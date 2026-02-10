@@ -17,17 +17,17 @@ export const TestimonialCard = ({ name, quote, image }: TestimonialProps) => (
         className="object-cover transition-transform duration-700 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-        <div className="w-16 h-16 rounded-full bg-transparent backdrop-blur-xs flex items-center justify-center border border-white/40 transition-transform group-hover:scale-110">
-          <Play className="text-white fill-white" size={24} />
+        <div className="w-[88px] h-[88px] rounded-full bg-transparent backdrop-blur-xs flex items-center justify-center border border-white/40 transition-transform group-hover:scale-110">
+          <Play className="text-green-100 fill-white" size={32} />
         </div>
       </div>
     </div>
 
     <div className="flex flex-col gap-1">
-      <h4 className="font-heading text-heading-xs text-green-700 font-bold uppercase tracking-tight">
+      <h4 className="font-body text-body-l text-green-800 font-bold tracking-tight mb-1">
         {quote}
       </h4>
-      <p className="font-body text-[10px] text-gray-300 uppercase tracking-widest">
+      <p className="text-sub-m font-normal text-green-600 uppercase tracking-wide">
         {name}
       </p>
     </div>

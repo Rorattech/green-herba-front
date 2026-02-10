@@ -1,3 +1,5 @@
+import { Button } from "../ui/Button";
+
 interface SectionHeaderProps {
   title: string;
   buttonText: string;
@@ -6,14 +8,18 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({ title, buttonText, onButtonClick }: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between px-4 md:px-0 mb-8">
-      <h2 className="text-4xl font-serif text-[#1a3014]">{title}</h2>
-      <button 
+    <div className="flex items-center justify-between mb-8">
+      <h2 className="text-h2 text-green-800">
+        {title}
+      </h2>
+
+      <Button 
+        variant="primary" 
+        colorTheme="green" 
         onClick={onButtonClick}
-        className="bg-[#1a3014] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#2a4522] transition-colors"
       >
         {buttonText}
-      </button>
+      </Button>
     </div>
   );
 }

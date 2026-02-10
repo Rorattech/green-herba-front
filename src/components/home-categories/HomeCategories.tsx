@@ -11,10 +11,10 @@ export default function HomeCategories() {
         <section className="bg-green-700 py-14 px-4 md:px-0">
             <div className="container mx-auto">
                 <div className="mb-8">
-                    <h2 className="font-heading text-heading-hg text-white mb-4 leading-heading">
+                    <h2 className="font-heading text-h2 text-green-100 mb-4 leading-heading">
                         Medicamentos para todas as áreas da vida
                     </h2>
-                    <p className="text-body-md font-light text-white opacity-90 leading-body">
+                    <p className="text-body-m font-body font-medium text-green-100 leading-body">
                         Categorias focadas em dar suporte ao seu corpo no dia a dia — seja para construir
                         uma base sólida ou atender a uma necessidade específica.
                     </p>

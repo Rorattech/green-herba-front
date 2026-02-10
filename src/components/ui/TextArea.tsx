@@ -1,4 +1,4 @@
-import { cn } from "@/src/utils/cn";
+import { cn } from "@/src-old/utils/cn";
 import { InputHTMLAttributes } from "react";
 
 interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> {

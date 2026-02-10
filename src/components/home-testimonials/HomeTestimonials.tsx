@@ -1,5 +1,6 @@
-import { Star } from 'lucide-react';
 import { TestimonialCard } from '../testimonial-card/TestimonialCard';
+import { SatisfiedCustomers } from '../satisfied-customers/SatisfiedCustomers';
+import { Button } from '../ui/Button';
 
 export default function HomeTestimonials() {
     const testimonials = [
@@ -15,21 +16,16 @@ export default function HomeTestimonials() {
 
                     <div className="flex flex-col gap-6 sticky top-20">
                         <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-1 text-[#f59e0b]">
-                                {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
-                                <span className="text-body-xs text-green-700 font-bold ml-2">1M+ Pessoas Satisfeitas</span>
-                            </div>
-                            <h2 className="font-heading text-heading-hg text-green-700 leading-heading">
+                            <SatisfiedCustomers variant="content" />
+                            <h2 className="font-heading text-h2 text-green-800 leading-heading">
                                 Green Herba Pharma
                             </h2>
-                            <p className="text-body-sm text-gray-400 max-w-70">
+                            <p className="text-body-m font-body font-medium text-green-800">
                                 Pessoas reais compartilham o impacto da Green Herba Pharma em suas vidas.
                             </p>
                         </div>
 
-                        <button className="w-fit bg-green-700 text-white px-8 py-3 rounded-full text-body-sm font-bold hover:bg-green-400 transition-all shadow-md">
-                            Comprar produtos
-                        </button>
+                        <Button className="w-fit">Shop all</Button>
                     </div>
 
                     <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { Button } from '../ui/Button';
 
 interface CategoryCardProps {
   title: string;
@@ -16,15 +17,20 @@ export const CategoryCard = ({ title, image }: CategoryCardProps) => (
       priority={true}
     />
 
-    <div className="absolute inset-0 bg-black/20 group-hover:bg-green-700/30 transition-colors duration-300" />
+    <div className="absolute inset-0 bg-black/20 transition-colors duration-300" />
     <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
-      <h3 className="text-white text-heading-lg font-heading leading-tight">
+      <h3 className="text-green-100 text-h3 font-heading leading-tight">
         {title}
       </h3>
       
-      <button className="w-fit bg-white text-green-700 px-8 py-3 rounded-full text-body-sm hover:bg-green-200 hover:cursor-pointer transition-colors shadow-sm">
+      
+      <Button 
+        variant="primary" 
+        colorTheme="white"
+        className="w-fit"
+      >
         Ver todos
-      </button>
+      </Button>
     </div>
   </div>
 );

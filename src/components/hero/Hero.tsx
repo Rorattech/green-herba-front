@@ -3,20 +3,43 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import Image from 'next/image';
+import { Button } from '../ui/Button';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
+import { SatisfiedCustomers } from '../satisfied-customers/SatisfiedCustomers';
 
 export default function Hero() {
   const slides = [
-    { id: 1, image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=1920", alt: "Natureza" },
-    { id: 2, image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1920", alt: "Yoga" },
-    { id: 3, image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", alt: "Saúde" },
+    { 
+      id: 1, 
+      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=1920", 
+      alt: "Natureza",
+      title: "Health you can feel. Every single day.",
+      description: "Targeted daily supplements designed to support digestion, immunity, and overall balance — without overcomplicating your routine.",
+      buttonText: "Shop supplements"
+    },
+    { 
+      id: 2, 
+      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1920", 
+      alt: "Yoga",
+      title: "Find your balance through nature.",
+      description: "Discover a range of plant-based solutions crafted to harmonize your body and mind in today's fast-paced world.",
+      buttonText: "Explore Balance"
+    },
+    { 
+      id: 3, 
+      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", 
+      alt: "Saúde",
+      title: "Pure ingredients. Real results.",
+      description: "We source the highest quality raw materials to ensure every capsule delivers the potency your health deserves.",
+      buttonText: "See our quality"
+    },
   ];
 
   return (
-    <section className="relative h-[70vh] w-full bg-green-700">
+    <section className="relative h-[80vh] w-full bg-green-700">
       <Swiper
         modules={[Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -29,6 +52,7 @@ export default function Hero() {
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="relative h-full w-full">
+              {/* Imagem de Fundo */}
               <Image
                 src={slide.image}
                 alt={slide.alt}
@@ -37,7 +61,30 @@ export default function Hero() {
                 unoptimized
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-black/20" />
+              <div className="absolute inset-0 bg-black/30 z-10" />
+
+              <div className="absolute inset-0 z-20 flex items-center">
+                <div className="container mx-auto px-4 md:px-0">
+                  <div className="max-w-4xl flex flex-col items-start gap-6 text-gray-100">
+                    
+                    <SatisfiedCustomers variant="hero" />
+
+                    <h1 className="text-h1 leading-tight">
+                      {slide.title}
+                    </h1>
+
+                    <p className="text-body-m font-body font-medium max-w-2xl">
+                      {slide.description}
+                    </p>
+
+                    <div className="mt-2">
+                      <Button variant="primary" colorTheme="white">
+                        {slide.buttonText}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </SwiperSlide>
         ))}

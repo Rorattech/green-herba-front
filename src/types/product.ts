@@ -4,7 +4,8 @@ export interface Product {
   image: string;
   price: string;
   oldPrice: string;
-  discount?: number;
+  badgeLabel?: string;
+  badgeVariant?: 'neutral' | 'success' | 'warning' | 'error' | 'primary';
   description: string;
   priceFormatted: string;
   rating?: number;
