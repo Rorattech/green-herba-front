@@ -83,8 +83,13 @@ export default async function Home() {
     },
   ];
 
-  const data = await fetchHealth();
-  console.log(data);
+  let data = null;
+  try {
+    data = await fetchHealth();
+    console.log(data);
+  } catch (error) {
+    console.error("Health check failed:", error);
+  }
   return (
     <>
       <MainLayout>

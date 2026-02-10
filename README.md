@@ -70,3 +70,28 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Makefile helpers
+
+For common tasks you can use the provided `Makefile` from the project root:
+
+```bash
+# Show all available commands
+make help
+
+# Node / Next.js commands (no Docker)
+make install      # npm install
+make dev          # npm run dev (http://localhost:3000)
+make build        # npm run build
+make start        # npm run start
+make lint         # npm run lint
+make test         # npm test
+make test-watch   # npm run test:watch
+
+# Docker Compose commands
+make dc-build     # docker compose build
+make dc-up        # docker compose up -d
+make dc-down      # docker compose down
+make dc-logs      # docker compose logs -f
+make dc-restart   # docker compose restart (down + up -d)
+```

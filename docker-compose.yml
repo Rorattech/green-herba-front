@@ -1,0 +1,14 @@
+services:
+  
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharma-green-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+
+networks:
+  pharma-green-network:
+    driver: bridge
+
