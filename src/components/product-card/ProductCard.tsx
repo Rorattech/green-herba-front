@@ -7,7 +7,7 @@ import { Badge } from '../ui/Badge';
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group flex flex-col items-center bg-transparent w-full">
-      <div className="relative aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-square lg:aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden">
         {product.badgeLabel && (
           <div className="absolute top-6 right-6 z-10">
             <Badge variant={product.badgeVariant}>

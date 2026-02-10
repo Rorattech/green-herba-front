@@ -1,12 +1,12 @@
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 
 export const Footer = () => (
-    <footer className="bg-green-800 text-green-100 px-8 py-16 font-sans">
+    <footer className="bg-green-800 text-green-100 px-8 py-10 md:py-16 font-sans">
         <div className="container mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
 
                 <div className="md:col-span-4 space-y-6">
-                    <h2 className="text-h4 font-heading text-green-100">Green Herba Pharma</h2>
+                    <h2 className="text-h4 font-heading text-green-100">Logo</h2>
                     <p className="text-green-100 text-body-m font-body font-medium">Join our newsletter and save 10% on your first order</p>
 
                     {/* <form className="flex gap-2">

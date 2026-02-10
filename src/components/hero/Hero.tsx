@@ -39,7 +39,7 @@ export default function Hero() {
   ];
 
   return (
-    <section className="relative h-[80vh] w-full bg-green-700">
+    <section className="relative h-[65vh] md:h-[80vh] w-full bg-green-700">
       <Swiper
         modules={[Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -52,7 +52,6 @@ export default function Hero() {
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="relative h-full w-full">
-              {/* Imagem de Fundo */}
               <Image
                 src={slide.image}
                 alt={slide.alt}
@@ -61,19 +60,19 @@ export default function Hero() {
                 unoptimized
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 z-10" />
+              <div className="absolute inset-0 bg-black/40 z-10" />
 
               <div className="absolute inset-0 z-20 flex items-center">
                 <div className="container mx-auto px-4 md:px-0">
-                  <div className="max-w-4xl flex flex-col items-start gap-6 text-gray-100">
+                  <div className="max-w-4xl flex flex-col items-start gap-4 md:gap-6 text-gray-100">
                     
                     <SatisfiedCustomers variant="hero" />
 
-                    <h1 className="text-h1 leading-tight">
+                    <h1 className="text-h3 md:text-h2 lg:text-h1 leading-tight">
                       {slide.title}
                     </h1>
 
-                    <p className="text-body-m font-body font-medium max-w-2xl">
+                    <p className="text-body-m font-body font-medium md:max-w-3xl">
                       {slide.description}
                     </p>
 
@@ -95,12 +94,13 @@ export default function Hero() {
           display: flex;
           justify-content: center;
           gap: 8px;
+          padding: 0 16px;
           z-index: 50;
         }
         
         .swiper-pagination-bullet {
-          width: 64px !important;
-          height: 3px !important;
+          width: 33.33% !important;
+          height: 2px !important;
           background-color: white !important;
           border-radius: 0 !important;
           opacity: 0.2;
@@ -110,6 +110,9 @@ export default function Hero() {
         }
 
         @media (min-width: 768px) {
+          .swiper-pagination-bullet {
+            padding: 0 !important;
+          }
           .swiper-pagination-bullet {
             width: 190px !important;
           }
