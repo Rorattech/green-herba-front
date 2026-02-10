@@ -16,7 +16,7 @@ export default function TopProducts({ products }: { products: Product[] }) {
   const progressRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="py-14 overflow-hidden">
+    <section className="py-10 md:py-14 overflow-hidden">
       
       <div className="container mx-auto px-4 md:px-0">
         <SectionHeader title="Top Produtos" buttonText="Ver todos" />
