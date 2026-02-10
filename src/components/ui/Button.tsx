@@ -39,7 +39,7 @@ export const Button = ({
       green: "bg-green-700 text-green-100 hover:bg-green-800",
       pistachio: "bg-green-200 text-green-700 hover:bg-green-800 hover:text-green-100",
       gray: "bg-gray-300 text-green-700 hover:bg-gray-400",
-      white: "bg-white text-green-700 hover:bg-green-100",
+      white: "bg-white text-green-700 hover:bg-green-200 hover:text-green-100",
     },
     soft: {
       green: "bg-green-100 text-green-700 hover:bg-green-200",
