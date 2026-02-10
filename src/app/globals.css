@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-green-200: #E9F0CA;
+  --color-green-400: #BBC3B8;
+  --color-green-500: #A0F13C;
+  --color-green-700: #1C3A13;
+  --color-green-800: #162E0F;
+
+  --color-blue-600: #245599;
+  --color-blue-700: #132E55;
+  --color-blue-800: #082144;
+
+  --color-gray-100: #F9F9F9;
+  --color-gray-200: #EFEFEF;
+  --color-gray-300: #93979E;
+  --color-gray-400: #20242C;
+  --color-gray-500: #16181D;
+  --color-gray-600: #14161A;
+  --color-gray-700: #101216;
+  --color-gray-800: #0B0C0F;
+
+  --color-white: #ffffff;
+
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-body: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-heading-hg: 3rem;     /* 48px */
+  --text-heading-xl: 2rem;     /* 32px */
+  --text-heading-lg: 1.75rem;  /* 28px */
+  --text-heading-md: 1.5rem;   /* 24px */
+  --text-heading-sm: 1.25rem;  /* 20px */
+  --text-heading-xs: 1rem;     /* 16px */
+
+  --text-body-md: 1rem;        /* 16px */
+  --text-body-sm: 0.875rem;    /* 14px */
+  --text-body-xs: 0.75rem;     /* 12px */
+
+  --leading-heading: 1.2;
+  --leading-body: 1.5;
+}
+
+@layer base {
+  body {
+    @apply font-body text-body-md bg-gray-100 text-gray-700;
+    line-height: var(--leading-body);
+  }
+}
