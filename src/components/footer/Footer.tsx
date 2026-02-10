@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 
 export const Footer = () => (
@@ -6,19 +8,17 @@ export const Footer = () => (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
 
                 <div className="md:col-span-4 space-y-6">
-                    <h2 className="text-h4 font-heading text-green-100">Logo</h2>
-                    <p className="text-green-100 text-body-m font-body font-medium">Join our newsletter and save 10% on your first order</p>
-
-                    {/* <form className="flex gap-2">
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="bg-transparent border border-white/30 rounded-full px-4 py-2 grow focus:outline-none focus:border-white transition-colors"
+                    <Link href="/" className="relative block w-[180px] h-[40px]">
+                        <Image 
+                            src="/assets/logo-footer.png" 
+                            alt="Green Herba Pharma" 
+                            width={327}
+                            height={90}
+                            className="object-contain"
                         />
-                        <button className="bg-gray-200 text-green-700 px-6 py-2 rounded-full font-medium hover:bg-white transition-colors">
-                            Subscribe
-                        </button>
-                    </form> */}
+                    </Link>
+                    
+                    <p className="text-green-100 text-body-m font-body font-medium">Join our newsletter and save 10% on your first order</p>
 
                     <p className="text-[10px] text-green-100/60">
                         By subscribing, you agree to our <a href="#" className="underline">Terms of service</a> & <a href="#" className="underline">Privacy policy</a>.

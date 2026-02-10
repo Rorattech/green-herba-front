@@ -1,4 +1,4 @@
-import { Inter_Tight, Instrument_Serif, Fragment_Mono } from "next/font/google";
+import { Inter_Tight, PT_Sans_Caption, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -7,9 +7,9 @@ const interTight = Inter_Tight({
   weight: ["400", "500", "700"],
 });
 
-const instrumentSerif = Instrument_Serif({
+const SansCaption = PT_Sans_Caption({
   subsets: ["latin"],
-  variable: "--font-instrument-serif",
+  variable: "--font-sans-caption",
   weight: ["400"],
 });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html 
       lang="pt-BR" 
-      className={`${interTight.variable} ${instrumentSerif.variable} ${fragmentMono.variable}`}
+      className={`${interTight.variable} ${SansCaption.variable} ${fragmentMono.variable}`}
     >
       <body className="antialiased">{children}</body>
     </html>
