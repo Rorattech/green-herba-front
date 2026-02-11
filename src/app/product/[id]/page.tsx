@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Button } from "@/src/components/ui/Button";
 import { QuantitySelector } from "@/src/components/ui/QuantitySelector";
@@ -11,8 +12,9 @@ import { mockTopProducts } from "@/src/mocks/products.mock";
 import { Star, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 
 export default function ProductInternalPage() {
+    const { id } = useParams<{ id: string }>();
+
     const product = {
-        name: "Terra Immune",
         price: 39.99,
         oldPrice: 49.99,
         discount: "-20%",
@@ -24,7 +26,7 @@ export default function ProductInternalPage() {
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Immune support", href: "/products" },
-        { label: product.name, href: "#" },
+        { label: id ?? "", href: "#" },
     ];
 
     return (
@@ -42,7 +44,7 @@ export default function ProductInternalPage() {
                             <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group">
                                 <Image
                                     src="/assets/products/PRODUTO-1.png"
-                                    alt={product.name}
+                                    alt={id ?? ""}
                                     fill
                                     className="object-contain p-12 transition-transform duration-500 group-hover:scale-105"
                                     priority
@@ -65,7 +67,7 @@ export default function ProductInternalPage() {
                                         (123 reviews)
                                     </span>
                                 </div>
-                                <h1 className="text-h2 font-heading text-green-800">{product.name}</h1>
+                                <h1 className="text-h2 font-heading text-green-800">{(id ?? "").replace(/-/g, " ")}</h1>
                                 <div className="flex items-center gap-3">
                                     <span className="text-h4 font-bold text-green-800">${product.price}</span>
                                     <span className="text-h5 text-gray-300 line-through">${product.oldPrice}</span>
