@@ -9,15 +9,15 @@ export const Footer = () => (
 
                 <div className="md:col-span-4 space-y-6">
                     <Link href="/" className="relative block w-[180px] h-[40px]">
-                        <Image 
-                            src="/assets/logo-footer.png" 
-                            alt="Green Herba Pharma" 
+                        <Image
+                            src="/assets/logo-footer.png"
+                            alt="Green Herba Pharma"
                             width={327}
                             height={90}
                             className="object-contain"
                         />
                     </Link>
-                    
+
                     <p className="text-green-100 text-body-m font-body font-medium">Join our newsletter and save 10% on your first order</p>
 
                     <p className="text-[10px] text-green-100/60">

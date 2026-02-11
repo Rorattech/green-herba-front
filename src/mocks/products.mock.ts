@@ -10,7 +10,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-3.png",
       rating: 5,
       reviewsCount: 123
     },
@@ -23,7 +23,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-1.png",
       rating: 5,
       reviewsCount: 123
     },
@@ -36,7 +36,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-4.png",
       rating: 5,
       reviewsCount: 89
     },
@@ -49,7 +49,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-2.png",
       rating: 4,
       reviewsCount: 156
     },
@@ -62,7 +62,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-1.png",
       rating: 4,
       reviewsCount: 156
     },
@@ -75,7 +75,7 @@ export const mockTopProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "-20%",
       badgeVariant: "error",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-4.png",
       rating: 4,
       reviewsCount: 156
     },
@@ -91,7 +91,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-2.png",
       rating: 5,
       reviewsCount: 123
     },
@@ -104,7 +104,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-4.png",
       rating: 5,
       reviewsCount: 123
     },
@@ -117,7 +117,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-1.png",
       rating: 5,
       reviewsCount: 89
     },
@@ -130,7 +130,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-3.png",
       rating: 4,
       reviewsCount: 156
     },
@@ -143,7 +143,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-4.png",
       rating: 4,
       reviewsCount: 156
     },
@@ -156,7 +156,7 @@ export const mockAllProducts: Product[] = [
       description: "DAILY SUPPLEMENT - 60 CAPSULES",
       badgeLabel: "Hot",
       badgeVariant: "warning",
-      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=400",
+      image: "/assets/products/PRODUTO-2.png",
       rating: 4,
       reviewsCount: 156
     },

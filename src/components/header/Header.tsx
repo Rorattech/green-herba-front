@@ -53,12 +53,12 @@ export const Header = ({ onCartOpen }: HeaderProps) => {
           </div>
 
           <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
-            <a href="#" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
+            <Link href="/products" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
               Produtos
-            </a>
-            <a href="#" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
+            </Link>
+            <Link href="#" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
               Sobre
-            </a>
+            </Link>
           </nav>
 
           <div className="flex items-center justify-end gap-4 lg:gap-6 flex-1 text-gray-700">
@@ -83,16 +83,16 @@ export const Header = ({ onCartOpen }: HeaderProps) => {
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <nav className="flex flex-col p-6 gap-6">
-          <a href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4">
+          <Link href="/products" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Produtos
-          </a>
-          <a href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4">
+          </Link>
+          <Link href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Sobre
-          </a>
-          <a href="#" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4">
+          </Link>
+          <Link href="#" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
             <User size={20} />
             Minha Conta
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
