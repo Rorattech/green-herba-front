@@ -15,14 +15,14 @@ export default function AllProducts({ products }: AllProductsProps) {
   return (
     <section className="py-10 md:py-20 bg-white">
       <div className="container mx-auto px-4 md:px-0">
-        <SectionHeader title="Todos os produtos" buttonText="Ver todos" />
+        <SectionHeader title="Todos os produtos" buttonText="Ver todos" buttonLink="/products" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12">
           {firstRow.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
           <div className="relative col-span-2 aspect-square md:aspect-auto h-full min-h-[280px] md:min-h-100 overflow-hidden group">
-            <Image 
-              src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=800" 
+            <Image
+              src="https://images.unsplash.com/photo-1498671546682-94a232c26d17?q=80&w=800"
               alt="Promoção Green Herba Pharma"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"

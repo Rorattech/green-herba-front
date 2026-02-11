@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react'; // Import necessário
+import { useEffect } from 'react';
 import { cn } from "@/src/utils/cn";
 import { X, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -57,10 +57,11 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
             <div key={item} className="flex gap-4">
               <div className="relative w-20 h-24 bg-gray-100 rounded-sm overflow-hidden shrink-0">
                 <Image
-                  src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=200"
-                  alt="Produto"
+                  src="/assets/products/PRODUTO-1.png"
+                  alt="Terra Immune"
                   fill
                   className="object-contain p-2"
+                  priority
                 />
               </div>
               <div className="flex flex-col flex-1">
@@ -87,17 +88,17 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
           <div className="space-y-2">
             <div className="flex justify-between text-body-m text-gray-500">
               <span>Subtotal (2 items)</span>
-              <span className="text-green-800 font-bold">$79.98</span>
+              <span className="text-green-800 font-medium">$79.98</span>
             </div>
             <div className="flex justify-between text-body-m text-gray-500">
               <span>Shipping</span>
-              <span className="text-green-700 font-bold uppercase tracking-tight">Free</span>
+              <span className="text-green-200 font-bold uppercase tracking-tight">Free</span>
             </div>
           </div>
 
           <div className="pt-4 border-t border-gray-100 flex justify-between items-center mb-4">
-            <span className="text-body-l font-bold text-green-800 uppercase tracking-wider">Estimated total</span>
-            <span className="text-h6 text-green-800 font-heading">$79.98</span>
+            <span className="text-body-l font-normal text-green-800 uppercase tracking-wider">Estimated total</span>
+            <span className="text-h6 text-green-800 font-heading font-bold">$79.98</span>
           </div>
 
           <Button variant="primary" colorTheme="green" className="w-full">

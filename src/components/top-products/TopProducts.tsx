@@ -17,9 +17,9 @@ export default function TopProducts({ products }: { products: Product[] }) {
 
   return (
     <section className="py-10 md:py-14 overflow-hidden">
-      
+
       <div className="container mx-auto px-4 md:px-0">
-        <SectionHeader title="Top Produtos" buttonText="Ver todos" />
+        <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
       </div>
 
       <div className="container mx-auto px-4 md:px-0">
@@ -58,19 +58,19 @@ export default function TopProducts({ products }: { products: Product[] }) {
           </div>
 
           <div className="flex gap-3">
-            <Button 
-              variant="primary" 
-              colorTheme="pistachio" 
-              isIconOnly 
+            <Button
+              variant="primary"
+              colorTheme="pistachio"
+              isIconOnly
               className="prev-prod w-12 h-12"
               aria-label="Previous product"
               iconLeft={<ArrowLeft size={18} />}
             />
 
-            <Button 
-              variant="primary" 
-              colorTheme="pistachio" 
-              isIconOnly 
+            <Button
+              variant="primary"
+              colorTheme="pistachio"
+              isIconOnly
               className="next-prod w-12 h-12"
               aria-label="Next product"
               iconRight={<ArrowRight size={18} />}

@@ -12,25 +12,25 @@ import { SatisfiedCustomers } from '../satisfied-customers/SatisfiedCustomers';
 
 export default function Hero() {
   const slides = [
-    { 
-      id: 1, 
-      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=1920", 
+    {
+      id: 1,
+      image: "https://images.unsplash.com/photo-1617101814812-3529cf87b5ce?auto=format&fit=crop&q=80&w=1920",
       alt: "Natureza",
       title: "Health you can feel. Every single day.",
       description: "Targeted daily supplements designed to support digestion, immunity, and overall balance — without overcomplicating your routine.",
       buttonText: "Shop supplements"
     },
-    { 
-      id: 2, 
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1920", 
+    {
+      id: 2,
+      image: "https://images.unsplash.com/photo-1605040056130-38d9faad3534?auto=format&fit=crop&q=80&w=1920",
       alt: "Yoga",
       title: "Find your balance through nature.",
       description: "Discover a range of plant-based solutions crafted to harmonize your body and mind in today's fast-paced world.",
       buttonText: "Explore Balance"
     },
-    { 
-      id: 3, 
-      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", 
+    {
+      id: 3,
+      image: "https://images.unsplash.com/photo-1594841061289-1d892771c607?auto=format&fit=crop&q=80&w=1920",
       alt: "Saúde",
       title: "Pure ingredients. Real results.",
       description: "We source the highest quality raw materials to ensure every capsule delivers the potency your health deserves.",
@@ -65,7 +65,7 @@ export default function Hero() {
               <div className="absolute inset-0 z-20 flex items-center">
                 <div className="container mx-auto px-4 md:px-0">
                   <div className="max-w-4xl flex flex-col items-start gap-4 md:gap-6 text-gray-100">
-                    
+
                     <SatisfiedCustomers variant="hero" />
 
                     <h1 className="text-h3 md:text-h2 lg:text-h1 leading-tight">
