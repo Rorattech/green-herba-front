@@ -22,26 +22,26 @@ export const Input = ({
   id,
   ...props
 }: InputProps) => {
-  
+
   // Estilos base vinculados ao text-body-m (Inter Tight)
   const containerClasses = "relative w-full group";
-  
+
   const inputVariants = {
     light: "bg-gray-100 border-gray-300 text-black placeholder:text-gray-400 focus:border-green-700",
     dark: "bg-green-800/20 border-green-600/30 text-green-100 placeholder:text-green-400/50 focus:border-green-500",
   };
 
-  const stateClasses = error 
-    ? "border-error focus:border-error" 
+  const stateClasses = error
+    ? "border-error focus:border-error"
     : "border transition-colors duration-200";
 
   return (
     <div className={containerClasses}>
       {label && (
-        <label 
-          htmlFor={id} 
+        <label
+          htmlFor={id}
           className={cn(
-            "block mb-1.5 text-body-s font-medium uppercase tracking-wider",
+            "block mb-1.5 text-body-s font-normal uppercase tracking-wider",
             colorTheme === 'light' ? "text-gray-400" : "text-green-400/70"
           )}
         >
