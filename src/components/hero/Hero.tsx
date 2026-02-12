@@ -16,25 +16,25 @@ export default function Hero() {
       id: 1,
       image: "https://images.unsplash.com/photo-1617101814812-3529cf87b5ce?auto=format&fit=crop&q=80&w=1920",
       alt: "Natureza",
-      title: "Health you can feel. Every single day.",
-      description: "Targeted daily supplements designed to support digestion, immunity, and overall balance — without overcomplicating your routine.",
-      buttonText: "Shop supplements"
+      title: "Saúde que você pode sentir. Todos os dias.",
+      description: "Suplementos diários direcionados projetados para apoiar digestão, imunidade e equilíbrio geral — sem complicar sua rotina.",
+      buttonText: "Comprar suplementos"
     },
     {
       id: 2,
       image: "https://images.unsplash.com/photo-1605040056130-38d9faad3534?auto=format&fit=crop&q=80&w=1920",
       alt: "Yoga",
-      title: "Find your balance through nature.",
-      description: "Discover a range of plant-based solutions crafted to harmonize your body and mind in today's fast-paced world.",
-      buttonText: "Explore Balance"
+      title: "Encontre seu equilíbrio através da natureza.",
+      description: "Descubra uma gama de soluções à base de plantas criadas para harmonizar seu corpo e mente no mundo acelerado de hoje.",
+      buttonText: "Explorar Equilíbrio"
     },
     {
       id: 3,
       image: "https://images.unsplash.com/photo-1594841061289-1d892771c607?auto=format&fit=crop&q=80&w=1920",
       alt: "Saúde",
-      title: "Pure ingredients. Real results.",
-      description: "We source the highest quality raw materials to ensure every capsule delivers the potency your health deserves.",
-      buttonText: "See our quality"
+      title: "Ingredientes puros. Resultados reais.",
+      description: "Buscamos matérias-primas da mais alta qualidade para garantir que cada cápsula entregue a potência que sua saúde merece.",
+      buttonText: "Ver nossa qualidade"
     },
   ];
 

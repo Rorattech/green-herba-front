@@ -29,21 +29,21 @@ export default function RegisterPage() {
 
         <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24">
           <div className="w-full max-w-[440px] space-y-8">
-            <h1 className="text-h2 font-heading text-green-800">Create an account</h1>
+            <h1 className="text-h2 font-heading text-green-800">Criar uma conta</h1>
 
             <form className="space-y-5">
               <div className="grid grid-cols-1 gap-5">
-                <Input label="First name" id="first-name" placeholder="Enter your first name" required />
-                <Input label="Last name" id="last-name" placeholder="Enter your last name" required />
+                <Input label="Nome" id="first-name" placeholder="Digite seu nome" required />
+                <Input label="Sobrenome" id="last-name" placeholder="Digite seu sobrenome" required />
               </div>
 
-              <Input label="Email" id="email" type="email" placeholder="Enter your email" required />
+              <Input label="Email" id="email" type="email" placeholder="Digite seu email" required />
 
               <Input
-                label="Password"
+                label="Senha"
                 id="password"
                 type="password"
-                placeholder="Create a password"
+                placeholder="Crie uma senha"
                 iconRight={<EyeOff size={20} className="cursor-pointer" />}
                 required
               />
@@ -51,27 +51,27 @@ export default function RegisterPage() {
               <label className="flex items-start gap-3 cursor-pointer group pt-2">
                 <input type="checkbox" className="mt-1 w-4 h-4 accent-green-800" />
                 <span className="text-body-s text-green-800 leading-tight">
-                  Opt out of Green Herba Pharma's marketing emails packed with exciting news and offers
+                  Optar por não receber emails de marketing da Green Herba Pharma repletos de notícias e ofertas emocionantes
                 </span>
               </label>
 
               <div className="space-y-4 pt-4">
                 <Button variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
-                  Join now
+                  Criar conta
                 </Button>
 
                 <Link href="/login" className="block text-center">
                   <Button variant="primary" colorTheme="pistachio" className="w-full h-14">
-                    Back to sign in
+                    Voltar para entrar
                   </Button>
                 </Link>
               </div>
             </form>
 
             <p className="text-[10px] text-gray-400 leading-relaxed">
-              This site is protected by reCAPTCHA and the
-              <a href="#" className="underline mx-1">Google Privacy Policy</a> and
-              <a href="#" className="underline mx-1">Terms of Service</a> apply.
+              Este site é protegido por reCAPTCHA e a
+              <a href="#" className="underline mx-1">Política de Privacidade do Google</a> e os
+              <a href="#" className="underline mx-1">Termos de Serviço</a> se aplicam.
             </p>
           </div>
         </div>

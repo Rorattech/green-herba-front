@@ -11,29 +11,35 @@ const PLACEHOLDER_IMAGE = "/assets/products/PRODUTO-1.png";
 
 /**
  * Maps an API product to the frontend Product type.
- * Fields not provided by the API (oldPrice, badgeLabel, rating, reviewsCount, etc.) are kept mock/optional.
+ * Fields not provided by the API (stock, sizes) are kept mock/optional.
  */
 export function mapApiProductToProduct(api: ApiProduct): Product {
-  const priceNum = parseFloat(api.price) || 0;
-  // oldPrice mockado até o back enviar (evita quebrar layout do card)
-  const oldPrice = priceNum > 0 ? (priceNum * 1.15).toFixed(2) : "";
+  // Usa new_price quando disponível, senão usa price
+  const priceFromString = parseFloat(api.price) || 0;
+  const finalPrice = api.new_price ?? priceFromString;
+  
+  // oldPrice: se tem desconto, usa price original, senão mock
+  const oldPrice = api.discount_percentage && parseFloat(api.discount_percentage) > 0
+    ? api.price
+    : (finalPrice > 0 ? (finalPrice * 1.15).toFixed(2) : ""); // mock quando não tem desconto
+  
   return {
     id: api.id,
     slug: api.slug,
     name: api.name,
-    price: api.price,
+    price: finalPrice.toString(),
     oldPrice,
-    priceFormatted: formatCurrency(priceNum),
+    priceFormatted: formatCurrency(finalPrice),
     description: api.description ?? "",
-    image: api.primary_image?.file_path
+    image: (api.primary_image && api.primary_image.file_path && typeof api.primary_image.file_path === 'string')
       ? `https://pharma-green-backend.onrender.com/storage/${api.primary_image.file_path}`
       : PLACEHOLDER_IMAGE,
-    badgeLabel: undefined, // mockado até o back enviar
-    badgeVariant: undefined,
-    rating: undefined,
-    reviewsCount: 0, // mockado até o back enviar
+    badgeLabel: api.badge_label ?? undefined,
+    badgeVariant: api.badge_variant as Product['badgeVariant'] | undefined,
+    rating: api.rating ?? 0,
+    reviewsCount: api.reviews_count ?? 0,
     stock: "Em estoque", // mockado até o back enviar
-    sizes: undefined,
+    sizes: undefined, // mockado até o back enviar
     category: api.categories?.[0]?.name, // Primeira categoria como categoria principal
     categories: api.categories,
   };

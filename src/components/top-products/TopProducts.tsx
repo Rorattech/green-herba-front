@@ -63,7 +63,7 @@ export default function TopProducts({ products }: { products: Product[] }) {
               colorTheme="pistachio"
               isIconOnly
               className="prev-prod w-12 h-12"
-              aria-label="Previous product"
+              aria-label="Produto anterior"
               iconLeft={<ArrowLeft size={18} />}
             />
 
@@ -72,7 +72,7 @@ export default function TopProducts({ products }: { products: Product[] }) {
               colorTheme="pistachio"
               isIconOnly
               className="next-prod w-12 h-12"
-              aria-label="Next product"
+              aria-label="Próximo produto"
               iconRight={<ArrowRight size={18} />}
             />
           </div>

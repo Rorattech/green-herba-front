@@ -29,9 +29,9 @@ export default function ForgotPasswordPage() {
         <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24">
           <div className="w-full max-w-[440px] space-y-8">
             <div className="space-y-2">
-              <h1 className="text-h2 font-heading text-green-800">Reset password</h1>
+              <h1 className="text-h2 font-heading text-green-800">Redefinir senha</h1>
               <p className="text-body-m text-green-800/70">
-                Enter a new password for your account.
+                Digite uma nova senha para sua conta.
               </p>
             </div>
 
@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
               <Input
                 id="new-password"
                 type="password"
-                label="New password"
-                placeholder="Enter new password"
+                label="Nova senha"
+                placeholder="Digite a nova senha"
                 iconRight={<EyeOff size={20} className="cursor-pointer" />}
                 required
               />
@@ -48,23 +48,23 @@ export default function ForgotPasswordPage() {
               <Input
                 id="confirm-password"
                 type="password"
-                label="Re-enter new password"
-                placeholder="Confirm new password"
+                label="Confirmar nova senha"
+                placeholder="Confirme a nova senha"
                 iconRight={<EyeOff size={20} className="cursor-pointer" />}
                 required
               />
 
               <div className="pt-2">
                 <Button variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
-                  Save new password
+                  Salvar nova senha
                 </Button>
               </div>
             </form>
 
             <p className="text-[10px] text-gray-400 leading-relaxed">
-              This site is protected by reCAPTCHA and the
-              <a href="#" className="underline mx-1">Google Privacy Policy</a> and
-              <a href="#" className="underline mx-1">Terms of Service</a> apply.
+              Este site é protegido por reCAPTCHA e a
+              <a href="#" className="underline mx-1">Política de Privacidade do Google</a> e os
+              <a href="#" className="underline mx-1">Termos de Serviço</a> se aplicam.
             </p>
           </div>
         </div>

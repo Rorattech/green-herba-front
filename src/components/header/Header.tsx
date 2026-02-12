@@ -24,7 +24,7 @@ export const Header = () => {
     <header className="w-full border-b border-gray-300 sticky top-0 z-50 bg-white">
       <div className="flex flex-row items-center justify-center gap-2 p-2 bg-green-700">
         <h3 className="text-green-100 text-body-m font-body font-medium">
-          Free shipping on orders over $50
+          Frete grátis em pedidos acima de R$ 50
         </h3>
         <ArrowRight size={16} strokeWidth={1.5} color="white" />
       </div>

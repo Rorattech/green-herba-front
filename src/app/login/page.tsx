@@ -30,7 +30,7 @@ export default function LoginPage() {
         <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24">
           <div className="w-full max-w-[440px] space-y-8">
             <div className="space-y-2">
-              <h1 className="text-h2 font-heading text-green-800">Sign in</h1>
+              <h1 className="text-h2 font-heading text-green-800">Entrar</h1>
             </div>
 
             <form className="space-y-6">
@@ -38,7 +38,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 label="Email"
-                placeholder="Enter your email"
+                placeholder="Digite seu email"
                 colorTheme="light"
                 required
               />
@@ -47,8 +47,8 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  label="Password"
-                  placeholder="Enter your password"
+                  label="Senha"
+                  placeholder="Digite sua senha"
                   colorTheme="light"
                   iconRight={<EyeOff size={20} className="cursor-pointer" />}
                   required
@@ -58,7 +58,7 @@ export default function LoginPage() {
                     href="/forgot-password"
                     className="text-body-s font-normal text-green-800 underline hover:text-green-700"
                   >
-                    Forgot your password?
+                    Esqueceu sua senha?
                   </Link>
                 </div>
               </div>
@@ -69,7 +69,7 @@ export default function LoginPage() {
                   colorTheme="green"
                   className="w-full h-14 text-body-m text-green-100"
                 >
-                  Sign in
+                  Entrar
                 </Button>
 
                 <Link href="/register" className="block">
@@ -78,16 +78,16 @@ export default function LoginPage() {
                     colorTheme="pistachio"
                     className="w-full h-14 text-body-m"
                   >
-                    Create an account
+                    Criar uma conta
                   </Button>
                 </Link>
               </div>
             </form>
 
             <p className="text-[10px] text-gray-400 leading-relaxed">
-              This site is protected by reCAPTCHA and the
-              <a href="#" className="underline mx-1">Google Privacy Policy</a> and
-              <a href="#" className="underline mx-1">Terms of Service</a> apply.
+              Este site é protegido por reCAPTCHA e a
+              <a href="#" className="underline mx-1">Política de Privacidade do Google</a> e os
+              <a href="#" className="underline mx-1">Termos de Serviço</a> se aplicam.
             </p>
           </div>
         </div>

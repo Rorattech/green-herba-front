@@ -8,6 +8,7 @@ import { Badge } from '../ui/Badge';
 import Link from 'next/link';
 import { useCart } from '@/src/contexts/CartContext';
 import { useCartDrawer } from '@/src/contexts/CartDrawerContext';
+import { formatCurrency } from '@/src/utils/format';
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -45,13 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Área de Conteúdo */}
       <div className="flex flex-col flex-1 items-center text-center px-2">
-        {/* Ajuste aqui: 
-            1. 'line-clamp-2' para limitar linhas.
-            2. 'leading-tight' para um espaçamento entre linhas melhor.
-            3. 'py-1' para evitar que o overflow do line-clamp corte a base das letras.
-        */}
         <h3 className="text-h6 text-green-800 leading-tight line-clamp-2 py-0.5 px-2">
           {product.name}
         </h3>
@@ -59,28 +54,35 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Avaliação */}
         <div className="flex items-center gap-1 mb-2">
           <div className="flex items-center gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={12}
-                className="fill-warning text-warning"
-              />
-            ))}
+            {[...Array(5)].map((_, i) => {
+              const rating = product.rating ?? 0;
+              const isFilled = i < Math.floor(rating);
+              return (
+                <Star
+                  key={i}
+                  size={12}
+                  className={
+                    isFilled
+                      ? "fill-warning text-warning"
+                      : "text-gray-300"
+                  }
+                />
+              );
+            })}
           </div>
           <span className="text-body-s font-medium text-green-600">
-            ({product.reviewsCount || 123})
+            ({product.reviewsCount ?? 0})
           </span>
         </div>
 
-        {/* Rodapé: Preço e Botão */}
         <div className="mt-auto w-full flex flex-col items-center pt-2">
           <div className="flex items-center gap-1 mb-4">
             <span className="text-body-m font-medium text-green-800">
-              R${product.price}
+              {product.priceFormatted}
             </span>
-            {product.oldPrice && (
+            {product.oldPrice && product.oldPrice !== "0" && (
               <span className="text-error line-through text-body-m font-medium">
-                R${product.oldPrice}
+                {formatCurrency(parseFloat(product.oldPrice))}
               </span>
             )}
           </div>
@@ -91,7 +93,8 @@ export default function ProductCard({ product }: { product: Product }) {
             className="w-full"
             onClick={handleAddToCart}
           >
-            Add to cart
+            <span className="lg:hidden">Adicionar</span>
+            <span className="hidden lg:inline">Adicionar ao carrinho</span>
           </Button>
         </div>
       </div>
