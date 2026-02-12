@@ -10,4 +10,6 @@ export interface Product {
   priceFormatted: string;
   rating?: number;
   reviewsCount?: number;
+  stock?: string;
+  sizes?: string[];
 }

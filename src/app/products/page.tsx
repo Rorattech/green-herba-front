@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import MainLayout from "../../layouts/MainLayout";
 import ProductCard from "../../components/product-card/ProductCard";
 import { mockAllProducts } from "../../mocks/products.mock";
@@ -9,9 +10,24 @@ import { Button } from "../../components/ui/Button";
 import { Select } from "@/src/components/ui/Select";
 import { cn } from "@/src/utils/cn";
 import { FilterSidebar } from '@/src/components/filter-sidebar/FilterSidebar';
+import { ProductSearchBar } from '@/src/components/product-search/ProductSearchBar';
+import { Product } from '@/src/types/product';
+
+function filterProductsByQuery(products: Product[], query: string): Product[] {
+  if (!query.trim()) return products;
+  const lower = query.trim().toLowerCase();
+  return products.filter((p) => p.name.toLowerCase().includes(lower) || (p.description?.toLowerCase().includes(lower)));
+}
 
 export default function ProductsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('q') ?? '';
+
+  const filteredProducts = useMemo(
+    () => filterProductsByQuery(mockAllProducts, searchQuery),
+    [searchQuery]
+  );
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
@@ -50,14 +66,19 @@ export default function ProductsPage() {
                 </button>
 
                 <span className="text-body-m font-medium text-green-800/60 ml-auto md:ml-0">
-                  100 results
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'resultado' : 'resultados'}
                 </span>
               </div>
 
-              <div className="w-full md:w-auto md:min-w-[200px]">
-                <Select label="Sort by" defaultValue="best-sellers">
-                  <option value="best-sellers">Best sellers</option>
-                </Select>
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                <div className="w-full md:w-auto lg:w-[400px]">
+                  <ProductSearchBar />
+                </div>
+                <div className="w-full md:w-auto md:min-w-[200px]">
+                  <Select label="Sort by" defaultValue="best-sellers">
+                    <option value="best-sellers">Best sellers</option>
+                  </Select>
+                </div>
               </div>
             </div>
 
@@ -92,16 +113,29 @@ export default function ProductsPage() {
                   ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
                   : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
               )}>
-                {mockAllProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))
+                ) : (
+                  <div className="col-span-full py-16 text-center">
+                    <p className="text-body-m text-green-800/70">
+                      Nenhum produto encontrado para &quot;{searchQuery}&quot;.
+                    </p>
+                    <p className="text-body-s text-gray-500 mt-2">
+                      Tente outro termo ou limpe a busca.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div className="mt-16 flex justify-center">
-                <Button variant="primary" colorTheme="pistachio" className="px-12">
-                  Show more
-                </Button>
-              </div>
+              {filteredProducts.length > 0 && (
+                <div className="mt-16 flex justify-center">
+                  <Button variant="primary" colorTheme="pistachio" className="px-12">
+                    Show more
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
