@@ -1,5 +1,6 @@
 import { Inter_Tight, PT_Sans_Caption, Fragment_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/src/components/providers/Providers";
 
 export const metadata = {
   title: "Green Herba Pharma",
@@ -36,7 +37,11 @@ export default function RootLayout({
       lang="pt-BR" 
       className={`${interTight.variable} ${SansCaption.variable} ${fragmentMono.variable}`}
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }
