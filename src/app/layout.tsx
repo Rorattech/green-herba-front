@@ -1,6 +1,13 @@
 import { Inter_Tight, PT_Sans_Caption, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 
+export const metadata = {
+  title: "Green Herba Pharma",
+  icons: {
+    icon: "/assets/favicon.png",
+  },
+};
+
 const interTight = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-inter-tight",
