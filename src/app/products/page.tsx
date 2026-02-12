@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import MainLayout from "../../layouts/MainLayout";
 import ProductCard from "../../components/product-card/ProductCard";
@@ -20,7 +20,7 @@ function filterProductsByQuery(products: Product[], query: string): Product[] {
   return products.filter((p) => p.name.toLowerCase().includes(lower) || (p.description?.toLowerCase().includes(lower)));
 }
 
-export default function ProductsPage() {
+function ProductsContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>(mockAllProducts);
   const searchParams = useSearchParams();
@@ -155,5 +155,25 @@ export default function ProductsPage() {
         </div>
       </section>
     </MainLayout>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <MainLayout>
+        <section className="bg-white min-h-screen">
+          <div className="container mx-auto px-4 md:px-0 py-10 md:py-16">
+            <div className="mb-8 md:mb-12">
+              <h1 className="text-h3 md:text-h2 font-heading text-green-800 mb-6 md:mb-8">
+                Todos os Produtos
+              </h1>
+            </div>
+          </div>
+        </section>
+      </MainLayout>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }
