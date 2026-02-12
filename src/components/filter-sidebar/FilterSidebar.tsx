@@ -28,8 +28,10 @@ export const FilterSidebar = () => {
             </FilterAccordion>
 
             <FilterAccordion title="Reviews">
-                {[4, 3, 2, 1].map((stars) => (
+                {[4, 3, 2, 1, 0].map((stars) => (
                     <FilterCheckbox
+                        variant="radio"
+                        name="rating"
                         key={stars}
                         id={`rating-${stars}`}
                         label={
@@ -40,16 +42,13 @@ export const FilterSidebar = () => {
                                             key={i}
                                             size={14}
                                             className={
-                                                i < stars
+                                                i - 1 < stars
                                                     ? "fill-green-800 text-green-800"
                                                     : "text-gray-300"
                                             }
                                         />
                                     ))}
                                 </div>
-                                <span className="text-body-s font-medium text-green-800/60">
-                                    and up
-                                </span>
                             </div>
                         }
                     />

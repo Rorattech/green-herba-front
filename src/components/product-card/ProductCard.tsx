@@ -3,10 +3,11 @@ import { Star } from 'lucide-react';
 import { Product } from '@/src/types/product';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import Link from 'next/link';
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="group flex flex-col items-center bg-transparent w-full">
+    <Link href="/products" className="group flex flex-col items-center bg-transparent w-full">
       <div className="relative aspect-square lg:aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden">
         {product.badgeLabel && (
           <div className="absolute top-6 right-6 z-10">
@@ -52,6 +53,6 @@ export default function ProductCard({ product }: { product: Product }) {
       <Button variant="primary" colorTheme="pistachio" className="w-full">
         Add to cart
       </Button>
-    </div>
+    </Link>
   );
 }
