@@ -7,7 +7,12 @@ import type {
 import type { Product } from "@/src/types/product";
 import { formatCurrency } from "@/src/utils/format";
 
-const PLACEHOLDER_IMAGE = "/assets/products/PRODUTO-1.png";
+const PLACEHOLDER_IMAGES = [
+  "/assets/products/PRODUTO-1.png",
+  "/assets/products/PRODUTO-2.png",
+  "/assets/products/PRODUTO-3.png",
+  "/assets/products/PRODUTO-4.png",
+];
 
 /**
  * Maps an API product to the frontend Product type.
@@ -16,6 +21,12 @@ const PLACEHOLDER_IMAGE = "/assets/products/PRODUTO-1.png";
 export function mapApiProductToProduct(api: ApiProduct): Product {
   const priceFromString = parseFloat(api.price) || 0;
   const finalPrice = api.new_price ?? priceFromString;
+
+  const placeholderIndex = typeof api.id === 'number' 
+    ? api.id % PLACEHOLDER_IMAGES.length 
+    : Math.floor(Math.random() * PLACEHOLDER_IMAGES.length);
+
+  const selectedPlaceholder = PLACEHOLDER_IMAGES[placeholderIndex];
 
   const oldPrice =
     api.discount_percentage && parseFloat(api.discount_percentage) > 0
@@ -34,7 +45,7 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
       api.primary_image?.file_path &&
       typeof api.primary_image.file_path === "string"
         ? `https://pharma-green-backend.onrender.com/storage/${api.primary_image.file_path}`
-        : PLACEHOLDER_IMAGE,
+        : selectedPlaceholder,
     badgeLabel: api.badge_label ?? undefined,
     badgeVariant: api.badge_variant as Product["badgeVariant"] | undefined,
     rating: api.rating ?? 0,

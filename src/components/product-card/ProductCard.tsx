@@ -26,7 +26,6 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/product/${product.slug ?? product.id}`}
       className="group flex flex-col bg-transparent w-full h-full"
     >
-      {/* Container da Imagem */}
       <div className="relative aspect-square lg:aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden shrink-0">
         {product.badgeLabel && (
           <div className="absolute top-6 right-6 z-10">
@@ -50,8 +49,6 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="text-h6 text-green-800 leading-tight line-clamp-2 py-0.5 px-2">
           {product.name}
         </h3>
-
-        {/* Avaliação */}
         <div className="flex items-center gap-1 mb-2">
           <div className="flex items-center gap-0.5">
             {[...Array(5)].map((_, i) => {
