@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import MainLayout from "../../layouts/MainLayout";
 import ProductCard from "../../components/product-card/ProductCard";
-import { mockAllProducts } from "../../mocks/products.mock";
+import ProductCardSkeleton from "../../components/product-card/ProductCardSkeleton";
 import { SlidersHorizontal } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Select } from "@/src/components/ui/Select";
@@ -106,7 +106,8 @@ function sortProducts(products: Product[], sort: ProductSort): Product[] {
 
 function ProductsContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>(mockAllProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -180,12 +181,19 @@ function ProductsContent() {
 
   useEffect(() => {
     let cancelled = false;
+    setProductsLoading(true);
     fetchProductsMapped({ page: 1 })
       .then(({ products: list }) => {
-        if (!cancelled) setProducts(list);
+        if (!cancelled) {
+          setProducts(list);
+          setProductsLoading(false);
+        }
       })
       .catch(() => {
-        if (!cancelled) setProducts(mockAllProducts);
+        if (!cancelled) {
+          setProducts([]);
+          setProductsLoading(false);
+        }
       });
     return () => { cancelled = true; };
   }, []);
@@ -319,7 +327,7 @@ function ProductsContent() {
                 </div>
 
                 <span className="text-body-m font-medium text-green-800/60 ml-auto md:ml-0">
-                  {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? 'resultado' : 'resultados'}
+                  {productsLoading ? "Carregando..." : `${filteredAndSortedProducts.length} ${filteredAndSortedProducts.length === 1 ? "resultado" : "resultados"}`}
                 </span>
               </div>
 
@@ -385,13 +393,20 @@ function ProductsContent() {
             )}
 
             <div className="flex-1">
-              <div className={cn(
-                "grid gap-x-4 md:gap-x-6 gap-y-10 md:gap-y-12 transition-all duration-300",
-                isFilterOpen
-                  ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
-                  : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-              )}>
-                {filteredAndSortedProducts.length > 0 ? (
+              <div
+                key={productsLoading ? "products-skeleton" : "products-list"}
+                className={cn(
+                  "grid gap-x-4 md:gap-x-6 gap-y-10 md:gap-y-12 transition-all duration-300",
+                  isFilterOpen
+                    ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
+                    : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                )}
+              >
+                {productsLoading ? (
+                  [...Array(8)].map((_, i) => (
+                    <ProductCardSkeleton key={i} />
+                  ))
+                ) : filteredAndSortedProducts.length > 0 ? (
                   filteredAndSortedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))
@@ -411,15 +426,36 @@ function ProductsContent() {
                   </div>
                 )}
               </div>
-
-              {filteredAndSortedProducts.length > 0 && (
+              {/* 
+              {!productsLoading && filteredAndSortedProducts.length > 0 && (
                 <div className="mt-16 flex justify-center">
                   <Button variant="primary" colorTheme="pistachio" className="px-12">
                     Mostrar mais
                   </Button>
                 </div>
-              )}
+              )} */}
             </div>
+          </div>
+        </div>
+      </section>
+    </MainLayout>
+  );
+}
+
+function ProductsPageFallback() {
+  return (
+    <MainLayout>
+      <section className="bg-white min-h-screen">
+        <div className="container mx-auto px-4 md:px-0 py-10 md:py-16">
+          <div className="mb-8 md:mb-12">
+            <h1 className="text-h3 md:text-h2 font-heading text-green-800 mb-6 md:mb-8">
+              Todos os Produtos
+            </h1>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-10 md:gap-y-12">
+            {[...Array(8)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </section>
@@ -429,19 +465,7 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={
-      <MainLayout>
-        <section className="bg-white min-h-screen">
-          <div className="container mx-auto px-4 md:px-0 py-10 md:py-16">
-            <div className="mb-8 md:mb-12">
-              <h1 className="text-h3 md:text-h2 font-heading text-green-800 mb-6 md:mb-8">
-                Todos os Produtos
-              </h1>
-            </div>
-          </div>
-        </section>
-      </MainLayout>
-    }>
+    <Suspense fallback={<ProductsPageFallback />}>
       <ProductsContent />
     </Suspense>
   );

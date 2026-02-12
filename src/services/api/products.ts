@@ -11,18 +11,17 @@ const PLACEHOLDER_IMAGE = "/assets/products/PRODUTO-1.png";
 
 /**
  * Maps an API product to the frontend Product type.
- * Fields not provided by the API (stock, sizes) are kept mock/optional.
+ * Fields not provided by the API (stock, sizes) use defaults until the backend supports them.
  */
 export function mapApiProductToProduct(api: ApiProduct): Product {
-  // Usa new_price quando disponível, senão usa price
   const priceFromString = parseFloat(api.price) || 0;
   const finalPrice = api.new_price ?? priceFromString;
-  
-  // oldPrice: se tem desconto, usa price original, senão mock
-  const oldPrice = api.discount_percentage && parseFloat(api.discount_percentage) > 0
-    ? api.price
-    : (finalPrice > 0 ? (finalPrice * 1.15).toFixed(2) : ""); // mock quando não tem desconto
-  
+
+  const oldPrice =
+    api.discount_percentage && parseFloat(api.discount_percentage) > 0
+      ? api.price
+      : (finalPrice > 0 ? (finalPrice * 1.15).toFixed(2) : "");
+
   return {
     id: api.id,
     slug: api.slug,
@@ -31,16 +30,18 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
     oldPrice,
     priceFormatted: formatCurrency(finalPrice),
     description: api.description ?? "",
-    image: (api.primary_image && api.primary_image.file_path && typeof api.primary_image.file_path === 'string')
-      ? `https://pharma-green-backend.onrender.com/storage/${api.primary_image.file_path}`
-      : PLACEHOLDER_IMAGE,
+    image:
+      api.primary_image?.file_path &&
+      typeof api.primary_image.file_path === "string"
+        ? `https://pharma-green-backend.onrender.com/storage/${api.primary_image.file_path}`
+        : PLACEHOLDER_IMAGE,
     badgeLabel: api.badge_label ?? undefined,
-    badgeVariant: api.badge_variant as Product['badgeVariant'] | undefined,
+    badgeVariant: api.badge_variant as Product["badgeVariant"] | undefined,
     rating: api.rating ?? 0,
     reviewsCount: api.reviews_count ?? 0,
-    stock: "Em estoque", // mockado até o back enviar
-    sizes: undefined, // mockado até o back enviar
-    category: api.categories?.[0]?.name, // Primeira categoria como categoria principal
+    stock: "Em estoque",
+    sizes: undefined,
+    category: api.categories?.[0]?.name,
     categories: api.categories,
   };
 }

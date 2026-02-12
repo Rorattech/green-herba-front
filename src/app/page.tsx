@@ -6,24 +6,21 @@ import { fetchHealth } from "../lib/api";
 import HomeTestimonials from "../components/home-testimonials/HomeTestimonials";
 import AllProducts from "../components/all-products/AllProcuts";
 import { fetchProductsMapped } from "../services/api/products";
-import { mockTopProducts, mockAllProducts } from "../mocks/products.mock";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const data = await fetchHealth();
   if (data) {
-    console.log('Health check:', data);
+    console.log("Health check:", data);
   }
 
-  let topProducts = mockTopProducts;
-  let allProducts = mockAllProducts;
+  let topProducts: Awaited<ReturnType<typeof fetchProductsMapped>>["products"] = [];
+  let allProducts: Awaited<ReturnType<typeof fetchProductsMapped>>["products"] = [];
   try {
     const { products } = await fetchProductsMapped({ page: 1 });
-    if (products.length > 0) {
-      topProducts = products.slice(0, 6);
-      allProducts = products;
-    }
+    topProducts = products.slice(0, 6);
+    allProducts = products;
   } catch (e) {
     console.warn("Failed to fetch products for home:", e);
   }
