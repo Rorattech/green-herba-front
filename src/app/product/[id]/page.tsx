@@ -14,6 +14,8 @@ import { Star, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 import { Badge } from "@/src/components/ui/Badge";
 import { Product } from "@/src/types/product";
 import { fetchProductBySlugMapped, fetchProductsMapped } from "@/src/services/api/products";
+import { useCart } from "@/src/contexts/CartContext";
+import { useCartDrawer } from "@/src/contexts/CartDrawerContext";
 
 const FALLBACK_PRODUCT: Product = {
     id: 0,
@@ -28,6 +30,34 @@ const FALLBACK_PRODUCT: Product = {
     stock: "—",
     sizes: [],
 };
+
+function AddToCartButton({ product }: { product: Product }) {
+    const [quantity, setQuantity] = useState(1);
+    const { addItem } = useCart();
+    const { openDrawer } = useCartDrawer();
+
+    return (
+        <div className="flex flex-col sm:flex-row gap-4">
+            <QuantitySelector 
+                colorTheme="light" 
+                value={quantity}
+                onChange={setQuantity}
+                min={1}
+            />
+            <Button 
+                variant="primary" 
+                colorTheme="green" 
+                className="flex-1 h-14"
+                onClick={() => {
+                    addItem(product, quantity);
+                    openDrawer();
+                }}
+            >
+                Add to cart
+            </Button>
+        </div>
+    );
+}
 
 export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
@@ -130,12 +160,7 @@ export default function ProductInternalPage() {
                                     </span>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <QuantitySelector colorTheme="light" />
-                                    <Button variant="primary" colorTheme="green" className="flex-1 h-14">
-                                        Add to cart
-                                    </Button>
-                                </div>
+                                <AddToCartButton product={product} />
 
                                 <div className="flex items-center gap-2 text-body-s text-green-800/60 pt-2">
                                     <Truck size={16} />

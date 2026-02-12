@@ -11,11 +11,13 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface HeaderProps {
-  onCartOpen: () => void;
-}
+import { useCartDrawer } from '@/src/contexts/CartDrawerContext';
+import { useCart } from '@/src/contexts/CartContext';
 
-export const Header = ({ onCartOpen }: HeaderProps) => {
+export const Header = () => {
+  const { openDrawer } = useCartDrawer();
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -73,10 +75,15 @@ export const Header = ({ onCartOpen }: HeaderProps) => {
               <User size={22} strokeWidth={1.5} />
             </Link>
             <button
-              onClick={onCartOpen}
-              className="hover:text-green-700 transition-colors cursor-pointer"
+              onClick={openDrawer}
+              className="hover:text-green-700 transition-colors cursor-pointer relative"
             >
               <ShoppingBag size={22} strokeWidth={1.5} />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-error text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
             </button>
           </div>
         </div>
