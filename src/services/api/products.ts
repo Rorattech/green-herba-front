@@ -34,6 +34,8 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
     reviewsCount: 0, // mockado até o back enviar
     stock: "Em estoque", // mockado até o back enviar
     sizes: undefined,
+    category: api.categories?.[0]?.name, // Primeira categoria como categoria principal
+    categories: api.categories,
   };
 }
 

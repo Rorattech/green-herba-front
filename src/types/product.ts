@@ -13,4 +13,6 @@ export interface Product {
   reviewsCount?: number;
   stock?: string;
   sizes?: string[];
+  category?: string;
+  categories?: Array<{ id: number; name: string; slug: string }>;
 }

@@ -100,7 +100,7 @@ export const Header = () => {
           <Link href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Sobre
           </Link>
-          <Link href="#" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
+          <Link href="/login" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
             <User size={20} />
             Minha Conta
           </Link>

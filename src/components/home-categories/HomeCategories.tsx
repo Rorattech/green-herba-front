@@ -4,7 +4,7 @@ export default function HomeCategories() {
     const categories = [
         { title: "Saúde", image: "https://images.unsplash.com/photo-1604660664082-3cac347079b0?q=100&w=1920" },
         { title: "Foco", image: "https://images.unsplash.com/photo-1612477954469-c6a60de89802?q=90&w=1920" },
-        { title: "Medicamentos", image: "https://images.unsplash.com/photo-1607077792448-17b60bcca65f?q=80&w=1920" },
+        { title: "Pet", image: "https://images.unsplash.com/photo-1415369629372-26f2fe60c467?q=80&w=1920" },
     ];
 
     return (
