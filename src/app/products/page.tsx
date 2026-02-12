@@ -12,6 +12,7 @@ import { cn } from "@/src/utils/cn";
 import { FilterSidebar } from '@/src/components/filter-sidebar/FilterSidebar';
 import { ProductSearchBar } from '@/src/components/product-search/ProductSearchBar';
 import { Product } from '@/src/types/product';
+import { fetchProductsMapped } from '@/src/services/api/products';
 
 function filterProductsByQuery(products: Product[], query: string): Product[] {
   if (!query.trim()) return products;
@@ -21,12 +22,25 @@ function filterProductsByQuery(products: Product[], query: string): Product[] {
 
 export default function ProductsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>(mockAllProducts);
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q') ?? '';
 
+  useEffect(() => {
+    let cancelled = false;
+    fetchProductsMapped({ page: 1 })
+      .then(({ products: list }) => {
+        if (!cancelled) setProducts(list);
+      })
+      .catch(() => {
+        if (!cancelled) setProducts(mockAllProducts);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const filteredProducts = useMemo(
-    () => filterProductsByQuery(mockAllProducts, searchQuery),
-    [searchQuery]
+    () => filterProductsByQuery(products, searchQuery),
+    [products, searchQuery]
   );
 
   useEffect(() => {

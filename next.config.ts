@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'pharma-green-backend.onrender.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

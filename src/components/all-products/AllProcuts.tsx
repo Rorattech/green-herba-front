@@ -10,7 +10,7 @@ interface AllProductsProps {
 
 export default function AllProducts({ products }: AllProductsProps) {
   const firstRow = products.slice(0, 2);
-  const remainingProducts = products.slice(2);
+  const remainingProducts = products.slice(2, 6);
 
   return (
     <section className="py-10 md:py-20 bg-white">
