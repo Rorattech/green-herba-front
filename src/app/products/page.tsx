@@ -52,15 +52,14 @@ function filterProducts(products: Product[], filters: ProductFilters): Product[]
   }
 
   // Filtro por rating mínimo - só filtra se não for null
-  // Produtos sem rating (undefined/null) são incluídos (assumimos que podem ter qualquer rating)
-  // Apenas produtos com rating definido são filtrados
+  // Produtos com rating 0 (sem avaliação) são excluídos quando há filtro de rating
   if (filters.minRating !== null && filters.minRating !== undefined) {
     filtered = filtered.filter((p) => {
-      // Se não tem rating definido, inclui o produto (pode ter qualquer rating)
-      if (p.rating === undefined || p.rating === null) {
-        return true;
+      // Se rating é 0 ou não existe (sem avaliação), exclui o produto
+      if (!p.rating || p.rating === 0) {
+        return false;
       }
-      // Se tem rating, verifica se atende ao mínimo
+      // Se tem rating > 0, verifica se atende ao mínimo
       return p.rating >= filters.minRating!;
     });
   }
@@ -291,7 +290,7 @@ function ProductsContent() {
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
                 >
                   <SlidersHorizontal size={16} />
-                  {isFilterOpen ? 'Hide filter' : 'Show filter'} {(() => {
+                  {isFilterOpen ? 'Ocultar filtros' : 'Mostrar filtros'} {(() => {
                     const activeCount = appliedFilters.categories.length + 
                       (appliedFilters.minRating !== null ? 1 : 0) + 
                       (appliedFilters.minPrice !== null || appliedFilters.maxPrice !== null ? 1 : 0);
@@ -306,14 +305,14 @@ function ProductsContent() {
                         onClick={handleResetFilters}
                         className="text-body-s font-bold text-green-800/60 underline cursor-pointer hover:text-green-800"
                       >
-                        Reset all
+                        Limpar tudo
                       </button>
                       <Button 
                         colorTheme="green" 
                         className="px-6 py-2 h-auto"
                         onClick={applyFilters}
                       >
-                        Apply
+                        Aplicar
                       </Button>
                     </>
                   )}
@@ -330,7 +329,7 @@ function ProductsContent() {
                 </div>
                 <div className="w-full md:w-auto md:min-w-[200px]">
                   <Select 
-                    label="Sort by" 
+                    label="Ordenar por" 
                     value={sort.field}
                     onChange={(e) => setSort({ field: e.target.value as ProductSort['field'] })}
                   >
@@ -416,7 +415,7 @@ function ProductsContent() {
               {filteredAndSortedProducts.length > 0 && (
                 <div className="mt-16 flex justify-center">
                   <Button variant="primary" colorTheme="pistachio" className="px-12">
-                    Show more
+                    Mostrar mais
                   </Button>
                 </div>
               )}

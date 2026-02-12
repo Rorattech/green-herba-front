@@ -5,6 +5,15 @@ export interface ApiCategory {
   slug: string;
 }
 
+/** Product image as returned by the API */
+export interface ApiProductImage {
+  id: number;
+  file_path: string;
+  alt_text: string | null;
+  sort_order?: number;
+  is_primary?: boolean;
+}
+
 /** Product as returned by the API */
 export interface ApiProduct {
   id: number;
@@ -12,15 +21,23 @@ export interface ApiProduct {
   slug: string;
   description: string;
   price: string;
+  discount_percentage: string | null;
+  new_price: number;
   requires_prescription: boolean;
+  badge_label: string | null;
+  badge_variant: string | null;
   specifications: Record<string, string>;
-  primary_image: {
-    id: number;
-    file_path: string;
-    alt_text: string;
-  } | null;
-  images: string[];
+  primary_image: ApiProductImage | null;
+  images: ApiProductImage[];
   categories: ApiCategory[];
+  rating: number | null;
+  reviews_count: number;
+  reviews?: Array<{
+    id: number;
+    user: string;
+    rating: number;
+    message: string;
+  }>;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

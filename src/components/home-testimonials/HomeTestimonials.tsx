@@ -35,7 +35,7 @@ export default function HomeTestimonials() {
                 Pessoas reais compartilham o impacto da Green Herba Pharma em suas vidas.
               </p>
             </div>
-            <Button className="w-fit">Shop all</Button>
+            <Button className="w-fit">Ver todos</Button>
           </div>
 
           <div className="md:col-span-full lg:col-span-3">
@@ -85,7 +85,7 @@ export default function HomeTestimonials() {
                       colorTheme="pistachio" 
                       isIconOnly 
                       className="prev-test w-12 h-12"
-                      aria-label="Previous testimonial"
+                      aria-label="Depoimento anterior"
                       iconLeft={<ArrowLeft size={18} />}
                     />
 
@@ -94,7 +94,7 @@ export default function HomeTestimonials() {
                       colorTheme="pistachio" 
                       isIconOnly 
                       className="next-test w-12 h-12"
-                      aria-label="Next testimonial"
+                      aria-label="Próximo depoimento"
                       iconRight={<ArrowRight size={18} />}
                     />
                   </div>

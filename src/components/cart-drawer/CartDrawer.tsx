@@ -8,6 +8,7 @@ import { Button } from "../ui/Button";
 import { QuantitySelector } from "../ui/QuantitySelector";
 import { useCart } from "@/src/contexts/CartContext";
 import Link from 'next/link';
+import { formatCurrency } from '@/src/utils/format';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -35,9 +36,6 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
     };
   }, [isOpen]);
 
-  const formatPrice = (price: number) => {
-    return `$${price.toFixed(2)}`;
-  };
 
   return (
     <>
@@ -56,7 +54,7 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
 
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-h5 font-heading text-green-800">
-            Your bag | {totalItems} {totalItems === 1 ? 'item' : 'items'}
+            Sua sacola | {totalItems} {totalItems === 1 ? 'item' : 'itens'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
             <X size={24} className="text-green-800" />
@@ -66,9 +64,9 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-body-m text-gray-400 mb-4">Your bag is empty</p>
+              <p className="text-body-m text-gray-400 mb-4">Sua sacola está vazia</p>
               <Button variant="primary" colorTheme="green" onClick={onClose}>
-                Continue Shopping
+                Continuar Comprando
               </Button>
             </div>
           ) : (
@@ -104,7 +102,7 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
                       </button>
                     </div>
                     {item.selectedSize && (
-                      <p className="text-body-s text-gray-400 mb-3">Size: {item.selectedSize}</p>
+                      <p className="text-body-s text-gray-400 mb-3">Tamanho: {item.selectedSize}</p>
                     )}
                     <div className="flex items-center justify-between mt-auto">
                       <QuantitySelector
@@ -114,9 +112,9 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
                         min={1}
                       />
                       <div className="flex flex-col items-end">
-                        <span className="text-body-m font-bold text-green-800">{formatPrice(price * item.quantity)}</span>
+                        <span className="text-body-m font-bold text-green-800">{formatCurrency(price * item.quantity)}</span>
                         {oldPrice > 0 && (
-                          <span className="text-body-s text-gray-300 line-through">{formatPrice(oldPrice * item.quantity)}</span>
+                          <span className="text-body-s text-gray-300 line-through">{formatCurrency(oldPrice * item.quantity)}</span>
                         )}
                       </div>
                     </div>
@@ -131,28 +129,28 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
           <div className="p-6 bg-white border-t border-gray-100 space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between text-body-m text-gray-500">
-                <span>Subtotal ({totalItems} {totalItems === 1 ? 'item' : 'items'})</span>
-                <span className="text-green-800 font-medium">{formatPrice(totalPrice)}</span>
+                <span>Subtotal ({totalItems} {totalItems === 1 ? 'item' : 'itens'})</span>
+                <span className="text-green-800 font-medium">{formatCurrency(totalPrice)}</span>
               </div>
               <div className="flex justify-between text-body-m text-gray-500">
-                <span>Shipping</span>
+                <span>Frete</span>
                 <span className="text-green-200 font-bold uppercase tracking-tight">
-                  {totalPrice >= 50 ? 'Free' : 'Calculated at checkout'}
+                  {totalPrice >= 50 ? 'Grátis' : 'Calculado no checkout'}
                 </span>
               </div>
             </div>
 
             <div className="pt-4 border-t border-gray-100 flex justify-between items-center mb-4">
-              <span className="text-body-l font-normal text-green-800 uppercase tracking-wider">Estimated total</span>
-              <span className="text-h6 text-green-800 font-heading font-bold">{formatPrice(totalPrice)}</span>
+              <span className="text-body-l font-normal text-green-800 uppercase tracking-wider">Total estimado</span>
+              <span className="text-h6 text-green-800 font-heading font-bold">{formatCurrency(totalPrice)}</span>
             </div>
 
             <Button variant="primary" colorTheme="green" className="w-full">
-              Checkout
+              Finalizar Compra
             </Button>
 
             <p className="text-[10px] text-gray-400 text-center px-4 leading-relaxed">
-              By continuing, I confirm that I have read and accept the <a href="#" className="underline hover:text-green-700">Terms of Service</a> and the <a href="#" className="underline hover:text-green-700">Privacy Policy</a>.
+              Ao continuar, confirmo que li e aceito os <a href="#" className="underline hover:text-green-700">Termos de Serviço</a> e a <a href="#" className="underline hover:text-green-700">Política de Privacidade</a>.
             </p>
           </div>
         )}

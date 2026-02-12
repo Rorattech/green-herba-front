@@ -16,6 +16,7 @@ import { Product } from "@/src/types/product";
 import { fetchProductBySlugMapped, fetchProductsMapped } from "@/src/services/api/products";
 import { useCart } from "@/src/contexts/CartContext";
 import { useCartDrawer } from "@/src/contexts/CartDrawerContext";
+import { formatCurrency } from '@/src/utils/format';
 
 const FALLBACK_PRODUCT: Product = {
     id: 0,
@@ -38,22 +39,22 @@ function AddToCartButton({ product }: { product: Product }) {
 
     return (
         <div className="flex flex-col sm:flex-row gap-4">
-            <QuantitySelector 
-                colorTheme="light" 
+            <QuantitySelector
+                colorTheme="light"
                 value={quantity}
                 onChange={setQuantity}
                 min={1}
             />
-            <Button 
-                variant="primary" 
-                colorTheme="green" 
+            <Button
+                variant="primary"
+                colorTheme="green"
                 className="flex-1 h-14"
                 onClick={() => {
                     addItem(product, quantity);
                     openDrawer();
                 }}
             >
-                Add to cart
+                Adicionar ao carrinho
             </Button>
         </div>
     );
@@ -84,13 +85,17 @@ export default function ProductInternalPage() {
         let cancelled = false;
         fetchProductsMapped({ page: 1 }).then(({ products }) => {
             if (!cancelled && products.length > 0) setTopProducts(products.slice(0, 6));
-        }).catch(() => {});
+        }).catch(() => { });
         return () => { cancelled = true; };
     }, []);
 
+    // Pega a primeira categoria do produto, se houver
+    const categoryName = product.category || product.categories?.[0]?.name || "Produtos";
+    const categoryHref = categoryName !== "Produtos" ? `/products?category=${encodeURIComponent(categoryName)}` : "/products";
+
     const breadcrumbItems = [
-        { label: "Home", href: "/" },
-        { label: "Immune support", href: "/products" },
+        { label: "Início", href: "/" },
+        { label: categoryName, href: categoryHref },
         { label: product.name, href: "#" },
     ];
 
@@ -126,23 +131,33 @@ export default function ProductInternalPage() {
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <div className="flex text-warning">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star key={i} size={16} fill="currentColor" />
-                                        ))}
+                                        {[...Array(5)].map((_, i) => {
+                                            const rating = product.rating ?? 0;
+                                            const isFilled = i < Math.floor(rating);
+                                            return (
+                                                <Star
+                                                    key={i}
+                                                    size={16}
+                                                    className={isFilled ? "fill-current" : "text-gray-300"}
+                                                />
+                                            );
+                                        })}
                                     </div>
                                     <span className="text-body-s text-gray-400 underline cursor-pointer">
-                                        ({product.reviewsCount} reviews)
+                                        ({product.reviewsCount ?? 0} avaliações)
                                     </span>
                                 </div>
                                 <h1 className="text-h2 font-heading text-green-800">{product.name}</h1>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-h4 font-bold text-green-800">${product.price}</span>
-                                    <span className="text-h5 text-gray-300 line-through">${product.oldPrice}</span>
+                                    <span className="text-h4 font-bold text-green-800">{product.priceFormatted}</span>
+                                    {product.oldPrice && product.oldPrice !== "0" && (
+                                        <span className="text-h5 text-gray-300 line-through">{formatCurrency(parseFloat(product.oldPrice))}</span>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="bg-green-200 text-green-100 p-4 rounded-lg flex justify-between items-center">
-                                <p className="text-body-s font-medium">This week only: save 20% on your favorites</p>
+                                <p className="text-body-s font-medium">Somente esta semana: economize 20% nos seus favoritos</p>
                                 <div className="flex gap-4 font-bold tracking-widest">
                                     <span>06 : 20 : 16</span>
                                 </div>
@@ -164,25 +179,25 @@ export default function ProductInternalPage() {
 
                                 <div className="flex items-center gap-2 text-body-s text-green-800/60 pt-2">
                                     <Truck size={16} />
-                                    <span>Free shipping over $50</span>
+                                    <span>Frete grátis acima de R$ 50</span>
                                 </div>
                             </div>
 
                             <div className="divide-y divide-gray-100 border-t border-gray-100 mt-6">
-                                <TextAccordion title="Details" defaultOpen>
-                                    <p>Terra Immune is designed for daily support, not quick fixes. With regular use, many people report feeling more balanced and supported through seasonal changes and everyday stressors.</p>
+                                <TextAccordion title="Detalhes" defaultOpen>
+                                    <p>Terra Immune é projetado para suporte diário, não soluções rápidas. Com uso regular, muitas pessoas relatam sentir-se mais equilibradas e apoiadas durante mudanças sazonais e estressores do dia a dia.</p>
                                 </TextAccordion>
 
-                                <TextAccordion title="Results">
-                                    <p>Our clinical trials showed a significant increase in baseline immune response after 30 days of consistent usage, combined with a healthy lifestyle.</p>
+                                <TextAccordion title="Resultados">
+                                    <p>Nossos ensaios clínicos mostraram um aumento significativo na resposta imune basal após 30 dias de uso consistente, combinado com um estilo de vida saudável.</p>
                                 </TextAccordion>
 
-                                <TextAccordion title="Ingredients">
+                                <TextAccordion title="Ingredientes">
                                     <ul className="list-disc pl-4 space-y-2">
-                                        <li>Vitamin C (as Ascorbic Acid)</li>
-                                        <li>Zinc (as Zinc Citrate)</li>
-                                        <li>Elderberry Extract</li>
-                                        <li>Echinacea Purpurea</li>
+                                        <li>Vitamina C (como Ácido Ascórbico)</li>
+                                        <li>Zinco (como Citrato de Zinco)</li>
+                                        <li>Extrato de Sabugueiro</li>
+                                        <li>Equinácea Purpúrea</li>
                                     </ul>
                                 </TextAccordion>
                             </div>
@@ -195,18 +210,18 @@ export default function ProductInternalPage() {
                 <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <Truck size={32} />
-                        <h3 className="text-h5 font-heading">Free shipping over $50</h3>
-                        <p className="text-body-m opacity-80">Delivered at your door step with no hidden fees.</p>
+                        <h3 className="text-h5 font-heading">Frete grátis acima de R$ 50</h3>
+                        <p className="text-body-m opacity-80">Entregue na sua porta sem taxas ocultas.</p>
                     </div>
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <RotateCcw size={32} />
-                        <h3 className="text-h5 font-heading">30-day easy returns</h3>
-                        <p className="text-body-m opacity-80">Changed your mind? Return unused products within 30 days.</p>
+                        <h3 className="text-h5 font-heading">Devolução fácil em 30 dias</h3>
+                        <p className="text-body-m opacity-80">Mudou de ideia? Devolva produtos não utilizados em até 30 dias.</p>
                     </div>
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <ShieldCheck size={32} />
-                        <h3 className="text-h5 font-heading">Trusted by thousands</h3>
-                        <p className="text-body-m opacity-80">Join thousands of happy customers who shop with us every month.</p>
+                        <h3 className="text-h5 font-heading">Confiado por milhares</h3>
+                        <p className="text-body-m opacity-80">Junte-se a milhares de clientes satisfeitos que compram conosco todo mês.</p>
                     </div>
                 </div>
             </section>
