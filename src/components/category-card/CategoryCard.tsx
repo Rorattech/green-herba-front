@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '../ui/Button';
 
 interface CategoryCardProps {
@@ -7,9 +8,9 @@ interface CategoryCardProps {
 }
 
 export const CategoryCard = ({ title, image }: CategoryCardProps) => (
-  <div className="relative aspect-square overflow-hidden group cursor-pointer">
-    <Image 
-      src={image} 
+  <Link href={`/products?category=${encodeURIComponent(title)}`} className="relative aspect-square overflow-hidden group cursor-pointer block">
+    <Image
+      src={image}
       alt={title}
       fill
       sizes="(max-width: 768px) 100vw, 33vw"
@@ -22,15 +23,14 @@ export const CategoryCard = ({ title, image }: CategoryCardProps) => (
       <h3 className="text-green-100 text-h3 font-heading leading-tight">
         {title}
       </h3>
-      
-      
-      <Button 
-        variant="primary" 
+
+      <Button
+        variant="primary"
         colorTheme="white"
         className="w-fit"
       >
         Ver todos
       </Button>
     </div>
-  </div>
+  </Link>
 );
