@@ -13,13 +13,13 @@ export default function Loading() {
     <MainLayout>
       <Hero />
 
-      {/* Top Products - mesma estrutura do carousel (Swiper) */}
+      {/* Top Products - mesma estrutura do carousel (Swiper), sangra à direita */}
       <section className="py-10 md:py-14 overflow-hidden">
         <div className="container mx-auto px-4 md:px-0">
           <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
         </div>
-        <div className="container mx-auto px-4 md:px-0">
-          <div className="flex gap-6 overflow-hidden">
+        <div className="container mx-auto px-4 md:px-0 overflow-visible">
+          <div className="flex gap-6 overflow-visible">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}

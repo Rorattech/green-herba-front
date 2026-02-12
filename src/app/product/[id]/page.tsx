@@ -51,18 +51,18 @@ function AddToCartButton({ product }: { product: Product }) {
 
 export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
+    const slug = typeof id === "string" ? id : undefined;
     const [product, setProduct] = useState<Product | null>(null);
     const [productLoading, setProductLoading] = useState(true);
     const [topProducts, setTopProducts] = useState<Product[]>([]);
 
+    const isLoading = Boolean(slug) && productLoading;
+    const effectiveProduct = slug ? product : null;
+
     useEffect(() => {
-        const slug = typeof id === "string" ? id : undefined;
-        if (!slug) {
-            setProductLoading(false);
-            return;
-        }
+        if (!slug) return;
         let cancelled = false;
-        setProductLoading(true);
+        queueMicrotask(() => setProductLoading(true));
         fetchProductBySlugMapped(slug)
             .then((p) => {
                 if (!cancelled) {
@@ -77,7 +77,7 @@ export default function ProductInternalPage() {
                 }
             });
         return () => { cancelled = true; };
-    }, [id]);
+    }, [slug]);
 
     useEffect(() => {
         let cancelled = false;
@@ -89,7 +89,7 @@ export default function ProductInternalPage() {
         return () => { cancelled = true; };
     }, []);
 
-    if (productLoading) {
+    if (isLoading) {
         return (
             <MainLayout>
                 <section className="bg-white py-10">
@@ -120,8 +120,8 @@ export default function ProductInternalPage() {
                     <div className="container mx-auto px-4 md:px-0">
                         <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
                     </div>
-                    <div className="container mx-auto px-4 md:px-0">
-                        <div className="flex gap-6 overflow-hidden">
+                    <div className="container mx-auto px-4 md:px-0 overflow-visible">
+                        <div className="flex gap-6 overflow-visible">
                             {[...Array(4)].map((_, i) => (
                                 <div key={i} className="w-full max-w-[320px] md:max-w-107.5 shrink-0">
                                     <ProductCardSkeleton />
@@ -157,7 +157,7 @@ export default function ProductInternalPage() {
         );
     }
 
-    if (!product) {
+    if (!effectiveProduct) {
         return (
             <MainLayout>
                 <section className="bg-white py-10 min-h-[50vh] flex items-center justify-center">
@@ -176,13 +176,13 @@ export default function ProductInternalPage() {
         );
     }
 
-    const categoryName = product.category || product.categories?.[0]?.name || "Produtos";
+    const categoryName = effectiveProduct.category || effectiveProduct.categories?.[0]?.name || "Produtos";
     const categoryHref = categoryName !== "Produtos" ? `/products?category=${encodeURIComponent(categoryName)}` : "/products";
 
     const breadcrumbItems = [
         { label: "Início", href: "/" },
         { label: categoryName, href: categoryHref },
-        { label: product.name, href: "#" },
+        { label: effectiveProduct.name, href: "#" },
     ];
 
     return (
@@ -199,15 +199,15 @@ export default function ProductInternalPage() {
                         <div className="space-y-4">
                             <div className="relative aspect-square bg-gray-100 overflow-hidden group">
                                 <Image
-                                    src={product.image}
-                                    alt={product.name}
+                                    src={effectiveProduct.image}
+                                    alt={effectiveProduct.name}
                                     fill
                                     className="object-contain p-12 transition-transform duration-500 group-hover:scale-105"
                                     priority
                                 />
                                 <div className="absolute top-6 right-6 z-10">
-                                    <Badge variant={product.badgeVariant}>
-                                        {product.badgeLabel}
+                                    <Badge variant={effectiveProduct.badgeVariant}>
+                                        {effectiveProduct.badgeLabel}
                                     </Badge>
                                 </div>
                             </div>
@@ -218,7 +218,7 @@ export default function ProductInternalPage() {
                                 <div className="flex items-center gap-2">
                                     <div className="flex text-warning">
                                         {[...Array(5)].map((_, i) => {
-                                            const rating = product.rating ?? 0;
+                                            const rating = effectiveProduct.rating ?? 0;
                                             const isFilled = i < Math.floor(rating);
                                             return (
                                                 <Star
@@ -230,14 +230,14 @@ export default function ProductInternalPage() {
                                         })}
                                     </div>
                                     <span className="text-body-s text-gray-400 underline cursor-pointer">
-                                        ({product.reviewsCount ?? 0} avaliações)
+                                        ({effectiveProduct.reviewsCount ?? 0} avaliações)
                                     </span>
                                 </div>
-                                <h1 className="text-h2 font-heading text-green-800">{product.name}</h1>
+                                <h1 className="text-h2 font-heading text-green-800">{effectiveProduct.name}</h1>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-h4 font-bold text-green-800">{product.priceFormatted}</span>
-                                    {product.oldPrice && product.oldPrice !== "0" && (
-                                        <span className="text-h5 text-gray-300 line-through">{formatCurrency(parseFloat(product.oldPrice))}</span>
+                                    <span className="text-h4 font-bold text-green-800">{effectiveProduct.priceFormatted}</span>
+                                    {effectiveProduct.oldPrice && effectiveProduct.oldPrice !== "0" && (
+                                        <span className="text-h5 text-gray-300 line-through">{formatCurrency(parseFloat(effectiveProduct.oldPrice))}</span>
                                     )}
                                 </div>
                             </div>
@@ -250,18 +250,18 @@ export default function ProductInternalPage() {
                             </div>
 
                             <p className="text-body-m text-green-800/70 leading-relaxed">
-                                {product.description}
+                                {effectiveProduct.description}
                             </p>
 
                             <div className="space-y-6">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 bg-green-500 rounded-full" />
                                     <span className="text-body-s font-bold text-green-500 uppercase">
-                                        {product.stock}
+                                        {effectiveProduct.stock}
                                     </span>
                                 </div>
 
-                                <AddToCartButton product={product} />
+                                <AddToCartButton product={effectiveProduct} />
 
                                 <div className="flex items-center gap-2 text-body-s text-green-800/60 pt-2">
                                     <Truck size={16} />
