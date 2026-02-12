@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import MainLayout from "@/src/layouts/MainLayout";
@@ -9,28 +10,16 @@ import { QuantitySelector } from "@/src/components/ui/QuantitySelector";
 import { Breadcrumb } from "@/src/components/ui/Breadcrumb";
 import { TextAccordion } from "@/src/components/ui/TextAccordion";
 import TopProducts from "@/src/components/top-products/TopProducts";
-import { mockTopProducts, mockAllProducts } from "@/src/mocks/products.mock";
-import { Star, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import ProductDetailSkeleton from "@/src/components/product-detail/ProductDetailSkeleton";
+import ProductCardSkeleton from "@/src/components/product-card/ProductCardSkeleton";
+import { Star, Truck, RotateCcw, ShieldCheck, ArrowLeft, ArrowRight } from "lucide-react";
+import SectionHeader from "@/src/components/section-header/SectionHeader";
 import { Badge } from "@/src/components/ui/Badge";
 import { Product } from "@/src/types/product";
 import { fetchProductBySlugMapped, fetchProductsMapped } from "@/src/services/api/products";
 import { useCart } from "@/src/contexts/CartContext";
 import { useCartDrawer } from "@/src/contexts/CartDrawerContext";
-import { formatCurrency } from '@/src/utils/format';
-
-const FALLBACK_PRODUCT: Product = {
-    id: 0,
-    name: "Carregando...",
-    price: "0",
-    oldPrice: "0",
-    priceFormatted: "R$ 0,00",
-    description: "",
-    image: "/assets/products/PRODUTO-1.png",
-    rating: 5,
-    reviewsCount: 0,
-    stock: "—",
-    sizes: [],
-};
+import { formatCurrency } from "@/src/utils/format";
 
 function AddToCartButton({ product }: { product: Product }) {
     const [quantity, setQuantity] = useState(1);
@@ -62,34 +51,131 @@ function AddToCartButton({ product }: { product: Product }) {
 
 export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
-    const [product, setProduct] = useState<Product>(FALLBACK_PRODUCT);
-    const [topProducts, setTopProducts] = useState<Product[]>(mockTopProducts);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [productLoading, setProductLoading] = useState(true);
+    const [topProducts, setTopProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         const slug = typeof id === "string" ? id : undefined;
-        if (!slug) return;
+        if (!slug) {
+            setProductLoading(false);
+            return;
+        }
         let cancelled = false;
+        setProductLoading(true);
         fetchProductBySlugMapped(slug)
             .then((p) => {
-                if (cancelled) return;
-                if (p) setProduct(p);
-                else setProduct(mockAllProducts[0] ?? FALLBACK_PRODUCT);
+                if (!cancelled) {
+                    setProduct(p ?? null);
+                    setProductLoading(false);
+                }
             })
             .catch(() => {
-                if (!cancelled) setProduct(mockAllProducts[0] ?? FALLBACK_PRODUCT);
+                if (!cancelled) {
+                    setProduct(null);
+                    setProductLoading(false);
+                }
             });
         return () => { cancelled = true; };
     }, [id]);
 
     useEffect(() => {
         let cancelled = false;
-        fetchProductsMapped({ page: 1 }).then(({ products }) => {
-            if (!cancelled && products.length > 0) setTopProducts(products.slice(0, 6));
-        }).catch(() => { });
+        fetchProductsMapped({ page: 1 })
+            .then(({ products }) => {
+                if (!cancelled) setTopProducts(products.slice(0, 6));
+            })
+            .catch(() => {});
         return () => { cancelled = true; };
     }, []);
 
-    // Pega a primeira categoria do produto, se houver
+    if (productLoading) {
+        return (
+            <MainLayout>
+                <section className="bg-white py-10">
+                    <div className="container mx-auto px-4 md:px-0">
+                        <ProductDetailSkeleton />
+                    </div>
+                </section>
+                <section className="bg-green-700 py-16 text-green-100">
+                    <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+                            <Truck size={32} />
+                            <h3 className="text-h5 font-heading">Frete grátis acima de R$ 50</h3>
+                            <p className="text-body-m opacity-80">Entregue na sua porta sem taxas ocultas.</p>
+                        </div>
+                        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+                            <RotateCcw size={32} />
+                            <h3 className="text-h5 font-heading">Devolução fácil em 30 dias</h3>
+                            <p className="text-body-m opacity-80">Mudou de ideia? Devolva produtos não utilizados em até 30 dias.</p>
+                        </div>
+                        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
+                            <ShieldCheck size={32} />
+                            <h3 className="text-h5 font-heading">Confiado por milhares</h3>
+                            <p className="text-body-m opacity-80">Junte-se a milhares de clientes satisfeitos que compram conosco todo mês.</p>
+                        </div>
+                    </div>
+                </section>
+                <section className="bg-white py-10 md:py-14 overflow-hidden">
+                    <div className="container mx-auto px-4 md:px-0">
+                        <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
+                    </div>
+                    <div className="container mx-auto px-4 md:px-0">
+                        <div className="flex gap-6 overflow-hidden">
+                            {[...Array(4)].map((_, i) => (
+                                <div key={i} className="w-full max-w-[320px] md:max-w-107.5 shrink-0">
+                                    <ProductCardSkeleton />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="container mx-auto mt-8 px-4 md:px-0">
+                        <div className="flex items-center justify-between border-gray-200">
+                            <div className="w-full max-w-56.25 h-0.5 bg-gray-200 relative overflow-hidden" />
+                            <div className="flex gap-3">
+                                <Button
+                                    variant="primary"
+                                    colorTheme="pistachio"
+                                    isIconOnly
+                                    className="w-12 h-12"
+                                    aria-label="Produto anterior"
+                                    iconLeft={<ArrowLeft size={18} />}
+                                />
+                                <Button
+                                    variant="primary"
+                                    colorTheme="pistachio"
+                                    isIconOnly
+                                    className="w-12 h-12"
+                                    aria-label="Próximo produto"
+                                    iconRight={<ArrowRight size={18} />}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </MainLayout>
+        );
+    }
+
+    if (!product) {
+        return (
+            <MainLayout>
+                <section className="bg-white py-10 min-h-[50vh] flex items-center justify-center">
+                    <div className="container mx-auto px-4 text-center">
+                        <h1 className="text-h3 font-heading text-green-800 mb-4">Produto não encontrado</h1>
+                        <p className="text-body-m text-green-800/70 mb-6">O produto que você procura não existe ou foi removido.</p>
+                        <Link
+                            href="/products"
+                            className="inline-flex items-center justify-center gap-2 rounded-full font-body text-body-m font-medium px-8 py-4 bg-green-700 text-green-100 hover:bg-green-800 transition-all duration-200"
+                        >
+                            Ver todos os produtos
+                        </Link>
+                    </div>
+                </section>
+            </MainLayout>
+        );
+    }
+
     const categoryName = product.category || product.categories?.[0]?.name || "Produtos";
     const categoryHref = categoryName !== "Produtos" ? `/products?category=${encodeURIComponent(categoryName)}` : "/products";
 
