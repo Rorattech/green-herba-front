@@ -65,9 +65,9 @@ export const Header = ({ onCartOpen }: HeaderProps) => {
             <button className="hover:text-green-700 transition-colors cursor-pointer">
               <Search size={22} strokeWidth={1.5} />
             </button>
-            <button className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer">
+            <Link href="/login" className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer">
               <User size={22} strokeWidth={1.5} />
-            </button>
+            </Link>
             <button
               onClick={onCartOpen}
               className="hover:text-green-700 transition-colors cursor-pointer"
