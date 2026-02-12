@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Link href={`/product/${product.id}`} className="group flex flex-col items-center bg-transparent w-full">
+    <Link href={`/product/${product.slug ?? product.id}`} className="group flex flex-col items-center bg-transparent w-full">
       <div className="relative aspect-square lg:aspect-4/5 w-full bg-gray-100 mb-4 flex items-center justify-center overflow-hidden">
         {product.badgeLabel && (
           <div className="absolute top-6 right-6 z-10">

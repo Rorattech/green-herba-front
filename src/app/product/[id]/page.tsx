@@ -2,31 +2,66 @@
 
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Button } from "@/src/components/ui/Button";
 import { QuantitySelector } from "@/src/components/ui/QuantitySelector";
 import { Breadcrumb } from "@/src/components/ui/Breadcrumb";
 import { TextAccordion } from "@/src/components/ui/TextAccordion";
 import TopProducts from "@/src/components/top-products/TopProducts";
-import { mockTopProducts } from "@/src/mocks/products.mock";
+import { mockTopProducts, mockAllProducts } from "@/src/mocks/products.mock";
 import { Star, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import { Badge } from "@/src/components/ui/Badge";
+import { Product } from "@/src/types/product";
+import { fetchProductBySlugMapped, fetchProductsMapped } from "@/src/services/api/products";
+
+const FALLBACK_PRODUCT: Product = {
+    id: 0,
+    name: "Carregando...",
+    price: "0",
+    oldPrice: "0",
+    priceFormatted: "R$ 0,00",
+    description: "",
+    image: "/assets/products/PRODUTO-1.png",
+    rating: 5,
+    reviewsCount: 0,
+    stock: "—",
+    sizes: [],
+};
 
 export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
+    const [product, setProduct] = useState<Product>(FALLBACK_PRODUCT);
+    const [topProducts, setTopProducts] = useState<Product[]>(mockTopProducts);
 
-    const product = {
-        price: 39.99,
-        oldPrice: 49.99,
-        discount: "-20%",
-        description: "Daily immune support designed to fit seamlessly into your routine. Terra Immune helps support your body's natural defenses with a formula made for consistent, everyday use.",
-        stock: "23 in stock",
-        sizes: ["60 caps", "30 caps", "10 caps"]
-    };
+    useEffect(() => {
+        const slug = typeof id === "string" ? id : undefined;
+        if (!slug) return;
+        let cancelled = false;
+        fetchProductBySlugMapped(slug)
+            .then((p) => {
+                if (cancelled) return;
+                if (p) setProduct(p);
+                else setProduct(mockAllProducts[0] ?? FALLBACK_PRODUCT);
+            })
+            .catch(() => {
+                if (!cancelled) setProduct(mockAllProducts[0] ?? FALLBACK_PRODUCT);
+            });
+        return () => { cancelled = true; };
+    }, [id]);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetchProductsMapped({ page: 1 }).then(({ products }) => {
+            if (!cancelled && products.length > 0) setTopProducts(products.slice(0, 6));
+        }).catch(() => {});
+        return () => { cancelled = true; };
+    }, []);
 
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Immune support", href: "/products" },
-        { label: id ?? "", href: "#" },
+        { label: product.name, href: "#" },
     ];
 
     return (
@@ -41,17 +76,19 @@ export default function ProductInternalPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
 
                         <div className="space-y-4">
-                            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group">
+                            <div className="relative aspect-square bg-gray-100 overflow-hidden group">
                                 <Image
-                                    src="/assets/products/PRODUTO-1.png"
-                                    alt={id ?? ""}
+                                    src={product.image}
+                                    alt={product.name}
                                     fill
                                     className="object-contain p-12 transition-transform duration-500 group-hover:scale-105"
                                     priority
                                 />
-                                <span className="absolute top-6 left-6 bg-error text-white text-body-s font-bold px-3 py-1 rounded-full">
-                                    {product.discount}
-                                </span>
+                                <div className="absolute top-6 right-6 z-10">
+                                    <Badge variant={product.badgeVariant}>
+                                        {product.badgeLabel}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
 
@@ -64,10 +101,10 @@ export default function ProductInternalPage() {
                                         ))}
                                     </div>
                                     <span className="text-body-s text-gray-400 underline cursor-pointer">
-                                        (123 reviews)
+                                        ({product.reviewsCount} reviews)
                                     </span>
                                 </div>
-                                <h1 className="text-h2 font-heading text-green-800">{(id ?? "").replace(/-/g, " ")}</h1>
+                                <h1 className="text-h2 font-heading text-green-800">{product.name}</h1>
                                 <div className="flex items-center gap-3">
                                     <span className="text-h4 font-bold text-green-800">${product.price}</span>
                                     <span className="text-h5 text-gray-300 line-through">${product.oldPrice}</span>
@@ -150,7 +187,7 @@ export default function ProductInternalPage() {
             </section>
 
             <section className="bg-white">
-                <TopProducts products={mockTopProducts} />
+                <TopProducts products={topProducts} />
             </section>
         </MainLayout>
     );

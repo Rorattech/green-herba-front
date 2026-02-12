@@ -1,3 +1,5 @@
+"use client";
+
 import { SelectHTMLAttributes } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
@@ -21,17 +23,15 @@ export const Select = ({
     ...props
 }: SelectProps) => {
 
-    const containerClasses = "relative w-full group";
-
     const selectVariants = {
-        light: "bg-white border-gray-200 text-green-800 focus:border-green-700",
+        light: "bg-gray-100 border-gray-200 text-green-800 focus:border-green-700",
         dark: "bg-green-800/20 border-green-600/30 text-green-100 focus:border-green-500",
     };
 
     return (
-        <div className={containerClasses}>
+        <div className="relative w-full group">
             <div className={cn(
-                "absolute top-2.5 left-4 z-10 pointer-events-none text-[10px] font-bold uppercase tracking-wider",
+                "absolute top-2 left-6 z-10 pointer-events-none text-[9px] font-bold uppercase tracking-widest",
                 colorTheme === 'light' ? "text-gray-400" : "text-green-400/70"
             )}>
                 {label}
@@ -41,7 +41,7 @@ export const Select = ({
                 <select
                     id={id}
                     className={cn(
-                        "w-full pl-4 pr-10 pt-7 pb-2.5 rounded-lg text-body-s font-medium appearance-none outline-none cursor-pointer border transition-colors duration-200",
+                        "w-full pl-6 pr-12 pt-6 pb-2 rounded-full text-body-s font-medium appearance-none outline-none cursor-pointer border transition-all duration-200 h-[58px]", // h-[58px] iguala ao py-4 do input
                         selectVariants[colorTheme],
                         className
                     )}
@@ -51,10 +51,10 @@ export const Select = ({
                 </select>
 
                 <div className={cn(
-                    "absolute right-4 bottom-3 pointer-events-none",
+                    "absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none",
                     colorTheme === 'light' ? "text-green-800" : "text-green-400"
                 )}>
-                    <ChevronDown size={16} />
+                    <ChevronDown size={18} />
                 </div>
             </div>
         </div>

@@ -62,9 +62,13 @@ export const Header = ({ onCartOpen }: HeaderProps) => {
           </nav>
 
           <div className="flex items-center justify-end gap-4 lg:gap-6 flex-1 text-gray-700">
-            <button className="hover:text-green-700 transition-colors cursor-pointer">
+            <Link
+              href="/products?focus=search"
+              className="hover:text-green-700 transition-colors cursor-pointer"
+              aria-label="Ir para busca de produtos"
+            >
               <Search size={22} strokeWidth={1.5} />
-            </button>
+            </Link>
             <Link href="/login" className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer">
               <User size={22} strokeWidth={1.5} />
             </Link>
