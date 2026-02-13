@@ -58,7 +58,7 @@ export const Header = () => {
             <Link href="/products" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
               Produtos
             </Link>
-            <Link href="#" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
+            <Link href="/about" className="text-body-m font-body font-medium text-gray-800 hover:text-green-700 transition-colors">
               Sobre
             </Link>
           </nav>
@@ -97,7 +97,7 @@ export const Header = () => {
           <Link href="/products" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Produtos
           </Link>
-          <Link href="#" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
+          <Link href="/about" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Sobre
           </Link>
           <Link href="/login" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>

@@ -23,7 +23,7 @@ export const TextAccordion = ({
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full py-4 flex items-center justify-between group cursor-pointer"
             >
-                <span className="text-body-s font-normal text-green-800 uppercase tracking-widest">
+                <span className="text-body-s text-left font-normal text-green-800 uppercase tracking-widest">
                     {title}
                 </span>
 
