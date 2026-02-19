@@ -13,10 +13,12 @@ function cn(...inputs: ClassValue[]) {
 
 import { useCartDrawer } from '@/src/contexts/CartDrawerContext';
 import { useCart } from '@/src/contexts/CartContext';
+import { useAuth } from '@/src/contexts/AuthContext';
 
 export const Header = () => {
   const { openDrawer } = useCartDrawer();
   const { getTotalItems } = useCart();
+  const { user, logout } = useAuth();
   const totalItems = getTotalItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -71,9 +73,15 @@ export const Header = () => {
             >
               <Search size={22} strokeWidth={1.5} />
             </Link>
-            <Link href="/login" className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer">
-              <User size={22} strokeWidth={1.5} />
-            </Link>
+            {user ? (
+              <Link href="/account" className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer" aria-label="Minha Conta">
+                <User size={22} strokeWidth={1.5} />
+              </Link>
+            ) : (
+              <Link href="/login" className="hidden lg:block hover:text-green-700 transition-colors cursor-pointer" aria-label="Entrar">
+                <User size={22} strokeWidth={1.5} />
+              </Link>
+            )}
             <button
               onClick={openDrawer}
               className="hover:text-green-700 transition-colors cursor-pointer relative"
@@ -100,10 +108,22 @@ export const Header = () => {
           <Link href="/about" className="text-body-m font-medium font-heading text-green-800 border-b border-gray-200 pb-4" onClick={() => setIsMenuOpen(false)}>
             Sobre
           </Link>
-          <Link href="/login" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
-            <User size={20} />
-            Minha Conta
-          </Link>
+          {user ? (
+            <>
+              <Link href="/account" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
+                <User size={20} />
+                Minha Conta
+              </Link>
+              <button type="button" onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-2">
+                Sair
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className="flex items-center gap-3 text-body-m font-body font-medium text-green-700 mt-4" onClick={() => setIsMenuOpen(false)}>
+              <User size={20} />
+              Minha Conta
+            </Link>
+          )}
         </nav>
       </div>
     </header>

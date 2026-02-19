@@ -1,13 +1,44 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
 import { EyeOff } from "lucide-react";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const form = e.currentTarget;
+    const firstName = (form.elements.namedItem("first-name") as HTMLInputElement)?.value?.trim();
+    const lastName = (form.elements.namedItem("last-name") as HTMLInputElement)?.value?.trim();
+    const email = (form.elements.namedItem("email") as HTMLInputElement)?.value?.trim();
+    const password = (form.elements.namedItem("password") as HTMLInputElement)?.value;
+    if (!firstName || !lastName || !email || !password) {
+      setError("Preencha todos os campos.");
+      return;
+    }
+    // Mock: cria usuário e já loga; depois a API Laravel fará o registro
+    const name = [firstName, lastName].filter(Boolean).join(" ").trim();
+    login({
+      id: `mock-${Date.now()}`,
+      email,
+      name,
+      firstName,
+      lastName,
+    });
+    router.push("/account");
+  }
+
   return (
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] flex flex-col md:flex-row">
@@ -31,15 +62,19 @@ export default function RegisterPage() {
           <div className="w-full max-w-[440px] space-y-8">
             <h1 className="text-h2 font-heading text-green-800">Criar uma conta</h1>
 
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {error && (
+                <p className="text-body-s text-error font-medium">{error}</p>
+              )}
               <div className="grid grid-cols-1 gap-5">
-                <Input label="Nome" id="first-name" placeholder="Digite seu nome" required />
-                <Input label="Sobrenome" id="last-name" placeholder="Digite seu sobrenome" required />
+                <Input name="first-name" label="Nome" id="first-name" placeholder="Digite seu nome" required />
+                <Input name="last-name" label="Sobrenome" id="last-name" placeholder="Digite seu sobrenome" required />
               </div>
 
-              <Input label="Email" id="email" type="email" placeholder="Digite seu email" required />
+              <Input name="email" label="Email" id="email" type="email" placeholder="Digite seu email" required />
 
               <Input
+                name="password"
                 label="Senha"
                 id="password"
                 type="password"
@@ -56,12 +91,12 @@ export default function RegisterPage() {
               </label>
 
               <div className="space-y-4 pt-4">
-                <Button variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
+                <Button type="submit" variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
                   Criar conta
                 </Button>
 
                 <Link href="/login" className="block text-center">
-                  <Button variant="primary" colorTheme="pistachio" className="w-full h-14">
+                  <Button type="button" variant="primary" colorTheme="pistachio" className="w-full h-14">
                     Voltar para entrar
                   </Button>
                 </Link>
