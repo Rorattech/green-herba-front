@@ -1,13 +1,46 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
 import { EyeOff } from "lucide-react";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement)?.value?.trim();
+    const password = (form.elements.namedItem("password") as HTMLInputElement)?.value;
+    if (!email) {
+      setError("Digite seu email.");
+      return;
+    }
+    if (!password) {
+      setError("Digite sua senha.");
+      return;
+    }
+    // Mock: qualquer email/senha loga; depois a API Laravel fará a validação
+    const name = email.split("@")[0] || "Usuário";
+    login({
+      id: `mock-${Date.now()}`,
+      email,
+      name,
+      firstName: name,
+      lastName: "",
+    });
+    router.push("/account");
+  }
+
   return (
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] flex flex-col md:flex-row">
@@ -33,9 +66,13 @@ export default function LoginPage() {
               <h1 className="text-h2 font-heading text-green-800">Entrar</h1>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <p className="text-body-s text-error font-medium">{error}</p>
+              )}
               <Input
                 id="email"
+                name="email"
                 type="email"
                 label="Email"
                 placeholder="Digite seu email"
@@ -46,6 +83,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   label="Senha"
                   placeholder="Digite sua senha"
@@ -65,6 +103,7 @@ export default function LoginPage() {
 
               <div className="space-y-4 pt-2">
                 <Button
+                  type="submit"
                   variant="primary"
                   colorTheme="green"
                   className="w-full h-14 text-body-m text-green-100"
@@ -74,6 +113,7 @@ export default function LoginPage() {
 
                 <Link href="/register" className="block">
                   <Button
+                    type="button"
                     variant="primary"
                     colorTheme="pistachio"
                     className="w-full h-14 text-body-m"

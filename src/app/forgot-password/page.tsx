@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import MainLayout from "@/src/layouts/MainLayout";
@@ -8,6 +9,14 @@ import { Button } from "@/src/components/ui/Button";
 import { EyeOff } from "lucide-react";
 
 export default function ForgotPasswordPage() {
+  const [success, setSuccess] = useState(false);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // Mock: simula envio; depois a API Laravel enviará o email
+    setSuccess(true);
+  }
+
   return (
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] flex flex-col md:flex-row">
@@ -31,35 +40,47 @@ export default function ForgotPasswordPage() {
             <div className="space-y-2">
               <h1 className="text-h2 font-heading text-green-800">Redefinir senha</h1>
               <p className="text-body-m text-green-800/70">
-                Digite uma nova senha para sua conta.
+                {success
+                  ? "Se existir uma conta com esse email, você receberá um link para redefinir sua senha."
+                  : "Digite uma nova senha para sua conta."}
               </p>
             </div>
 
-            <form className="space-y-6">
-              <Input
-                id="new-password"
-                type="password"
-                label="Nova senha"
-                placeholder="Digite a nova senha"
-                iconRight={<EyeOff size={20} className="cursor-pointer" />}
-                required
-              />
-
-              <Input
-                id="confirm-password"
-                type="password"
-                label="Confirmar nova senha"
-                placeholder="Confirme a nova senha"
-                iconRight={<EyeOff size={20} className="cursor-pointer" />}
-                required
-              />
-
-              <div className="pt-2">
+            {success ? (
+              <Link href="/login" className="block">
                 <Button variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
-                  Salvar nova senha
+                  Voltar para entrar
                 </Button>
-              </div>
-            </form>
+              </Link>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <Input
+                  id="new-password"
+                  name="new-password"
+                  type="password"
+                  label="Nova senha"
+                  placeholder="Digite a nova senha"
+                  iconRight={<EyeOff size={20} className="cursor-pointer" />}
+                  required
+                />
+
+                <Input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="password"
+                  label="Confirmar nova senha"
+                  placeholder="Confirme a nova senha"
+                  iconRight={<EyeOff size={20} className="cursor-pointer" />}
+                  required
+                />
+
+                <div className="pt-2">
+                  <Button type="submit" variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
+                    Salvar nova senha
+                  </Button>
+                </div>
+              </form>
+            )}
 
             <p className="text-[10px] text-gray-400 leading-relaxed">
               Este site é protegido por reCAPTCHA e a

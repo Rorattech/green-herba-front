@@ -7,8 +7,9 @@ import Image from "next/image";
 import { Button } from "../ui/Button";
 import { QuantitySelector } from "../ui/QuantitySelector";
 import { useCart } from "@/src/contexts/CartContext";
-import Link from 'next/link';
-import { formatCurrency } from '@/src/utils/format';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/src/utils/format";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -16,9 +17,15 @@ interface CartDrawerProps {
 }
 
 export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
+  const router = useRouter();
   const { items, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCart();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
+
+  function goToCheckout() {
+    onClose();
+    router.push("/checkout");
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -145,7 +152,7 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
               <span className="text-h6 text-green-800 font-heading font-bold">{formatCurrency(totalPrice)}</span>
             </div>
 
-            <Button variant="primary" colorTheme="green" className="w-full">
+            <Button variant="primary" colorTheme="green" className="w-full" onClick={goToCheckout}>
               Finalizar Compra
             </Button>
 
