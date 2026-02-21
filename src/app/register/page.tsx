@@ -9,13 +9,15 @@ import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
 import { EyeOff } from "lucide-react";
 import { useAuth } from "@/src/contexts/AuthContext";
+import { register as apiRegister } from "@/src/services/api/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     const form = e.currentTarget;
@@ -27,16 +29,21 @@ export default function RegisterPage() {
       setError("Preencha todos os campos.");
       return;
     }
-    // Mock: cria usuário e já loga; depois a API Laravel fará o registro
+    if (password.length < 8) {
+      setError("A senha deve ter no mínimo 8 caracteres.");
+      return;
+    }
     const name = [firstName, lastName].filter(Boolean).join(" ").trim();
-    login({
-      id: `mock-${Date.now()}`,
-      email,
-      name,
-      firstName,
-      lastName,
-    });
-    router.push("/account");
+    setLoading(true);
+    try {
+      const { user } = await apiRegister({ name, email, password });
+      login(user);
+      router.push("/account");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao criar conta. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -91,8 +98,8 @@ export default function RegisterPage() {
               </label>
 
               <div className="space-y-4 pt-4">
-                <Button type="submit" variant="primary" colorTheme="green" className="w-full h-14 text-green-100">
-                  Criar conta
+                <Button type="submit" variant="primary" colorTheme="green" className="w-full h-14 text-green-100" disabled={loading}>
+                  {loading ? "Criando conta…" : "Criar conta"}
                 </Button>
 
                 <Link href="/login" className="block text-center">
