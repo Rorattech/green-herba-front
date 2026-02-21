@@ -16,10 +16,104 @@ import { Star, Truck, RotateCcw, ShieldCheck, ArrowLeft, ArrowRight } from "luci
 import SectionHeader from "@/src/components/section-header/SectionHeader";
 import { Badge } from "@/src/components/ui/Badge";
 import { Product } from "@/src/types/product";
-import { fetchProductBySlugMapped, fetchProductsMapped } from "@/src/services/api/products";
+import { fetchProductsMapped, getProductBySlug, mapApiProductToProduct } from "@/src/services/api/products";
 import { useCart } from "@/src/contexts/CartContext";
 import { useCartDrawer } from "@/src/contexts/CartDrawerContext";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { createReview } from "@/src/services/api/reviews";
+import type { ApiProduct } from "@/src/types/api";
 import { formatCurrency } from "@/src/utils/format";
+
+function ProductReviewsSection({
+    apiProduct,
+    isLoggedIn,
+    onReviewSubmitted,
+}: {
+    apiProduct: ApiProduct;
+    isLoggedIn: boolean;
+    onReviewSubmitted: () => void;
+}) {
+    const [rating, setRating] = useState(5);
+    const [message, setMessage] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setError(null);
+        setSubmitting(true);
+        try {
+            await createReview(apiProduct.id, { rating, message: message.trim() || undefined });
+            setMessage("");
+            setRating(5);
+            onReviewSubmitted();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Erro ao enviar avaliação.");
+        } finally {
+            setSubmitting(false);
+        }
+    }
+
+    const reviews = apiProduct.reviews ?? [];
+
+    return (
+        <div className="border-t border-gray-100 pt-6 mt-6">
+            <TextAccordion title={`Avaliações (${reviews.length})`} defaultOpen={reviews.length > 0}>
+                <div className="space-y-4">
+                    {reviews.length === 0 && !isLoggedIn && <p className="text-body-s text-gray-500">Nenhuma avaliação ainda.</p>}
+                    {reviews.map((r) => (
+                        <div key={r.id} className="border-b border-gray-100 pb-3 last:border-0">
+                            <div className="flex items-center gap-2">
+                                <div className="flex text-warning">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} size={14} className={i < r.rating ? "fill-current" : "text-gray-300"} />
+                                    ))}
+                                </div>
+                                <span className="text-body-s font-medium text-green-800">{r.user}</span>
+                            </div>
+                            {r.message && <p className="text-body-s text-gray-600 mt-1">{r.message}</p>}
+                        </div>
+                    ))}
+                    {isLoggedIn && (
+                        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+                            {error && <p className="text-body-s text-error">{error}</p>}
+                            <div>
+                                <label className="text-body-s font-medium text-green-800 block mb-1">Sua nota</label>
+                                <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map((v) => (
+                                        <button
+                                            key={v}
+                                            type="button"
+                                            onClick={() => setRating(v)}
+                                            className="p-1 rounded hover:bg-gray-100"
+                                            aria-label={`${v} estrelas`}
+                                        >
+                                            <Star size={24} className={v <= rating ? "text-warning fill-current" : "text-gray-300"} />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="review-message" className="text-body-s font-medium text-green-800 block mb-1">Comentário (opcional)</label>
+                                <textarea
+                                    id="review-message"
+                                    maxLength={500}
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-body-m min-h-[80px]"
+                                    placeholder="Conte sua experiência com o produto"
+                                />
+                            </div>
+                            <Button type="submit" variant="primary" colorTheme="green" disabled={submitting} className="text-green-100">
+                                {submitting ? "Enviando…" : "Enviar avaliação"}
+                            </Button>
+                        </form>
+                    )}
+                </div>
+            </TextAccordion>
+        </div>
+    );
+}
 
 function AddToCartButton({ product }: { product: Product }) {
     const [quantity, setQuantity] = useState(1);
@@ -53,26 +147,44 @@ export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
     const slug = typeof id === "string" ? id : undefined;
     const [product, setProduct] = useState<Product | null>(null);
+    const [apiProduct, setApiProduct] = useState<ApiProduct | null>(null);
     const [productLoading, setProductLoading] = useState(true);
     const [topProducts, setTopProducts] = useState<Product[]>([]);
+    const { user } = useAuth();
 
     const isLoading = Boolean(slug) && productLoading;
     const effectiveProduct = slug ? product : null;
+
+    function refetchProduct() {
+        if (!slug) return;
+        getProductBySlug(slug).then((api) => {
+            if (api) {
+                setApiProduct(api);
+                setProduct(mapApiProductToProduct(api));
+            }
+        }).catch(() => {});
+    }
 
     useEffect(() => {
         if (!slug) return;
         let cancelled = false;
         queueMicrotask(() => setProductLoading(true));
-        fetchProductBySlugMapped(slug)
-            .then((p) => {
-                if (!cancelled) {
-                    setProduct(p ?? null);
-                    setProductLoading(false);
+        getProductBySlug(slug)
+            .then((api) => {
+                if (cancelled) return;
+                if (api) {
+                    setApiProduct(api);
+                    setProduct(mapApiProductToProduct(api));
+                } else {
+                    setProduct(null);
+                    setApiProduct(null);
                 }
+                setProductLoading(false);
             })
             .catch(() => {
                 if (!cancelled) {
                     setProduct(null);
+                    setApiProduct(null);
                     setProductLoading(false);
                 }
             });
@@ -229,7 +341,7 @@ export default function ProductInternalPage() {
                                             );
                                         })}
                                     </div>
-                                    <span className="text-body-s text-gray-400 underline cursor-pointer">
+                                    <span className="text-body-s text-gray-400">
                                         ({effectiveProduct.reviewsCount ?? 0} avaliações)
                                     </span>
                                 </div>
@@ -286,6 +398,14 @@ export default function ProductInternalPage() {
                                         <li>Equinácea Purpúrea</li>
                                     </ul>
                                 </TextAccordion>
+
+                                {apiProduct && (
+                                    <ProductReviewsSection
+                                        apiProduct={apiProduct}
+                                        isLoggedIn={!!user}
+                                        onReviewSubmitted={refetchProduct}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

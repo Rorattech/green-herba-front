@@ -15,4 +15,6 @@ export interface Product {
   sizes?: string[];
   category?: string;
   categories?: Array<{ id: number; name: string; slug: string }>;
+  /** From API: product requires prescription to purchase */
+  requiresPrescription?: boolean;
 }

@@ -3,19 +3,23 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
 import { EyeOff } from "lucide-react";
 import { useAuth } from "@/src/contexts/AuthContext";
+import { login as apiLogin } from "@/src/services/api/auth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") ?? "/account";
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     const form = e.currentTarget;
@@ -29,16 +33,16 @@ export default function LoginPage() {
       setError("Digite sua senha.");
       return;
     }
-    // Mock: qualquer email/senha loga; depois a API Laravel fará a validação
-    const name = email.split("@")[0] || "Usuário";
-    login({
-      id: `mock-${Date.now()}`,
-      email,
-      name,
-      firstName: name,
-      lastName: "",
-    });
-    router.push("/account");
+    setLoading(true);
+    try {
+      const { user } = await apiLogin({ email, password });
+      login(user);
+      router.push(redirectTo.startsWith("/") ? redirectTo : "/account");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao entrar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -107,8 +111,9 @@ export default function LoginPage() {
                   variant="primary"
                   colorTheme="green"
                   className="w-full h-14 text-body-m text-green-100"
+                  disabled={loading}
                 >
-                  Entrar
+                  {loading ? "Entrando…" : "Entrar"}
                 </Button>
 
                 <Link href="/register" className="block">

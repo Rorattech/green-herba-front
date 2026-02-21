@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from "@/src/utils/cn";
 import { X, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/Button";
 import { QuantitySelector } from "../ui/QuantitySelector";
 import { useCart } from "@/src/contexts/CartContext";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { getApprovedPrescriptionProductIds } from "@/src/services/api/prescriptions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/src/utils/format";
@@ -18,13 +20,43 @@ interface CartDrawerProps {
 
 export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
   const router = useRouter();
+  const { user } = useAuth();
   const { items, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCart();
+  const [checkingPrescription, setCheckingPrescription] = useState(false);
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
-  function goToCheckout() {
-    onClose();
-    router.push("/checkout");
+  async function goToCheckout() {
+    const itemsRequiringPrescription = items.filter(
+      (item) => (item.product as { requiresPrescription?: boolean }).requiresPrescription
+    );
+    if (itemsRequiringPrescription.length === 0) {
+      onClose();
+      router.push("/checkout");
+      return;
+    }
+    if (!user) {
+      onClose();
+      router.push("/login?redirect=/checkout");
+      return;
+    }
+    setCheckingPrescription(true);
+    try {
+      const approvedIds = await getApprovedPrescriptionProductIds();
+      const missing = itemsRequiringPrescription.some((item) => !approvedIds.has(Number(item.product.id)));
+      if (missing) {
+        onClose();
+        router.push("/account/prescriptions?missing_prescription=1");
+        return;
+      }
+      onClose();
+      router.push("/checkout");
+    } catch {
+      onClose();
+      router.push("/checkout");
+    } finally {
+      setCheckingPrescription(false);
+    }
   }
 
   useEffect(() => {
@@ -152,8 +184,8 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
               <span className="text-h6 text-green-800 font-heading font-bold">{formatCurrency(totalPrice)}</span>
             </div>
 
-            <Button variant="primary" colorTheme="green" className="w-full" onClick={goToCheckout}>
-              Finalizar Compra
+            <Button variant="primary" colorTheme="green" className="w-full" onClick={goToCheckout} disabled={checkingPrescription}>
+              {checkingPrescription ? "Verificando…" : "Finalizar Compra"}
             </Button>
 
             <p className="text-[10px] text-gray-400 text-center px-4 leading-relaxed">

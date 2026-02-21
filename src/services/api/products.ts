@@ -1,4 +1,4 @@
-import { apiGet } from "@/src/lib/api-client";
+import { apiGet, getApiBaseUrl } from "@/src/lib/api-client";
 import type {
   ApiProduct,
   ApiProductsResponse,
@@ -44,7 +44,7 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
     image:
       api.primary_image?.file_path &&
       typeof api.primary_image.file_path === "string"
-        ? `https://pharma-green-backend.onrender.com/storage/${api.primary_image.file_path}`
+        ? `${getApiBaseUrl()}/storage/${api.primary_image.file_path}`
         : selectedPlaceholder,
     badgeLabel: api.badge_label ?? undefined,
     badgeVariant: api.badge_variant as Product["badgeVariant"] | undefined,
@@ -54,12 +54,15 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
     sizes: undefined,
     category: api.categories?.[0]?.name,
     categories: api.categories,
+    requiresPrescription: api.requires_prescription ?? false,
   };
 }
 
 export type GetProductsParams = {
   page?: number;
   per_page?: number;
+  /** Filter: only products that require prescription (for prescription upload select) */
+  requires_prescription?: boolean;
 };
 
 /**
@@ -68,10 +71,14 @@ export type GetProductsParams = {
 export async function getProducts(
   params?: GetProductsParams
 ): Promise<ApiProductsResponse> {
-  return apiGet<ApiProductsResponse>("/api/products", {
+  const query: Record<string, string | number | undefined> = {
     page: params?.page,
     per_page: params?.per_page,
-  } as Record<string, number | undefined>);
+  };
+  if (params?.requires_prescription === true) {
+    query.requires_prescription = "1";
+  }
+  return apiGet<ApiProductsResponse>("/api/products", query);
 }
 
 /**

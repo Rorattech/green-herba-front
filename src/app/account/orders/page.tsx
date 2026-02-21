@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
-import { useAuth } from "@/src/contexts/AuthContext";
-import { getOrdersByUser } from "@/src/services/mock-account";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { getOrders } from "@/src/services/api/orders";
 import { formatCurrency } from "@/src/utils/format";
-import type { OrderStatus } from "@/src/types/order";
+import type { ApiOrder } from "@/src/types/api-resources";
 
-const statusLabel: Record<OrderStatus, string> = {
+const statusLabel: Record<string, string> = {
   pending: "Pendente",
+  pending_payment: "Aguardando pagamento",
   processing: "Em processamento",
   shipped: "Enviado",
   delivered: "Entregue",
@@ -15,36 +16,42 @@ const statusLabel: Record<OrderStatus, string> = {
 };
 
 export default function AccountOrdersPage() {
-  const { user } = useAuth();
-  const orders = useMemo(() => (user ? getOrdersByUser(user.id) : []), [user]);
+  const [orders, setOrders] = useState<ApiOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!user) return null;
+  useEffect(() => {
+    getOrders({ per_page: 20 })
+      .then((res) => setOrders(res.data ?? []))
+      .catch(() => setError("Erro ao carregar pedidos."))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="space-y-6">
       <h2 className="text-h5 font-heading text-green-800">Meus pedidos</h2>
-      {orders.length === 0 ? (
+      {error && <p className="text-body-s text-error font-medium">{error}</p>}
+      {loading ? (
+        <p className="text-body-m text-gray-500">Carregando…</p>
+      ) : orders.length === 0 ? (
         <p className="text-body-m text-gray-400">Você ainda não fez nenhum pedido.</p>
       ) : (
         <ul className="space-y-4">
           {orders.map((order) => (
-            <li
-              key={order.id}
-              className="border border-gray-200 rounded-lg p-4 bg-gray-50"
-            >
+            <li key={order.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <span className="text-body-s font-medium text-green-800">
-                  Pedido #{order.id.slice(-8)}
-                </span>
+                <Link href={`/account/orders/${order.id}`} className="text-body-s font-medium text-green-800 hover:underline">
+                  Pedido #{order.order_number}
+                </Link>
                 <span className="text-body-s text-gray-500">
-                  {new Date(order.createdAt).toLocaleDateString("pt-BR")}
+                  {new Date(order.created_at).toLocaleDateString("pt-BR")}
                 </span>
                 <span className="text-body-s font-medium text-green-700 uppercase tracking-wide">
-                  {statusLabel[order.status]}
+                  {statusLabel[order.status] ?? order.status}
                 </span>
               </div>
               <p className="text-body-s text-gray-500">
-                {order.items.length} {order.items.length === 1 ? "item" : "itens"} · Total {formatCurrency(order.total)}
+                {order.items?.length ?? 0} {(order.items?.length ?? 0) === 1 ? "item" : "itens"} · Total {formatCurrency(order.total_amount)}
               </p>
             </li>
           ))}
