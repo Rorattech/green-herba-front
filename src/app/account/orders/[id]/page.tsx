@@ -16,6 +16,7 @@ const statusLabel: Record<string, string> = {
   shipped: "Enviado",
   delivered: "Entregue",
   cancelled: "Cancelado",
+  paid: "Pago",
 };
 
 export default function OrderDetailPage() {

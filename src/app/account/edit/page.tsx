@@ -20,8 +20,10 @@ export default function AccountEditPage() {
     const form = e.currentTarget;
     const firstName = (form.elements.namedItem("first-name") as HTMLInputElement)?.value?.trim();
     const lastName = (form.elements.namedItem("last-name") as HTMLInputElement)?.value?.trim();
-    const phone = (form.elements.namedItem("phone") as HTMLInputElement)?.value?.trim() || undefined;
-    const document_number = (form.elements.namedItem("document_number") as HTMLInputElement)?.value?.trim() || undefined;
+    const rawPhone = (form.elements.namedItem("phone") as HTMLInputElement)?.value?.trim() || "";
+    const rawDoc = (form.elements.namedItem("document_number") as HTMLInputElement)?.value?.trim() || "";
+    const phone = rawPhone ? rawPhone.replace(/\D/g, "") : undefined;
+    const document_number = rawDoc ? rawDoc.replace(/\D/g, "") : undefined;
     updateUser({ firstName, lastName });
     setLoading(true);
     try {
@@ -79,18 +81,19 @@ export default function AccountEditPage() {
         <Input
           name="phone"
           id="phone"
-          type="tel"
           label="Telefone"
           placeholder="(00) 00000-0000"
           colorTheme="light"
+          mask="(99) 99999-9999"
           defaultValue={user.phone ?? ""}
         />
         <Input
           name="document_number"
           id="document_number"
-          label="CPF / Documento"
-          placeholder="Apenas números"
+          label="CPF"
+          placeholder="000.000.000-00"
           colorTheme="light"
+          mask="999.999.999-99"
           defaultValue={user.document_number ?? ""}
         />
         <Button type="submit" variant="primary" colorTheme="green" className="h-12 text-green-100" disabled={loading}>

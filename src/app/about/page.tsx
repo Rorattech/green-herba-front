@@ -14,20 +14,20 @@ export default function AboutPage() {
             <section className="flex flex-col md:flex-row min-h-[80vh] bg-white">
                 <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-20 lg:p-32 space-y-6">
                     <SatisfiedCustomers variant="content" />
-                    <span className="text-[12px] font-normal uppercase tracking-widest text-gray-500">Nossa abordagem</span>
+                    <span className="text-sub-s font-normal uppercase tracking-widest text-gray-500">Nossa abordagem</span>
                     <h1 className="text-h3 md:text-h1 font-heading text-green-800 leading-tight">
-                        Bem-estar construído pela consistência
+                        Cuidado contínuo para uma saúde duradoura 
                     </h1>
                     <p className="text-body-m text-green-800/70 max-w-md">
-                        A Terra Health nasceu de uma ideia simples: bem-estar a longo prazo não é sobre extremos. É sobre pequenos hábitos repetíveis que se encaixam naturalmente no dia a dia.
+                        A Green Herba Pharma nasceu com o propósito de oferecer soluções terapêuticas seguras e baseadas em ciência. Acreditamos que o bem-estar sustentável é construído por meio de acompanhamento responsável, rigor técnico e excelência em qualidade farmacêutica.
                     </p>
                     <Link href="/products">
                         <Button variant="primary" colorTheme="green" className="w-fit px-8 h-12">
-                            Comprar suplementos
+                            Conheça nossos produtos
                         </Button>
                     </Link>
                 </div>
-                <div className="w-full md:w-1/2 relative h-[400px] md:h-auto">
+                <div className="w-full md:w-1/2 relative h-100 md:h-auto">
                     <Image
                         src="https://images.unsplash.com/photo-1625188770425-bb118b81eb4e?q=80&w=1200"
                         alt="Textura de folha natural"
@@ -51,7 +51,7 @@ export default function AboutPage() {
             {/* Standards Section: Numbers and Impact */}
             <section className="py-20 bg-white">
                 <div className="container mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-16 items-center">
-                    <div className="w-full md:w-1/2 relative h-[500px] overflow-hidden">
+                    <div className="w-full md:w-1/2 relative h-125 overflow-hidden">
                         <Image
                             src="https://images.unsplash.com/photo-1536964310528-e47dd655ecf3?q=80&w=1200"
                             alt="Agricultura sustentável"
@@ -61,9 +61,9 @@ export default function AboutPage() {
                     </div>
                     <div className="w-full md:w-1/2 space-y-12">
                         <div className="space-y-4">
-                            <h2 className="text-h3 font-heading text-green-800">Nossos padrões, aplicados no dia a dia</h2>
+                            <h2 className="text-h3 font-heading text-green-800">Aqui na Green Herba Fharma, não apenas produzimos óleos, cultivamos esperança, alívio e a promessa de uma vida melhor.</h2>
                             <p className="text-body-m text-green-800/60 max-w-md">
-                                Toda decisão que tomamos — da formulação à origem dos ingredientes — segue um conjunto claro de padrões pensados para uso diário e de longo prazo.
+                                Cada frasco que entregamos é um convite para uma jornada pessoal, uma busca pelo equilíbrio e pela harmonia.
                             </p>
                         </div>
 
@@ -81,7 +81,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Journey Section: Timeline */}
+            {/* Journey Section: Timeline
             <section className="bg-green-200 py-20 text-green-800">
                 <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-20">
                     <div className="space-y-6">
@@ -98,7 +98,7 @@ export default function AboutPage() {
                             { year: "Hoje", title: "Feito para o dia a dia", desc: "A Terra Health segue construindo suplementos em torno de pequenos hábitos." }
                         ].map((item, i) => (
                             <div key={i} className="relative group">
-                                <div className="absolute -left-[37px] md:-left-[69px] top-1 w-2 h-2 rounded-full bg-green-800" />
+                                <div className="absolute -left-9.25 md:-left-17.25 top-1 w-2 h-2 rounded-full bg-green-800" />
                                 <h4 className="text-h5 font-heading mb-2">{item.year}</h4>
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-green-800 mb-2">{item.title}</p>
                                 <p className="text-body-s opacity-70">{item.desc}</p>
@@ -106,7 +106,7 @@ export default function AboutPage() {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* FAQ: Perguntas frequentes */}
             <section className="py-20 bg-green-100">
@@ -114,19 +114,19 @@ export default function AboutPage() {
                     <div className="w-full md:w-1/3 space-y-6">
                         <h2 className="text-h2 font-heading text-green-800">Perguntas frequentes</h2>
                         <p className="text-body-m text-green-800/60">
-                            Se você é novo na Terra Health, aqui estão algumas coisas que as pessoas costumam querer saber antes de começar.
+                            Se você é novo na Green Herba Pharma, aqui está um guia rápido com informações importantes que ajudam a entender nossos produtos e nosso compromisso com a saúde.
                         </p>
                         <Button variant="primary" colorTheme="green" className="h-12 px-8">Fale conosco</Button>
                     </div>
                     <div className="w-full md:w-2/3">
-                        <TextAccordion title="O que torna a Terra Health diferente?" defaultOpen>
-                            A Terra Health prioriza consistência em vez de complexidade. Em vez de linhas grandes e avassaladoras, oferecemos produtos que se adaptam ao dia a dia.
+                        <TextAccordion title="O que torna a Green Herba Pharma diferente?" defaultOpen>
+                            A Green Herba Pharma se destaca por unir ciência, segurança e cuidado em cada produto. Nossas terapias à base de cannabis são desenvolvidas com controle de qualidade, garantindo soluções confiáveis para diferentes necessidades de saúde.
                         </TextAccordion>
                         <TextAccordion title="Como escolher os produtos certos para mim?">
-                            Nossos produtos são pensados para serem modulares. Você pode começar com os suplementos base e adicionar suporte específico conforme sua rotina evolui.
+                            Escolher o produto certo começa com compreender suas necessidades e objetivos de cuidado.
                         </TextAccordion>
-                        <TextAccordion title="Posso tomar os produtos Terra Health todos os dias?">
-                            Sim, todas as nossas fórmulas são feitas para consumo diário e de longo prazo, com a segurança como base.
+                        <TextAccordion title="Posso tomar os produtos Green Herba Pharma todos os dias?">
+                            Sempre consulte médicos especializados, que podem avaliar suas necessidades individuais e indicar a melhor.
                         </TextAccordion>
                     </div>
                 </div>

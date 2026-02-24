@@ -16,25 +16,28 @@ export default function Hero() {
       id: 1,
       image: "https://images.unsplash.com/photo-1617101814812-3529cf87b5ce?auto=format&fit=crop&q=80&w=1920",
       alt: "Natureza",
-      title: "Saúde que você pode sentir. Todos os dias.",
-      description: "Suplementos diários direcionados projetados para apoiar digestão, imunidade e equilíbrio geral — sem complicar sua rotina.",
-      buttonText: "Comprar suplementos"
+      title: "A saúde que você procura começa aqui.",
+      description: "Extraímos da natureza o que há de mais puro, com qualidade, segurança e responsabilidade.",
+      buttonText: "Conheça nosso produtos",
+      buttonHref: "/products"
     },
     {
       id: 2,
       image: "https://images.unsplash.com/photo-1605040056130-38d9faad3534?auto=format&fit=crop&q=80&w=1920",
       alt: "Yoga",
-      title: "Encontre seu equilíbrio através da natureza.",
-      description: "Descubra uma gama de soluções à base de plantas criadas para harmonizar seu corpo e mente no mundo acelerado de hoje.",
-      buttonText: "Explorar Equilíbrio"
+      title: "Equilíbrio e bem-estar em harmonia com a natureza.",
+      description: "Conheça nossa linha à base de cannabis, desenvolvidas para promover equilíbrio e qualidade de vida.",
+      buttonText: "Saiba mais",
+      buttonHref: "/about"
     },
     {
       id: 3,
       image: "https://images.unsplash.com/photo-1594841061289-1d892771c607?auto=format&fit=crop&q=80&w=1920",
       alt: "Saúde",
-      title: "Ingredientes puros. Resultados reais.",
-      description: "Buscamos matérias-primas da mais alta qualidade para garantir que cada cápsula entregue a potência que sua saúde merece.",
-      buttonText: "Ver nossa qualidade"
+      title: "Ciência e natureza a favor da sua saúde.",
+      description: "Extraímos da natureza o que há de mais puro, com tecnologia e controle de qualidade.",
+      buttonText: "Conhecer",
+      buttonHref: "/products"
     },
   ];
 
@@ -77,7 +80,7 @@ export default function Hero() {
                     </p>
 
                     <div className="mt-2">
-                      <Button variant="primary" colorTheme="white">
+                      <Button variant="primary" colorTheme="white" href={slide.buttonHref}>
                         {slide.buttonText}
                       </Button>
                     </div>

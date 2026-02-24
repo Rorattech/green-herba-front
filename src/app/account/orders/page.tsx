@@ -13,6 +13,7 @@ const statusLabel: Record<string, string> = {
   shipped: "Enviado",
   delivered: "Entregue",
   cancelled: "Cancelado",
+  paid: "Pago",
 };
 
 export default function AccountOrdersPage() {
@@ -26,6 +27,8 @@ export default function AccountOrdersPage() {
       .catch(() => setError("Erro ao carregar pedidos."))
       .finally(() => setLoading(false));
   }, []);
+
+  console.log(orders)
 
   return (
     <div className="space-y-6">
