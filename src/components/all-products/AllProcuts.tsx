@@ -20,7 +20,7 @@ export default function AllProducts({ products }: AllProductsProps) {
           {firstRow.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-          <div className="relative col-span-2 aspect-square md:aspect-auto h-full min-h-[280px] md:min-h-100 overflow-hidden group">
+          <div className="relative col-span-2 aspect-square md:aspect-auto h-full min-h-70 md:min-h-100 overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1498671546682-94a232c26d17?q=80&w=800"
               alt="Promoção Green Herba Pharma"
@@ -29,10 +29,10 @@ export default function AllProducts({ products }: AllProductsProps) {
             />
             <div className="absolute inset-0 bg-black/20 flex flex-col justify-center p-6 md:p-10">
               <h3 className="text-green-100 font-heading text-h3 mb-2 md:mb-4 leading-tight">
-                Produtos essenciais
+                Base para o cuidado diário.
               </h3>
-              <p className="text-green-100 text-body-m font-body font-medium max-w-full md:max-w-[500px]">
-                Nossas fórmulas diárias mais populares, projetadas para apoiar a saúde cotidiana.
+              <p className="text-green-100 text-body-m font-body font-medium max-w-full md:max-w-125">
+                Nossas formulações mais procuradas para integrar cuidado e equilíbrio à sua rotina.
               </p>
             </div>
           </div>

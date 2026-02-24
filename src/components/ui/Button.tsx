@@ -1,4 +1,5 @@
-import { ReactNode, ButtonHTMLAttributes } from 'react';
+import { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
+import Link from 'next/link';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -6,13 +7,18 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonBaseProps = {
   variant?: 'primary' | 'soft' | 'outline' | 'ghost';
   colorTheme?: 'green' | 'pistachio' | 'gray' | 'white';
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   isIconOnly?: boolean;
-}
+};
+
+type ButtonProps = ButtonBaseProps & (
+  | (ButtonHTMLAttributes<HTMLButtonElement> & { href?: never })
+  | (AnchorHTMLAttributes<HTMLAnchorElement> & { href: string })
+);
 
 export const Button = ({
   children,
@@ -22,6 +28,7 @@ export const Button = ({
   iconRight,
   isIconOnly = false,
   className,
+  href,
   ...props
 }: ButtonProps) => {
   
@@ -61,15 +68,31 @@ export const Button = ({
     }
   };
 
+  const classes = cn(
+    baseClasses,
+    variantStyles[variant][colorTheme],
+    sizeClasses,
+    className
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={classes}
+        {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}
+      >
+        {iconLeft && <span className="shrink-0">{iconLeft}</span>}
+        {!isIconOnly && children}
+        {iconRight && <span className="shrink-0">{iconRight}</span>}
+      </Link>
+    );
+  }
+
   return (
     <button
-      className={cn(
-        baseClasses,
-        variantStyles[variant][colorTheme],
-        sizeClasses,
-        className
-      )}
-      {...props}
+      className={classes}
+      {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {iconLeft && <span className="shrink-0">{iconLeft}</span>}
       {!isIconOnly && children}

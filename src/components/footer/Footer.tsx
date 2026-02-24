@@ -8,7 +8,7 @@ export const Footer = () => (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
 
                 <div className="md:col-span-4 space-y-6">
-                    <Link href="/" className="relative block w-[180px] h-[40px]">
+                    <Link href="/" className="relative block w-45 h-10">
                         <Image
                             src="/assets/logo-footer.png"
                             alt="Green Herba Pharma"
@@ -18,7 +18,7 @@ export const Footer = () => (
                         />
                     </Link>
 
-                    <p className="text-green-100 text-body-m font-body font-medium">Junte-se à nossa newsletter e economize 10% no seu primeiro pedido</p>
+                    <p className="text-green-100 text-body-m font-body font-medium">Faça parte da nossa comunidade, receba conteúdos exclusivos e garanta 10% no seu primeiro pedido.</p>
 
                     <p className="text-[10px] text-green-100/60">
                         Ao se inscrever, você concorda com nossos <a href="#" className="underline">Termos de serviço</a> e <a href="#" className="underline">Política de privacidade</a>.

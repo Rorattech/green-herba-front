@@ -8,6 +8,7 @@ import { Button } from "@/src/components/ui/Button";
 import type { ApiPrescription } from "@/src/types/api-resources";
 import type { ApiProduct } from "@/src/types/api";
 import { Upload, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
+import { Select } from "@/src/components/ui/Select";
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; className: string }> = {
   pending: { label: "Em análise", icon: Clock, className: "text-warning" },
@@ -77,14 +78,13 @@ function PrescriptionsContent() {
 
       {error && <p className="text-body-s text-error font-medium">{error}</p>}
 
-      <div className="flex flex-wrap gap-4 items-end">
+      <div className="flex flex-wrap gap-4 items-center">
         <div className="min-w-[200px]">
-          <label htmlFor="prescription-product" className="block text-body-s font-medium text-green-800 mb-1">Produto</label>
-          <select
+          <Select
             id="prescription-product"
             value={selectedProductId}
             onChange={(e) => setSelectedProductId(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-body-m"
+            className="w-full px-3 py-2 text-body-m"
           >
             <option value="">
               {products.length === 0 ? "Nenhum produto exige prescrição" : "Selecione o produto"}
@@ -92,7 +92,7 @@ function PrescriptionsContent() {
             {products.map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
-          </select>
+          </Select>
         </div>
         <input
           ref={fileInputRef}

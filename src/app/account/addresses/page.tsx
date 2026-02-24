@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/src/components/ui/Button";
+import { Input } from "@/src/components/ui/Input";
 import {
   getAddresses,
   createAddress,
@@ -12,6 +13,8 @@ import {
   type Address,
   type CreateAddressBody,
 } from "@/src/services/api/addresses";
+import { fetchByCep } from "@/src/services/viacep";
+import { fetchEstados, fetchMunicipiosByEstadoId, type IbgeEstado, type IbgeMunicipio } from "@/src/services/ibge";
 import { MapPin, Plus, Pencil, Trash2, Truck, CreditCard } from "lucide-react";
 
 const emptyForm: CreateAddressBody = {
@@ -26,6 +29,8 @@ const emptyForm: CreateAddressBody = {
   country: "Brasil",
 };
 
+const inputBaseClass = "w-full border border-gray-300 rounded-full px-6 py-4 text-body-m font-medium bg-gray-100 border-gray-200 text-green-800 placeholder:text-gray-400 focus:border-green-700 outline-none transition-all duration-200";
+
 export default function AccountAddressesPage() {
   const [list, setList] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +39,43 @@ export default function AccountAddressesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreateAddressBody & { id?: number }>(emptyForm);
   const [saving, setSaving] = useState(false);
+
+  const [estados, setEstados] = useState<IbgeEstado[]>([]);
+  const [municipios, setMunicipios] = useState<IbgeMunicipio[]>([]);
+  const [cepLoading, setCepLoading] = useState(false);
+
+  useEffect(() => {
+    fetchEstados().then(setEstados);
+  }, []);
+
+  const selectedEstadoId = form.state ? estados.find((e) => e.sigla === form.state)?.id : null;
+  useEffect(() => {
+    if (selectedEstadoId == null) {
+      setMunicipios([]);
+      return;
+    }
+    fetchMunicipiosByEstadoId(selectedEstadoId).then(setMunicipios);
+  }, [selectedEstadoId]);
+
+  const handleCepBlur = useCallback(async () => {
+    const digits = form.postal_code.replace(/\D/g, "");
+    if (digits.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const data = await fetchByCep(form.postal_code);
+      if (data) {
+        setForm((f) => ({
+          ...f,
+          street: data.logradouro || f.street,
+          district: data.bairro || f.district,
+          city: data.localidade || f.city,
+          state: data.uf || f.state,
+        }));
+      }
+    } finally {
+      setCepLoading(false);
+    }
+  }, [form.postal_code]);
 
   function load() {
     setLoading(true);
@@ -50,6 +92,7 @@ export default function AccountAddressesPage() {
   function openCreate() {
     setForm(emptyForm);
     setEditingId(null);
+    setMunicipios([]);
     setShowForm(true);
   }
 
@@ -62,7 +105,7 @@ export default function AccountAddressesPage() {
       district: addr.district,
       city: addr.city,
       state: addr.state,
-      postal_code: addr.postal_code,
+      postal_code: addr.postal_code.replace(/\D/g, "").length === 8 ? addr.postal_code.replace(/(\d{5})(\d{3})/, "$1-$2") : addr.postal_code,
       country: addr.country,
       is_default_billing: addr.is_default_billing,
       is_default_shipping: addr.is_default_shipping,
@@ -76,6 +119,7 @@ export default function AccountAddressesPage() {
     setShowForm(false);
     setEditingId(null);
     setForm(emptyForm);
+    setMunicipios([]);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -91,8 +135,8 @@ export default function AccountAddressesPage() {
         district: form.district,
         city: form.city,
         state: form.state,
-        postal_code: form.postal_code,
-        country: form.country,
+        postal_code: form.postal_code.replace(/\D/g, ""),
+        country: "Brasil",
         is_default_billing: form.is_default_billing,
         is_default_shipping: form.is_default_shipping,
       };
@@ -139,6 +183,135 @@ export default function AccountAddressesPage() {
     }
   }
 
+  const addressForm = (
+    <form className="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50" onSubmit={handleSubmit}>
+      <h3 className="text-h6 font-heading text-green-800">{editingId ? "Editar endereço" : "Novo endereço"}</h3>
+
+      <Input
+        name="label"
+        id="address-label"
+        label="Apelido"
+        placeholder="Ex: Casa, Trabalho"
+        colorTheme="light"
+        value={form.label}
+        onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
+        required
+      />
+
+      <div className="relative">
+        <Input
+          name="postal_code"
+          id="postal_code"
+          label="CEP"
+          placeholder="00000-000"
+          colorTheme="light"
+          mask="99999-999"
+          value={form.postal_code}
+          onChange={(e) => setForm((f) => ({ ...f, postal_code: e.target.value }))}
+          onBlur={handleCepBlur}
+          required
+        />
+        {cepLoading && (
+          <span className="absolute right-4 top-[42px] text-body-s text-gray-400">Buscando…</span>
+        )}
+      </div>
+
+      <Input
+        name="street"
+        id="street"
+        label="Rua"
+        placeholder="Logradouro"
+        colorTheme="light"
+        value={form.street}
+        onChange={(e) => setForm((f) => ({ ...f, street: e.target.value }))}
+        required
+      />
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          name="number"
+          id="number"
+          label="Número"
+          placeholder="Nº"
+          colorTheme="light"
+          value={form.number}
+          onChange={(e) => setForm((f) => ({ ...f, number: e.target.value }))}
+          required
+        />
+        <Input
+          name="complement"
+          id="complement"
+          label="Complemento"
+          placeholder="Apto, bloco…"
+          colorTheme="light"
+          value={form.complement}
+          onChange={(e) => setForm((f) => ({ ...f, complement: e.target.value }))}
+        />
+      </div>
+      <Input
+        name="district"
+        id="district"
+        label="Bairro"
+        placeholder="Bairro"
+        colorTheme="light"
+        value={form.district}
+        onChange={(e) => setForm((f) => ({ ...f, district: e.target.value }))}
+        required
+      />
+
+      <div>
+        <label htmlFor="state" className="block mb-1.5 text-body-s font-medium uppercase tracking-wider text-gray-400">
+          Estado (UF)
+        </label>
+        <select
+          id="state"
+          name="state"
+          value={form.state}
+          onChange={(e) => setForm((f) => ({ ...f, state: e.target.value, city: "" }))}
+          required
+          className={inputBaseClass}
+        >
+          <option value="">Selecione o estado</option>
+          {estados.map((e) => (
+            <option key={e.id} value={e.sigla}>
+              {e.nome} ({e.sigla})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="city" className="block mb-1.5 text-body-s font-medium uppercase tracking-wider text-gray-400">
+          Cidade
+        </label>
+        <select
+          id="city"
+          name="city"
+          value={form.city}
+          onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+          required
+          className={inputBaseClass}
+          disabled={!form.state || municipios.length === 0}
+        >
+          <option value="">Selecione a cidade</option>
+          {municipios.map((m) => (
+            <option key={m.id} value={m.nome}>
+              {m.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex gap-4 pt-2">
+        <Button type="submit" variant="primary" colorTheme="green" disabled={saving} className="text-green-100">
+          {saving ? "Salvando…" : "Salvar"}
+        </Button>
+        <Button type="button" variant="outline" colorTheme="gray" onClick={closeForm}>
+          Cancelar
+        </Button>
+      </div>
+    </form>
+  );
+
   if (!list.length && !showForm && !loading) {
     return (
       <div className="space-y-6">
@@ -148,28 +321,7 @@ export default function AccountAddressesPage() {
         <Button type="button" variant="primary" colorTheme="green" iconLeft={<Plus size={18} />} onClick={openCreate} className="text-green-100">
           Adicionar endereço
         </Button>
-        {showForm && (
-          <form className="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50" onSubmit={handleSubmit}>
-            <h3 className="text-h6 font-heading text-green-800">{editingId ? "Editar endereço" : "Novo endereço"}</h3>
-            <input name="label" placeholder="Ex: Casa" value={form.label} onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            <input name="street" placeholder="Rua" value={form.street} onChange={(e) => setForm((f) => ({ ...f, street: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            <div className="grid grid-cols-2 gap-2">
-              <input name="number" placeholder="Número" value={form.number} onChange={(e) => setForm((f) => ({ ...f, number: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-              <input name="complement" placeholder="Complemento" value={form.complement} onChange={(e) => setForm((f) => ({ ...f, complement: e.target.value }))} className="w-full border rounded px-3 py-2" />
-            </div>
-            <input name="district" placeholder="Bairro" value={form.district} onChange={(e) => setForm((f) => ({ ...f, district: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            <div className="grid grid-cols-2 gap-2">
-              <input name="city" placeholder="Cidade" value={form.city} onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-              <input name="state" placeholder="Estado" value={form.state} onChange={(e) => setForm((f) => ({ ...f, state: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            </div>
-            <input name="postal_code" placeholder="CEP" value={form.postal_code} onChange={(e) => setForm((f) => ({ ...f, postal_code: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            <input name="country" placeholder="País" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} className="w-full border rounded px-3 py-2" required />
-            <div className="flex gap-4 pt-2">
-              <Button type="submit" variant="primary" colorTheme="green" disabled={saving} className="text-green-100">{saving ? "Salvando…" : "Salvar"}</Button>
-              <Button type="button" variant="outline" colorTheme="gray" onClick={closeForm}>Cancelar</Button>
-            </div>
-          </form>
-        )}
+        {showForm && addressForm}
       </div>
     );
   }
@@ -230,28 +382,7 @@ export default function AccountAddressesPage() {
         </ul>
       )}
 
-      {showForm && (
-        <form className="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50" onSubmit={handleSubmit}>
-          <h3 className="text-h6 font-heading text-green-800">{editingId ? "Editar endereço" : "Novo endereço"}</h3>
-          <input name="label" placeholder="Ex: Casa, Trabalho" value={form.label} onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          <input name="street" placeholder="Rua" value={form.street} onChange={(e) => setForm((f) => ({ ...f, street: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          <div className="grid grid-cols-2 gap-2">
-            <input name="number" placeholder="Número" value={form.number} onChange={(e) => setForm((f) => ({ ...f, number: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-            <input name="complement" placeholder="Complemento" value={form.complement} onChange={(e) => setForm((f) => ({ ...f, complement: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" />
-          </div>
-          <input name="district" placeholder="Bairro" value={form.district} onChange={(e) => setForm((f) => ({ ...f, district: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          <div className="grid grid-cols-2 gap-2">
-            <input name="city" placeholder="Cidade" value={form.city} onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-            <input name="state" placeholder="UF" value={form.state} onChange={(e) => setForm((f) => ({ ...f, state: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          </div>
-          <input name="postal_code" placeholder="CEP" value={form.postal_code} onChange={(e) => setForm((f) => ({ ...f, postal_code: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          <input name="country" placeholder="País" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 text-body-m" required />
-          <div className="flex gap-4 pt-2">
-            <Button type="submit" variant="primary" colorTheme="green" disabled={saving} className="text-green-100">{saving ? "Salvando…" : "Salvar"}</Button>
-            <Button type="button" variant="outline" colorTheme="gray" onClick={closeForm}>Cancelar</Button>
-          </div>
-        </form>
-      )}
+      {showForm && addressForm}
     </div>
   );
 }

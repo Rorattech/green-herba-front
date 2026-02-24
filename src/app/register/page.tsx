@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
-import { EyeOff } from "lucide-react";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { register as apiRegister } from "@/src/services/api/auth";
 
@@ -86,7 +85,7 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 placeholder="Crie uma senha"
-                iconRight={<EyeOff size={20} className="cursor-pointer" />}
+                showPasswordToggle
                 required
               />
 

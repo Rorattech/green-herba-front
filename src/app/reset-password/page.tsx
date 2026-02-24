@@ -7,7 +7,6 @@ import { useSearchParams } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
-import { EyeOff } from "lucide-react";
 import { resetPassword } from "@/src/services/api/auth";
 
 function ResetPasswordForm() {
@@ -89,7 +88,7 @@ function ResetPasswordForm() {
           type="password"
           label="Nova senha"
           placeholder="Mínimo 8 caracteres"
-          iconRight={<EyeOff size={20} className="cursor-pointer" />}
+          showPasswordToggle
           required
           minLength={8}
         />
@@ -99,7 +98,7 @@ function ResetPasswordForm() {
           type="password"
           label="Confirmar nova senha"
           placeholder="Repita a nova senha"
-          iconRight={<EyeOff size={20} className="cursor-pointer" />}
+          showPasswordToggle
           required
           minLength={8}
         />

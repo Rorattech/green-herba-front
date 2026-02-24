@@ -7,7 +7,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Input } from "@/src/components/ui/Input";
 import { Button } from "@/src/components/ui/Button";
-import { EyeOff } from "lucide-react";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { login as apiLogin } from "@/src/services/api/auth";
 
@@ -92,7 +91,7 @@ export default function LoginPage() {
                   label="Senha"
                   placeholder="Digite sua senha"
                   colorTheme="light"
-                  iconRight={<EyeOff size={20} className="cursor-pointer" />}
+                  showPasswordToggle
                   required
                 />
                 <div className="text-right">
