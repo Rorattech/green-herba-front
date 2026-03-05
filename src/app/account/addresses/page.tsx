@@ -351,12 +351,12 @@ export default function AccountAddressesPage() {
                   </p>
                   <div className="flex gap-2 mt-2">
                     {addr.is_default_shipping && (
-                      <span className="inline-flex items-center gap-1 text-body-s text-green-700 bg-green-100 px-2 py-0.5 rounded">
+                      <span className="inline-flex items-center gap-1 text-body-s text-green-100 bg-green-800 px-2 py-0.5 rounded">
                         <Truck size={14} /> Entrega
                       </span>
                     )}
                     {addr.is_default_billing && (
-                      <span className="inline-flex items-center gap-1 text-body-s text-green-700 bg-green-100 px-2 py-0.5 rounded">
+                      <span className="inline-flex items-center gap-1 text-body-s text-green-100 bg-green-800 px-2 py-0.5 rounded">
                         <CreditCard size={14} /> Cobrança
                       </span>
                     )}
@@ -364,16 +364,16 @@ export default function AccountAddressesPage() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => handleSetDefaultShipping(addr.id)} className="text-body-s text-green-800 hover:underline flex items-center gap-1" title="Usar como endereço de entrega">
+                <button type="button" onClick={() => handleSetDefaultShipping(addr.id)} className="text-body-s cursor-pointer text-green-800 hover:underline flex items-center gap-1" title="Usar como endereço de entrega">
                   <Truck size={14} /> Entrega
                 </button>
-                <button type="button" onClick={() => handleSetDefaultBilling(addr.id)} className="text-body-s text-green-800 hover:underline flex items-center gap-1" title="Usar como endereço de cobrança">
+                <button type="button" onClick={() => handleSetDefaultBilling(addr.id)} className="text-body-s cursor-pointer text-green-800 hover:underline flex items-center gap-1" title="Usar como endereço de cobrança">
                   <CreditCard size={14} /> Cobrança
                 </button>
-                <button type="button" onClick={() => openEdit(addr)} className="text-body-s text-green-800 hover:underline flex items-center gap-1">
+                <button type="button" onClick={() => openEdit(addr)} className="text-body-s cursor-pointer text-green-800 hover:underline flex items-center gap-1">
                   <Pencil size={14} /> Editar
                 </button>
-                <button type="button" onClick={() => handleDelete(addr.id)} className="text-body-s text-error hover:underline flex items-center gap-1">
+                <button type="button" onClick={() => handleDelete(addr.id)} className="text-body-s cursor-pointer text-error hover:underline flex items-center gap-1">
                   <Trash2 size={14} /> Excluir
                 </button>
               </div>

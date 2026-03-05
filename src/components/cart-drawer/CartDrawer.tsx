@@ -43,10 +43,11 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
     setCheckingPrescription(true);
     try {
       const approvedIds = await getApprovedPrescriptionProductIds();
-      const missing = itemsRequiringPrescription.some((item) => !approvedIds.has(Number(item.product.id)));
-      if (missing) {
+      const firstMissing = itemsRequiringPrescription.find((item) => !approvedIds.has(Number(item.product.id)));
+      if (firstMissing) {
         onClose();
-        router.push("/account/prescriptions?missing_prescription=1");
+        const productId = Number(firstMissing.product.id);
+        router.push(`/account/prescriptions?missing_prescription=1&product_id=${productId}`);
         return;
       }
       onClose();

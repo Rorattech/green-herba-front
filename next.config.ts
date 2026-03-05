@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pharma-green-backend.onrender.com',
+        hostname: 'api.green-herba-pharma.com.br',
         port: '',
         pathname: '/**',
       },
