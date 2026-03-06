@@ -22,13 +22,24 @@ export function clearStoredToken(): void {
 
 /**
  * Base URL for the backend API (no trailing slash).
- * Use NEXT_PUBLIC_API_URL in .env for override.
+ * Server: uses API_URL / NEXT_PUBLIC_API_URL / default.
+ * Client: uses same-origin proxy (/api-proxy) to avoid CORS when the API does not send Access-Control-Allow-Origin.
  */
 export function getApiBaseUrl(): string {
-  const url =
-    typeof window !== "undefined"
-      ? process.env.NEXT_PUBLIC_API_URL
-      : process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api-proxy`;
+  }
+  const url = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  return (url && url.trim()) ? url.trim().replace(/\/$/, "") : DEFAULT_API_BASE;
+}
+
+/**
+ * Real API base URL for building resource URLs (images, storage).
+ * Always returns the actual API host (never the proxy), so next/image and img work in both dev and production.
+ * Use this only for src attributes; use getApiBaseUrl() for fetch().
+ */
+export function getApiBaseUrlForResources(): string {
+  const url = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL;
   return (url && url.trim()) ? url.trim().replace(/\/$/, "") : DEFAULT_API_BASE;
 }
 

@@ -9,6 +9,8 @@ export interface ApiCategory {
 export interface ApiProductImage {
   id: number;
   file_path: string;
+  /** Full URL when using external storage (e.g. DigitalOcean Spaces) */
+  url?: string;
   alt_text: string | null;
   sort_order?: number;
   is_primary?: boolean;

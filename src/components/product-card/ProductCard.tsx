@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useCart } from '@/src/contexts/CartContext';
 import { useCartDrawer } from '@/src/contexts/CartDrawerContext';
 import { formatCurrency } from '@/src/utils/format';
+import { getApiBaseUrlForResources } from '@/src/lib/api-client';
 import { useState } from 'react';
 
 const PLACEHOLDER_IMAGE = '/images/placeholder-product.svg';
@@ -18,6 +19,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const { openDrawer } = useCartDrawer();
   const [imgError, setImgError] = useState(false);
   const imageSrc = imgError || !product.image ? PLACEHOLDER_IMAGE : product.image;
+  const isApiImage = Boolean(product.image && imageSrc !== PLACEHOLDER_IMAGE && imageSrc.startsWith(getApiBaseUrlForResources()));
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function ProductCard({ product }: { product: Product }) {
             sizes="(max-width: 768px) 50vw, 25vw"
             className="object-contain transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgError(true)}
-            unoptimized={imgError}
+            unoptimized={imgError || isApiImage}
           />
         </div>
       </div>

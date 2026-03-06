@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Inter_Tight, PT_Sans_Caption, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/src/components/providers/Providers";
@@ -39,7 +40,9 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <Providers>
-          {children}
+          <Suspense fallback={null}>
+            {children}
+          </Suspense>
         </Providers>
       </body>
     </html>

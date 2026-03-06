@@ -12,8 +12,14 @@ import SectionHeader from '../section-header/SectionHeader';
 import ProductCard from '../product-card/ProductCard';
 import { Button } from '../ui/Button';
 
-export default function TopProducts({ products }: { products: Product[] }) {
+interface TopProductsProps {
+  products: Product[];
+  productsLoadFailed?: boolean;
+}
+
+export default function TopProducts({ products, productsLoadFailed = false }: TopProductsProps) {
   const progressRef = useRef<HTMLDivElement>(null);
+  const hasNoProducts = products.length === 0;
 
   return (
     <section className="py-10 md:py-14 overflow-hidden">
@@ -22,6 +28,19 @@ export default function TopProducts({ products }: { products: Product[] }) {
         <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
       </div>
 
+      {hasNoProducts ? (
+        <div className="container mx-auto px-4 md:px-0 py-16 text-center">
+          <p className="text-body-m text-green-800/70">
+            {productsLoadFailed
+              ? 'Não foi possível carregar os produtos. Tente novamente mais tarde.'
+              : 'Nenhum produto encontrado.'}
+          </p>
+          <p className="text-body-s text-gray-500 mt-2">
+            {productsLoadFailed ? 'Verifique sua conexão e atualize a página.' : 'Tente novamente mais tarde.'}
+          </p>
+        </div>
+      ) : (
+        <>
       <div className="container mx-auto px-4 md:px-0">
         <Swiper
           modules={[Navigation, Pagination]}
@@ -78,6 +97,8 @@ export default function TopProducts({ products }: { products: Product[] }) {
           </div>
         </div>
       </div>
+        </>
+      )}
 
       <style jsx global>{`
         .custom-bar-container.swiper-pagination-progressbar {

@@ -1,4 +1,4 @@
-import { apiGet, getApiBaseUrl } from "@/src/lib/api-client";
+import { apiGet, getApiBaseUrlForResources } from "@/src/lib/api-client";
 import type {
   ApiProduct,
   ApiProductsResponse,
@@ -33,6 +33,12 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
       ? api.price
       : (finalPrice > 0 ? (finalPrice * 1.15).toFixed(2) : "");
 
+  const primaryImageUrl =
+    api.primary_image?.url ||
+    (api.primary_image?.file_path && typeof api.primary_image.file_path === "string"
+      ? `${getApiBaseUrlForResources()}/storage/${api.primary_image.file_path}`
+      : null);
+
   return {
     id: api.id,
     slug: api.slug,
@@ -41,11 +47,7 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
     oldPrice,
     priceFormatted: formatCurrency(finalPrice),
     description: api.description ?? "",
-    image:
-      api.primary_image?.file_path &&
-      typeof api.primary_image.file_path === "string"
-        ? `${getApiBaseUrl()}/storage/${api.primary_image.file_path}`
-        : selectedPlaceholder,
+    image: primaryImageUrl ?? selectedPlaceholder,
     badgeLabel: api.badge_label ?? undefined,
     badgeVariant: api.badge_variant as Product["badgeVariant"] | undefined,
     rating: api.rating ?? 0,

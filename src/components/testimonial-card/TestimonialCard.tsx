@@ -10,10 +10,11 @@ interface TestimonialProps {
 export const TestimonialCard = ({ name, quote, image }: TestimonialProps) => (
   <div className="flex flex-col gap-4 group cursor-pointer">
     <div className="relative aspect-9/16 w-full overflow-hidden bg-gray-200">
-      <Image 
-        src={image} 
+      <Image
+        src={image}
         alt={`Depoimento de ${name}`}
         fill
+        sizes="(max-width: 768px) 280px, (max-width: 1024px) 33vw, 25vw"
         className="object-cover transition-transform duration-700 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">

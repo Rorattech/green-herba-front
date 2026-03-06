@@ -10,29 +10,28 @@ import { fetchProductsMapped } from "../services/api/products";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const data = await fetchHealth();
-  if (data) {
-    console.log("Health check:", data);
-  }
+  await fetchHealth();
 
   let topProducts: Awaited<ReturnType<typeof fetchProductsMapped>>["products"] = [];
   let allProducts: Awaited<ReturnType<typeof fetchProductsMapped>>["products"] = [];
+  let productsLoadFailed = false;
   try {
     const { products } = await fetchProductsMapped({ page: 1 });
     topProducts = products.slice(0, 6);
     allProducts = products;
   } catch (e) {
     console.warn("Failed to fetch products for home:", e);
+    productsLoadFailed = true;
   }
 
   return (
     <>
       <MainLayout>
         <Hero />
-        <TopProducts products={topProducts} />
+        <TopProducts products={topProducts} productsLoadFailed={productsLoadFailed} />
         <HomeCategories />
         <HomeTestimonials />
-        <AllProducts products={allProducts} />
+        <AllProducts products={allProducts} productsLoadFailed={productsLoadFailed} />
       </MainLayout>
     </>
   );
