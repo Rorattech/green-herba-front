@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE = "https://pharma-green-backend.onrender.com";
+const DEFAULT_API_BASE = "https://api.green-herba-pharma.com.br";
 
 const AUTH_TOKEN_KEY = "green-herba-token";
 
