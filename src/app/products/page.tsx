@@ -360,6 +360,7 @@ function ProductsContent() {
                   isMobile={true}
                   tempFilters={tempFilters}
                   setTempFilters={setTempFilters}
+                  hideCategoryFilter={!!categoryParam}
                 />
               </div>
 
@@ -388,6 +389,7 @@ function ProductsContent() {
                   isMobile={false}
                   tempFilters={tempFilters}
                   setTempFilters={setTempFilters}
+                  hideCategoryFilter={!!categoryParam}
                 />
               </div>
             )}

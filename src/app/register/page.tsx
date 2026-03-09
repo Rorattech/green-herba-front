@@ -92,7 +92,7 @@ export default function RegisterPage() {
               <label className="flex items-start gap-3 cursor-pointer group pt-2">
                 <input type="checkbox" className="mt-1 w-4 h-4 accent-green-800" />
                 <span className="text-body-s text-green-800 leading-tight">
-                  Optar por não receber emails de marketing da Green Herba Pharma repletos de notícias e ofertas emocionantes
+                  Optar por não receber emails de marketing da Green Herba Pharma sobre notícias e ofertas.
                 </span>
               </label>
 

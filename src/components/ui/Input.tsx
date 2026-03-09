@@ -19,6 +19,16 @@ function getDigits(value: string): string {
   return (value ?? '').replace(/\D/g, '');
 }
 
+/** Retorna a posição no texto mascarado após o n-ésimo dígito (n = 0,1,2,...). */
+function positionAfterDigitCount(formatted: string, digitCount: number): number {
+  let count = 0;
+  for (let i = 0; i < formatted.length; i++) {
+    if (/\d/.test(formatted[i])) count++;
+    if (count === digitCount) return i + 1;
+  }
+  return formatted.length;
+}
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: boolean;
@@ -101,6 +111,45 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     onChange?.(synthetic);
   };
 
+  const handleMaskKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const el = e.currentTarget;
+    const pos = el.selectionStart ?? 0;
+    const len = maskedValue.length;
+
+    if (e.key === 'Backspace' && pos > 0) {
+      const charBefore = maskedValue[pos - 1];
+      if (!/\d/.test(charBefore)) {
+        e.preventDefault();
+        const digits = getDigits(maskedValue);
+        const digitIndex = getDigits(maskedValue.slice(0, pos)).length;
+        if (digitIndex === 0) return;
+        const newDigits = digits.slice(0, digitIndex - 1) + digits.slice(digitIndex);
+        const formatted = formatWithMask(newDigits, mask!);
+        setMaskedValue(formatted);
+        onChange?.({ ...e, target: { ...el, value: formatted } } as React.ChangeEvent<HTMLInputElement>);
+        const newPos = positionAfterDigitCount(formatted, digitIndex - 1);
+        requestAnimationFrame(() => el.setSelectionRange(newPos, newPos));
+      }
+      return;
+    }
+
+    if (e.key === 'Delete' && pos < len) {
+      const charAfter = maskedValue[pos];
+      if (!/\d/.test(charAfter)) {
+        e.preventDefault();
+        const digits = getDigits(maskedValue);
+        const digitIndex = getDigits(maskedValue.slice(0, pos)).length;
+        if (digitIndex >= digits.length) return;
+        const newDigits = digits.slice(0, digitIndex) + digits.slice(digitIndex + 1);
+        const formatted = formatWithMask(newDigits, mask!);
+        setMaskedValue(formatted);
+        onChange?.({ ...e, target: { ...el, value: formatted } } as React.ChangeEvent<HTMLInputElement>);
+        const newPos = positionAfterDigitCount(formatted, digitIndex);
+        requestAnimationFrame(() => el.setSelectionRange(newPos, newPos));
+      }
+    }
+  };
+
   const inputEl = mask ? (
     <input
       {...props}
@@ -112,6 +161,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
       className={inputClasses}
       value={maskedValue}
       onChange={handleMaskChange}
+      onKeyDown={(e) => {
+        handleMaskKeyDown(e);
+        props.onKeyDown?.(e);
+      }}
     />
   ) : (
     <input

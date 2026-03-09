@@ -12,6 +12,8 @@ interface FilterSidebarProps {
     isMobile?: boolean;
     tempFilters: ProductFilters;
     setTempFilters: (filters: ProductFilters) => void;
+    /** Quando true, não exibe o filtro de categorias (ex.: veio da home por clique em categoria). */
+    hideCategoryFilter?: boolean;
 }
 
 export const FilterSidebar = ({ 
@@ -19,7 +21,8 @@ export const FilterSidebar = ({
     priceRange, 
     isMobile = false,
     tempFilters,
-    setTempFilters
+    setTempFilters,
+    hideCategoryFilter = false
 }: FilterSidebarProps) => {
     const [localMinPrice, setLocalMinPrice] = useState(tempFilters.minPrice?.toString() || '');
     const [localMaxPrice, setLocalMaxPrice] = useState(tempFilters.maxPrice?.toString() || '');
@@ -55,7 +58,7 @@ export const FilterSidebar = ({
 
     return (
         <div className="flex flex-col w-full gap-6">
-            {availableCategories.length > 0 && (
+            {!hideCategoryFilter && availableCategories.length > 0 && (
                 <FilterAccordion title="Categorias" defaultOpen>
                     {availableCategories.map((category) => (
                         <FilterCheckbox

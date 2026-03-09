@@ -52,9 +52,10 @@ export default function CheckoutPage() {
     if (itemsRequiringPrescription.length > 0) {
       getApprovedPrescriptionProductIds()
         .then((approvedIds) => {
-          const missing = itemsRequiringPrescription.some((i) => !approvedIds.has(Number(i.product.id)));
-          if (missing) {
-            router.replace("/account/prescriptions?missing_prescription=1");
+          const firstMissing = itemsRequiringPrescription.find((i) => !approvedIds.has(Number(i.product.id)));
+          if (firstMissing) {
+            const productId = Number(firstMissing.product.id);
+            router.replace(`/account/prescriptions?missing_prescription=1&product_id=${productId}`);
           }
         })
         .catch(() => {});

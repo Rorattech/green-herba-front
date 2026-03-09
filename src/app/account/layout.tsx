@@ -63,7 +63,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="flex items-center gap-2 text-body-m font-body py-2 px-3 rounded-full whitespace-nowrap transition-colors text-green-800 hover:bg-gray-100 w-full text-left"
+                    className="flex items-center gap-2 text-body-m cursor-pointer font-body py-2 px-3 rounded-full whitespace-nowrap transition-colors text-green-800 hover:bg-gray-100 w-full text-left"
                   >
                     <LogOut size={18} />
                     Sair

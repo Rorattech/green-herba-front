@@ -13,18 +13,19 @@ import { Select } from "@/src/components/ui/Select";
 const statusConfig: Record<string, { label: string; icon: typeof Clock; className: string }> = {
   pending: { label: "Em análise", icon: Clock, className: "text-warning" },
   approved: { label: "Aprovada", icon: CheckCircle, className: "text-success" },
-  rejected: { label: "Rejeitada", icon: XCircle, className: "text-error" },
+  declined: { label: "Rejeitada", icon: XCircle, className: "text-error" },
 };
 
 function PrescriptionsContent() {
   const searchParams = useSearchParams();
   const missingPrescription = searchParams.get("missing_prescription") === "1";
+  const productIdFromUrl = searchParams.get("product_id");
   const [prescriptions, setPrescriptions] = useState<ApiPrescription[]>([]);
   const [products, setProducts] = useState<ApiProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [selectedProductId, setSelectedProductId] = useState<string>(productIdFromUrl ?? "");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,6 +34,13 @@ function PrescriptionsContent() {
       getProducts({ per_page: 100, requires_prescription: true }).then((res) => setProducts(res.data ?? [])),
     ]).catch(() => setError("Erro ao carregar.")).finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!products.length || !productIdFromUrl) return;
+    const id = productIdFromUrl;
+    const exists = products.some((p) => String(p.id) === id);
+    if (exists) setSelectedProductId(id);
+  }, [products, productIdFromUrl]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -64,14 +72,20 @@ function PrescriptionsContent() {
     <div className="space-y-6">
       <h2 className="text-h5 font-heading text-green-800">Prescrições médicas</h2>
       <p className="text-body-m text-green-800/70 max-w-lg">
-        Envie sua prescrição médica (PDF ou imagem, máx. 5MB) vinculada a um produto. Você poderá acompanhar aqui se foi aprovada.
+        Envie sua prescrição médica (PDF, máx. 5MB) vinculada a um produto. Você poderá acompanhar aqui se foi aprovada.
       </p>
 
       {missingPrescription && (
-        <div className="flex gap-3 p-4 rounded-lg bg-warning/15 border border-warning text-green-800">
-          <AlertCircle size={22} className="shrink-0 mt-0.5" />
+        <div className="flex justify-center gap-3 p-4 rounded-lg bg-warning/15 border border-warning text-green-800">
+          <AlertCircle size={22} className="shrink-0" />
           <p className="text-body-m">
-            Você tem produtos no carrinho que exigem prescrição aprovada. Envie uma prescrição para o produto ou aguarde a aprovação das que já enviou para continuar a compra.
+            {(() => {
+              const product = productIdFromUrl ? products.find((p) => String(p.id) === productIdFromUrl) : null;
+              if (product) {
+                return <>O produto <strong>{product.name}</strong> exige prescrição aprovada. Envie uma prescrição para este produto ou aguarde a aprovação das que já enviou para continuar a compra.</>;
+              }
+              return "Você tem produtos no carrinho que exigem prescrição aprovada. Envie uma prescrição para o produto ou aguarde a aprovação das que já enviou para continuar a compra.";
+            })()}
           </p>
         </div>
       )}
@@ -79,7 +93,7 @@ function PrescriptionsContent() {
       {error && <p className="text-body-s text-error font-medium">{error}</p>}
 
       <div className="flex flex-wrap gap-4 items-center">
-        <div className="min-w-[200px]">
+        <div className="min-w-[300px]">
           <Select
             id="prescription-product"
             value={selectedProductId}

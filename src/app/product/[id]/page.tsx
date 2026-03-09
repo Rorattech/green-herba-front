@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Button } from "@/src/components/ui/Button";
 import { QuantitySelector } from "@/src/components/ui/QuantitySelector";
@@ -12,7 +12,10 @@ import { TextAccordion } from "@/src/components/ui/TextAccordion";
 import TopProducts from "@/src/components/top-products/TopProducts";
 import ProductDetailSkeleton from "@/src/components/product-detail/ProductDetailSkeleton";
 import ProductCardSkeleton from "@/src/components/product-card/ProductCardSkeleton";
-import { Star, Truck, RotateCcw, ShieldCheck, ArrowLeft, ArrowRight } from "lucide-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import { Star, Truck, RotateCcw, ShieldCheck, ArrowLeft, ArrowRight, X } from "lucide-react";
 import SectionHeader from "@/src/components/section-header/SectionHeader";
 import { Badge } from "@/src/components/ui/Badge";
 import { Product } from "@/src/types/product";
@@ -22,6 +25,7 @@ import { useCartDrawer } from "@/src/contexts/CartDrawerContext";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { createReview } from "@/src/services/api/reviews";
 import type { ApiProduct } from "@/src/types/api";
+import { getApiBaseUrlForResources } from "@/src/lib/api-client";
 import { formatCurrency } from "@/src/utils/format";
 
 function ProductReviewsSection({
@@ -155,6 +159,38 @@ export default function ProductInternalPage() {
     const isLoading = Boolean(slug) && productLoading;
     const effectiveProduct = slug ? product : null;
 
+    const galleryItems = useMemo(() => {
+        if (!effectiveProduct) return [];
+        const base = getApiBaseUrlForResources();
+        if (apiProduct?.images?.length) {
+            return apiProduct.images.map((img) => ({
+                url: img.url ?? `${base}/storage/${img.file_path}`,
+                alt: img.alt_text ?? effectiveProduct?.name ?? "Produto",
+            }));
+        }
+        if (effectiveProduct.image) {
+            return [{ url: effectiveProduct.image, alt: effectiveProduct.name }];
+        }
+        return [];
+    }, [apiProduct?.images, effectiveProduct]);
+
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const mainImage = galleryItems[selectedImageIndex] ?? galleryItems[0] ?? (effectiveProduct?.image ? { url: effectiveProduct.image, alt: effectiveProduct.name } : null);
+
+    useEffect(() => {
+        setSelectedImageIndex(0);
+    }, [slug]);
+
+    useEffect(() => {
+        if (!lightboxOpen) return;
+        const onEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setLightboxOpen(false);
+        };
+        window.addEventListener("keydown", onEscape);
+        return () => window.removeEventListener("keydown", onEscape);
+    }, [lightboxOpen]);
+
     function refetchProduct() {
         if (!slug) return;
         getProductBySlug(slug).then((api) => {
@@ -162,7 +198,7 @@ export default function ProductInternalPage() {
                 setApiProduct(api);
                 setProduct(mapApiProductToProduct(api));
             }
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
     useEffect(() => {
@@ -197,7 +233,7 @@ export default function ProductInternalPage() {
             .then(({ products }) => {
                 if (!cancelled) setTopProducts(products.slice(0, 6));
             })
-            .catch(() => {});
+            .catch(() => { });
         return () => { cancelled = true; };
     }, []);
 
@@ -308,21 +344,187 @@ export default function ProductInternalPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-                        <div className="space-y-4">
-                            <div className="relative aspect-square bg-gray-100 overflow-hidden group">
-                                <Image
-                                    src={effectiveProduct.image}
-                                    alt={effectiveProduct.name}
-                                    fill
-                                    className="object-contain p-12 transition-transform duration-500 group-hover:scale-105"
-                                    priority
-                                />
-                                <div className="absolute top-6 right-6 z-10">
+                        <div className={galleryItems.length > 1 ? "flex flex-col gap-4" : "space-y-4"}>
+                            <div
+                                className={`relative block w-full bg-gray-100 overflow-hidden group ${galleryItems.length > 1 ? "aspect-4/3" : "aspect-square"}`}
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => mainImage && setLightboxOpen(true)}
+                                    className={`absolute inset-0 w-full h-full text-left z-0 ${mainImage ? "cursor-zoom-in" : ""}`}
+                                    aria-label="Ampliar imagem"
+                                >
+                                    {mainImage && (
+                                        <Image
+                                            src={mainImage.url}
+                                            alt={mainImage.alt}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                            className="object-contain p-8 md:p-12 transition-transform duration-500 group-hover:scale-105"
+                                            priority
+                                        />
+                                    )}
+                                </button>
+                                {galleryItems.length > 1 && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
+                                            }}
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
+                                            aria-label="Imagem anterior"
+                                        >
+                                            <ArrowLeft size={20} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
+                                            }}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
+                                            aria-label="Próxima imagem"
+                                        >
+                                            <ArrowRight size={20} />
+                                        </button>
+                                    </>
+                                )}
+                                <div className="absolute top-6 right-6 z-10 pointer-events-none">
                                     <Badge variant={effectiveProduct.badgeVariant}>
                                         {effectiveProduct.badgeLabel}
                                     </Badge>
                                 </div>
                             </div>
+                            {galleryItems.length > 1 && (
+                                <div className="flex items-center gap-3">
+                                    {galleryItems.length <= 4 ? (
+                                        <div className="grid grid-cols-4 gap-3 w-full">
+                                            {galleryItems.map((item, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    onClick={() => setSelectedImageIndex(i)}
+                                                    className={`relative aspect-square w-full overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
+                                                        }`}
+                                                    aria-label={`Ver imagem ${i + 1}`}
+                                                >
+                                                    <Image
+                                                        src={item.url}
+                                                        alt={item.alt}
+                                                        fill
+                                                        sizes="(max-width: 768px) 22vw, 120px"
+                                                        className="object-cover"
+                                                    />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Button
+                                                variant="outline"
+                                                colorTheme="green"
+                                                isIconOnly
+                                                className="prev-gallery shrink-0 w-9 h-9"
+                                                aria-label="Imagens anteriores"
+                                                iconLeft={<ArrowLeft size={16} />}
+                                            />
+                                            <Swiper
+                                                modules={[Navigation]}
+                                                spaceBetween={12}
+                                                slidesPerView={4}
+                                                navigation={{ prevEl: ".prev-gallery", nextEl: ".next-gallery" }}
+                                                className="flex-1 min-w-0"
+                                            >
+                                                {galleryItems.map((item, i) => (
+                                                    <SwiperSlide key={i}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSelectedImageIndex(i)}
+                                                            className={`relative block w-full aspect-square overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
+                                                                }`}
+                                                            aria-label={`Ver imagem ${i + 1}`}
+                                                        >
+                                                            <Image
+                                                                src={item.url}
+                                                                alt={item.alt}
+                                                                fill
+                                                                sizes="120px"
+                                                                className="object-cover"
+                                                            />
+                                                        </button>
+                                                    </SwiperSlide>
+                                                ))}
+                                            </Swiper>
+                                            <Button
+                                                variant="outline"
+                                                colorTheme="green"
+                                                isIconOnly
+                                                className="next-gallery shrink-0 w-9 h-9"
+                                                aria-label="Próximas imagens"
+                                                iconRight={<ArrowRight size={16} />}
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                            )}
+
+                            {lightboxOpen && mainImage && (
+                                <div
+                                    className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+                                    onClick={() => setLightboxOpen(false)}
+                                    role="dialog"
+                                    aria-modal="true"
+                                    aria-label="Visualização em tela cheia"
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() => setLightboxOpen(false)}
+                                        className="absolute top-4 right-4 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                                        aria-label="Fechar"
+                                    >
+                                        <X size={28} />
+                                    </button>
+                                    {galleryItems.length > 1 && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
+                                                }}
+                                                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                                                aria-label="Imagem anterior"
+                                            >
+                                                <ArrowLeft size={28} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
+                                                }}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                                                aria-label="Próxima imagem"
+                                            >
+                                                <ArrowRight size={28} />
+                                            </button>
+                                        </>
+                                    )}
+                                    <div
+                                        className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={mainImage.url}
+                                            alt={mainImage.alt}
+                                            className="max-w-full max-h-[85vh] w-auto h-auto object-contain"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex flex-col gap-6">
@@ -354,13 +556,6 @@ export default function ProductInternalPage() {
                                 </div>
                             </div>
 
-                            <div className="bg-green-200 text-green-100 p-4 rounded-lg flex justify-between items-center">
-                                <p className="text-body-s font-medium">Somente esta semana: economize 20% nos seus favoritos</p>
-                                <div className="flex gap-4 font-bold tracking-widest">
-                                    <span>06 : 20 : 16</span>
-                                </div>
-                            </div>
-
                             <p className="text-body-m text-green-800/70 leading-relaxed">
                                 {effectiveProduct.description}
                             </p>
@@ -381,22 +576,22 @@ export default function ProductInternalPage() {
                                 </div>
                             </div>
 
-                            <div className="divide-y divide-gray-100 border-t border-gray-100 mt-6">
-                                <TextAccordion title="Detalhes" defaultOpen>
-                                    <p>Terra Immune é projetado para suporte diário, não soluções rápidas. Com uso regular, muitas pessoas relatam sentir-se mais equilibradas e apoiadas durante mudanças sazonais e estressores do dia a dia.</p>
-                                </TextAccordion>
-
-                                <TextAccordion title="Resultados">
-                                    <p>Nossos ensaios clínicos mostraram um aumento significativo na resposta imune basal após 30 dias de uso consistente, combinado com um estilo de vida saudável.</p>
-                                </TextAccordion>
-
-                                <TextAccordion title="Ingredientes">
-                                    <ul className="list-disc pl-4 space-y-2">
-                                        <li>Vitamina C (como Ácido Ascórbico)</li>
-                                        <li>Zinco (como Citrato de Zinco)</li>
-                                        <li>Extrato de Sabugueiro</li>
-                                        <li>Equinácea Purpúrea</li>
-                                    </ul>
+                            <div className="border-t border-gray-100 mt-6">
+                                <TextAccordion title="Especificações" defaultOpen={!!(apiProduct?.specifications && Object.keys(apiProduct.specifications).length > 0)}>
+                                    {apiProduct?.specifications && Object.keys(apiProduct.specifications).length > 0 ? (
+                                        <ul className="list-disc pl-4 space-y-2 text-body-m text-green-800/80">
+                                            {Object.entries(apiProduct.specifications).map(([key, value]) => (
+                                                <li key={key}>
+                                                    <span className="font-medium capitalize">
+                                                        {key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}:
+                                                    </span>{" "}
+                                                    {value}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-body-m text-green-800/70">Nenhuma especificação disponível.</p>
+                                    )}
                                 </TextAccordion>
 
                                 {apiProduct && (
