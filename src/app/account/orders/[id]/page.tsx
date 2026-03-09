@@ -87,7 +87,7 @@ export default function OrderDetailPage() {
       <div className="border border-gray-200 rounded-lg p-4 space-y-2">
         <p className="text-body-s text-gray-500">Subtotal: {formatCurrency(order.total_items_amount)}</p>
         <p className="text-body-s text-gray-500">Frete: {formatCurrency(order.shipping_cost)}</p>
-        {order.discount_amount > 0 && <p className="text-body-s text-gray-500">Desconto: -{formatCurrency(order.discount_amount)}</p>}
+        {(Number(order.discount_amount) || 0) > 0 && <p className="text-body-s text-gray-500">Desconto: -{formatCurrency(order.discount_amount)}</p>}
         <p className="text-body-m font-medium text-green-800">Total: {formatCurrency(order.total_amount)}</p>
       </div>
 

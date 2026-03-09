@@ -3,6 +3,22 @@ const DEFAULT_API_BASE = "https://pharma-green-backend.onrender.com";
 const AUTH_TOKEN_KEY = "green-herba-token";
 
 /**
+ * Thrown when the API returns an error (4xx/5xx). Carries status and optional
+ * validation errors (e.g. errors.coupon_code) for 422 responses.
+ */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly errors?: Record<string, string[]>
+  ) {
+    super(message);
+    this.name = "ApiError";
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
+}
+
+/**
  * Get stored Sanctum token (client-only).
  */
 export function getStoredToken(): string | null {
@@ -78,13 +94,15 @@ export async function apiRequest<T>(
   if (!res.ok) {
     const text = await res.text();
     let message = text;
+    let errors: Record<string, string[]> | undefined;
     try {
-      const json = JSON.parse(text);
+      const json = JSON.parse(text) as { message?: string; error?: string; errors?: Record<string, string[]> };
       message = json.message ?? json.error ?? text;
+      errors = json.errors;
     } catch {
       // use text as message
     }
-    throw new Error(message || `API error: ${res.status}`);
+    throw new ApiError(message || `API error: ${res.status}`, res.status, errors);
   }
 
   const contentType = res.headers.get("content-type");
@@ -153,13 +171,15 @@ export async function apiMultipart<T>(path: string, formData: FormData): Promise
   if (!res.ok) {
     const text = await res.text();
     let message = text;
+    let errors: Record<string, string[]> | undefined;
     try {
-      const json = JSON.parse(text);
+      const json = JSON.parse(text) as { message?: string; error?: string; errors?: Record<string, string[]> };
       message = json.message ?? json.error ?? text;
+      errors = json.errors;
     } catch {
       // use text as message
     }
-    throw new Error(message || `API error: ${res.status}`);
+    throw new ApiError(message || `API error: ${res.status}`, res.status, errors);
   }
 
   return res.json() as Promise<T>;

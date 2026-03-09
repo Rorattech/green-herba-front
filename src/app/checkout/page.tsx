@@ -12,8 +12,10 @@ import { getAddresses } from "@/src/services/api/addresses";
 import { getCoupons } from "@/src/services/api/coupons";
 import { getApprovedPrescriptionProductIds } from "@/src/services/api/prescriptions";
 import { createOrder } from "@/src/services/api/checkout";
+import { ApiError } from "@/src/lib/api-client";
 import { formatCurrency } from "@/src/utils/format";
 import type { Address } from "@/src/services/api/addresses";
+import type { ApiCoupon } from "@/src/types/api-resources";
 import type { Product } from "@/src/types/product";
 
 const SHIPPING_FREE_THRESHOLD = 50;
@@ -29,7 +31,7 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const { items, getTotalPrice, clearCart } = useCart();
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [coupons, setCoupons] = useState<Array<{ code: string; description: string | null }>>([]);
+  const [coupons, setCoupons] = useState<ApiCoupon[]>([]);
   const [shippingAddressId, setShippingAddressId] = useState<number | "">("");
   const [couponCode, setCouponCode] = useState("");
   const [placing, setPlacing] = useState(false);
@@ -92,7 +94,13 @@ export default function CheckoutPage() {
       clearCart();
       router.push(`/checkout/pay/${order.order.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar pedido. Tente novamente.");
+      const msg =
+        err instanceof ApiError && err.errors?.coupon_code?.[0]
+          ? err.errors.coupon_code[0]
+          : err instanceof Error
+            ? err.message
+            : "Erro ao criar pedido. Tente novamente.";
+      setError(msg);
     } finally {
       setPlacing(false);
     }
@@ -162,18 +170,35 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {coupons.length > 0 && (
-              <div>
-                <h2 className="text-h6 font-heading text-green-800 mb-2">Cupom</h2>
-                <input
-                  type="text"
-                  placeholder="Código do cupom"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-2 text-body-m w-full max-w-xs"
-                />
-              </div>
-            )}
+            <div>
+              <h2 className="text-h6 font-heading text-green-800 mb-2">Cupom</h2>
+              {coupons.length > 0 && (
+                <ul className="mb-3 space-y-2">
+                  {coupons.map((c) => (
+                    <li key={c.code} className="text-body-s text-green-800/80">
+                      <span className="font-mono font-medium">{c.code}</span>
+                      {c.description && ` — ${c.description}`}
+                      {c.remaining_usage != null && (
+                        <span className="text-gray-500"> ({c.remaining_usage} usos restantes)</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <input
+                type="text"
+                placeholder="Código do cupom"
+                value={couponCode}
+                onChange={(e) => {
+                  setCouponCode(e.target.value);
+                  if (error) setError(null);
+                }}
+                className="border border-gray-300 rounded px-3 py-2 text-body-m w-full max-w-xs"
+              />
+              <p className="mt-1 text-body-s text-gray-500">
+                O desconto é validado e aplicado automaticamente no pagamento.
+              </p>
+            </div>
 
             <div>
               <h2 className="text-h6 font-heading text-green-800 mb-4">Resumo do pedido</h2>
