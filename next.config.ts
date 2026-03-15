@@ -30,6 +30,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "pharma-green-backend.onrender.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "ghpdo.nyc3.digitaloceanspaces.com",
         port: "",
         pathname: "/**",

@@ -33,11 +33,18 @@ export function mapApiProductToProduct(api: ApiProduct): Product {
       ? api.price
       : (finalPrice > 0 ? (finalPrice * 1.15).toFixed(2) : "");
 
-  const primaryImageUrl =
+  const baseUrl = getApiBaseUrlForResources();
+  const rawPrimaryUrl =
     api.primary_image?.url ||
     (api.primary_image?.file_path && typeof api.primary_image.file_path === "string"
-      ? `${getApiBaseUrlForResources()}/storage/${api.primary_image.file_path}`
+      ? `${baseUrl}/storage/${api.primary_image.file_path}`
       : null);
+  // Normalize: if API returned full URL with old host, use our configured base
+  const primaryImageUrl =
+    rawPrimaryUrl?.replace(
+      /^https:\/\/pharma-green-backend\.onrender\.com/,
+      baseUrl
+    ) ?? null;
 
   return {
     id: api.id,
