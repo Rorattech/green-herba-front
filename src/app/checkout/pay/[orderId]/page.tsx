@@ -3,17 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import MainLayout from "@/src/layouts/MainLayout";
 import { Button } from "@/src/components/ui/Button";
 import { getPaymentPreference, getOrder, processPayment } from "@/src/services/api/orders";
-import { initMercadoPago } from "@mercadopago/sdk-react";
-import type { ProcessPaymentBody } from "@/src/services/api/orders";
-
-const Payment = dynamic(
-  () => import("@mercadopago/sdk-react").then((mod) => mod.Payment),
-  { ssr: false }
-);
+import { initMercadoPago, Payment, StatusScreen } from "@mercadopago/sdk-react";
+import type { ProcessPaymentBody, PayerAddress } from "@/src/services/api/orders";
 
 export default function CheckoutPayPage() {
   const params = useParams<{ orderId: string }>();
@@ -26,6 +20,17 @@ export default function CheckoutPayPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState<{ orderNumber: string } | null>(null);
+  const [paymentPending, setPaymentPending] = useState<{
+    orderNumber: string;
+    paymentMethodId: string;
+    paymentId: string;
+    qrCodeBase64?: string;
+    qrCode?: string;
+    ticketUrl?: string;
+    externalResourceUrl?: string;
+  } | null>(null);
+  /** paymentId de um pagamento PIX já criado anteriormente (ex.: vindo de Meus pedidos) */
+  const [existingPixPaymentId, setExistingPixPaymentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!Number.isFinite(orderId)) {
@@ -41,6 +46,25 @@ export default function CheckoutPayPage() {
         setPreferenceId(pref.preference_id);
         setPublicKey(pref.public_key);
         setAmount(Number(order.total_amount) || 0);
+
+        // Se já existir um pagamento PIX pendente para este pedido (vindo de "Meus pedidos"),
+        // usamos diretamente o Status Screen do Mercado Pago em vez de voltar para a escolha de método.
+        const overallMethod = (order.payment_method ?? "").toLowerCase();
+        let pixId: string | null = null;
+        if (overallMethod === "pix" && Array.isArray(order.payments)) {
+          const pendingPix = order.payments.find(
+            (p) =>
+              p.payment_gateway === "mercadopago" &&
+              typeof p.status === "string" &&
+              p.status.toLowerCase().startsWith("pending") &&
+              p.gateway_payment_id
+          );
+          if (pendingPix?.gateway_payment_id) {
+            pixId = String(pendingPix.gateway_payment_id);
+          }
+        }
+        setExistingPixPaymentId(pixId);
+
         if (pref.public_key) {
           initMercadoPago(pref.public_key);
           setMpReady(true);
@@ -100,7 +124,9 @@ export default function CheckoutPayPage() {
         payer: {
           email: payerEmail,
           first_name: payer?.first_name ?? payer?.firstName,
+          last_name: (payer as { last_name?: string })?.last_name,
           identification: payer?.identification,
+          address: (payer as { address?: PayerAddress })?.address,
         },
         order_id: orderId,
         payment_type: p?.paymentType ?? p?.selectedPaymentMethod,
@@ -111,7 +137,22 @@ export default function CheckoutPayPage() {
 
       try {
         const result = await processPayment(orderId, body);
-        setPaymentSuccess({ orderNumber: result.order_number });
+        const status = (result.status ?? "").toLowerCase();
+        if (status === "approved" || status === "paid") {
+          setPaymentSuccess({ orderNumber: result.order_number });
+        } else if (status === "pending" || status === "in_process") {
+          setPaymentPending({
+            orderNumber: result.order_number,
+            paymentMethodId,
+            paymentId: String(result.payment_id),
+            qrCodeBase64: result.qr_code_base64,
+            qrCode: result.qr_code,
+            ticketUrl: result.ticket_url,
+            externalResourceUrl: result.external_resource_url,
+          });
+        } else {
+          setPaymentSuccess({ orderNumber: result.order_number });
+        }
       } catch (err) {
         throw err;
       }
@@ -176,6 +217,44 @@ export default function CheckoutPayPage() {
     );
   }
 
+  // Se já temos um paymentId (criado agora ou antes), mostramos apenas o Status Screen oficial do MP.
+  const activePaymentId = paymentPending?.paymentId ?? existingPixPaymentId ?? null;
+
+  if (activePaymentId) {
+    return (
+      <MainLayout>
+        <section className="bg-white min-h-[calc(100vh-180px)] flex items-center justify-center p-8">
+          <div className="max-w-[540px] w-full space-y-6">
+            <h1 className="text-h4 font-heading text-green-800 text-center">Acompanhe seu pagamento</h1>
+            <p className="text-body-m text-green-800/70 text-center">
+              Esta tela mostra o Status Screen Brick oficial do Mercado Pago para o pagamento criado.
+            </p>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <StatusScreen
+                initialization={{ paymentId: activePaymentId }}
+                onReady={() => {
+                  // opcional: esconder loading próprio
+                }}
+                onError={(error) => {
+                  console.error("Status Screen Brick error", error);
+                }}
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Link href={`/account/orders/${orderId}`}>
+                <Button variant="secondary" colorTheme="green" className="w-full sm:w-auto">Ver pedido</Button>
+              </Link>
+              <Link href="/account/orders">
+                <Button variant="primary" colorTheme="pistachio" className="w-full sm:w-auto">Meus pedidos</Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </MainLayout>
+    );
+  }
+
   if (loading || !publicKey || !mpReady) {
     return (
       <MainLayout>
@@ -205,7 +284,8 @@ export default function CheckoutPayPage() {
               }}
               customization={{
                 paymentMethods: {
-                  ticket: "all",
+                  // Desabilita boleto: array vazio em vez de "all"/"bolbradesco"
+                  ticket: [],
                   bankTransfer: "all",
                   creditCard: "all",
                   debitCard: "all",

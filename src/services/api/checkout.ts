@@ -9,7 +9,7 @@ export interface CheckoutItem {
 
 export interface CheckoutBody {
   shipping_address_id: number;
-  shipping_method: "standard_fixed";
+  shipping_method: "entrega_propria";
   /** Only the code; backend validates and applies discount. Never send discount amount. */
   coupon_code?: string;
   items: CheckoutItem[];
