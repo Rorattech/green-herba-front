@@ -7,16 +7,18 @@ import { getOrder } from "@/src/services/api/orders";
 import { formatCurrency } from "@/src/utils/format";
 import type { ApiOrder } from "@/src/types/api-resources";
 import { Button } from "@/src/components/ui/Button";
+import { OrderStatusTimeline } from "@/src/components/order/OrderStatusTimeline";
 import { ArrowLeft } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   pending: "Pendente",
-  pending_payment: "Aguardando pagamento",
-  processing: "Em processamento",
+  pending_payment: "Pagamento pendente",
+  processing: "Pronto para envio",
   shipped: "Enviado",
   delivered: "Entregue",
   cancelled: "Cancelado",
   paid: "Pago",
+  ready_to_ship: "Pronto para envio",
 };
 
 export default function OrderDetailPage() {
@@ -65,6 +67,8 @@ export default function OrderDetailPage() {
         <span>Data: {new Date(order.created_at).toLocaleDateString("pt-BR")}</span>
         <span className="font-medium text-green-800 uppercase">{statusLabel[order.status] ?? order.status}</span>
       </div>
+
+      <OrderStatusTimeline currentStatus={order.status} />
 
       {order.items && order.items.length > 0 && (
         <div>

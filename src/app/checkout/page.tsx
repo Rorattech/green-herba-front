@@ -26,6 +26,46 @@ function getItemSubtotal(item: { product: Product; quantity: number }): number {
   return price * item.quantity;
 }
 
+/**
+ * Pré-valida o cupom contra a lista (GET /api/coupons) e calcula o desconto estimado.
+ * A validação definitiva é sempre no backend ao criar o pedido (POST /api/checkout).
+ */
+function validateCouponAgainstList(
+  coupons: ApiCoupon[],
+  code: string,
+  subtotal: number
+): { valid: true; discountAmount: number } | { valid: false; error: string } {
+  const trimmed = code.trim();
+  if (!trimmed) return { valid: false, error: "Digite o código do cupom." };
+
+  const coupon = coupons.find((c) => c.code.trim().toUpperCase() === trimmed.toUpperCase());
+  if (!coupon) return { valid: false, error: "O cupom informado é inválido." };
+
+  if (coupon.remaining_usage != null && coupon.remaining_usage <= 0) {
+    return { valid: false, error: "Este cupom não possui mais usos disponíveis." };
+  }
+
+  const minOrder = coupon.min_order_amount ? parseFloat(coupon.min_order_amount) : null;
+  if (minOrder != null && !Number.isNaN(minOrder) && subtotal < minOrder) {
+    return { valid: false, error: `Pedido mínimo para este cupom: ${formatCurrency(minOrder)}` };
+  }
+
+  const discountValue = parseFloat(coupon.discount_value) || 0;
+  let discountAmount = 0;
+  if (coupon.discount_type === "percentage") {
+    discountAmount = (subtotal * discountValue) / 100;
+    const maxDiscount = coupon.max_discount ? parseFloat(coupon.max_discount) : null;
+    if (maxDiscount != null && !Number.isNaN(maxDiscount)) {
+      discountAmount = Math.min(discountAmount, maxDiscount);
+    }
+  } else {
+    discountAmount = Math.min(discountValue, subtotal);
+  }
+  discountAmount = Math.round(discountAmount * 100) / 100;
+
+  return { valid: true, discountAmount };
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -34,12 +74,38 @@ export default function CheckoutPage() {
   const [coupons, setCoupons] = useState<ApiCoupon[]>([]);
   const [shippingAddressId, setShippingAddressId] = useState<number | "">("");
   const [couponCode, setCouponCode] = useState("");
+  const [appliedCouponDiscount, setAppliedCouponDiscount] = useState<number | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const subtotal = getTotalPrice();
   const shipping = subtotal >= SHIPPING_FREE_THRESHOLD ? 0 : SHIPPING_COST;
-  const total = subtotal + shipping;
+  const discount = appliedCouponDiscount ?? 0;
+  const total = Math.max(0, subtotal + shipping - discount);
+
+  function handleApplyCoupon() {
+    const code = couponCode.trim();
+    if (!code) return;
+    setCouponError(null);
+    if (coupons.length === 0) {
+      setCouponError("Lista de cupons ainda não carregada. O cupom será validado ao finalizar.");
+      return;
+    }
+    const result = validateCouponAgainstList(coupons, code, subtotal);
+    if (result.valid) {
+      setAppliedCouponDiscount(result.discountAmount);
+    } else {
+      setCouponError(result.error);
+      setAppliedCouponDiscount(null);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setCouponCode("");
+    setAppliedCouponDiscount(null);
+    setCouponError(null);
+  }
 
   useEffect(() => {
     if (!user) {
@@ -58,7 +124,7 @@ export default function CheckoutPage() {
             router.replace(`/account/prescriptions?missing_prescription=1&product_id=${productId}`);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
     getAddresses()
       .then((list) => {
@@ -68,7 +134,7 @@ export default function CheckoutPage() {
         else if (list.length === 1) setShippingAddressId(list[0].id);
       })
       .catch(() => setError("Erro ao carregar endereços."));
-    getCoupons().then(setCoupons).catch(() => {});
+    getCoupons().then(setCoupons).catch(() => { });
   }, [user, router, items]);
 
   async function handlePlaceOrder(e: React.FormEvent) {
@@ -95,9 +161,10 @@ export default function CheckoutPage() {
       clearCart();
       router.push(`/checkout/pay/${order.order.id}`);
     } catch (err) {
+      // 422 pode vir com errors.coupon_code ou só message (ex.: success: false, message: "Invalid or expired coupon")
       const msg =
-        err instanceof ApiError && err.errors?.coupon_code?.[0]
-          ? err.errors.coupon_code[0]
+        err instanceof ApiError
+          ? (err.errors?.coupon_code?.[0] ?? err.message)
           : err instanceof Error
             ? err.message
             : "Erro ao criar pedido. Tente novamente.";
@@ -173,7 +240,7 @@ export default function CheckoutPage() {
 
             <div>
               <h2 className="text-h6 font-heading text-green-800 mb-2">Cupom</h2>
-              {coupons.length > 0 && (
+              {/* {coupons.length > 0 && (
                 <ul className="mb-3 space-y-2">
                   {coupons.map((c) => (
                     <li key={c.code} className="text-body-s text-green-800/80">
@@ -185,20 +252,49 @@ export default function CheckoutPage() {
                     </li>
                   ))}
                 </ul>
+              )} */}
+              {appliedCouponDiscount != null && appliedCouponDiscount > 0 ? (
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <span className="text-body-m font-medium text-green-800">
+                    Cupom <span className="font-mono">{couponCode}</span> aplicado. Desconto: {formatCurrency(appliedCouponDiscount)}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    colorTheme="pistachio"
+                    className="text-body-s"
+                    onClick={handleRemoveCoupon}
+                  >
+                    Remover
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Código do cupom"
+                    value={couponCode}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value.toUpperCase());
+                      setAppliedCouponDiscount(null);
+                      setCouponError(null);
+                      if (error) setError(null);
+                    }}
+                    className="border border-gray-300 rounded px-3 py-2 text-body-m w-full max-w-[200px]"
+                  />
+                  <Button
+                    type="button"
+                    variant="primary"
+                    colorTheme="pistachio"
+                    className="text-body-s"
+                    disabled={!couponCode.trim()}
+                    onClick={handleApplyCoupon}
+                  >
+                    Aplicar
+                  </Button>
+                </div>
               )}
-              <input
-                type="text"
-                placeholder="Código do cupom"
-                value={couponCode}
-                onChange={(e) => {
-                  setCouponCode(e.target.value);
-                  if (error) setError(null);
-                }}
-                className="border border-gray-300 rounded px-3 py-2 text-body-m w-full max-w-xs"
-              />
-              <p className="mt-1 text-body-s text-gray-500">
-                O desconto é validado e aplicado automaticamente no pagamento.
-              </p>
+              {couponError && <p className="mt-2 text-body-s text-error font-medium">{couponError}</p>}
             </div>
 
             <div>
@@ -242,6 +338,12 @@ export default function CheckoutPage() {
                   {shipping === 0 ? "Grátis" : formatCurrency(shipping)}
                 </span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-body-m text-green-700">
+                  <span>Desconto (cupom)</span>
+                  <span className="font-medium">-{formatCurrency(discount)}</span>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center">

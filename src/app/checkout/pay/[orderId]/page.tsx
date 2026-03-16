@@ -94,7 +94,6 @@ export default function CheckoutPayPage() {
       const installments = Math.max(1, Math.floor(Number(fd.installments ?? 1)));
 
       const body: ProcessPaymentBody = {
-        token,
         payment_method_id: paymentMethodId,
         transaction_amount: transactionAmount,
         installments,
@@ -106,6 +105,7 @@ export default function CheckoutPayPage() {
         order_id: orderId,
         payment_type: p?.paymentType ?? p?.selectedPaymentMethod,
       };
+      if (isCard && token) body.token = token;
       if (fd.issuer_id != null) body.issuer_id = String(fd.issuer_id);
       if (fd.issuerId != null) body.issuer_id = String(fd.issuerId);
 
@@ -193,9 +193,9 @@ export default function CheckoutPayPage() {
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] py-8 md:py-12">
         <div className="container mx-auto px-4 md:px-0 max-w-2xl">
-          <h1 className="text-h4 font-heading text-green-800 mb-6">Pagamento — Checkout Bricks</h1>
+          <h1 className="text-h4 font-heading text-green-800 mb-6">Escolha a forma de pagamento</h1>
           <p className="text-body-m text-green-800/70 mb-8">
-            Escolha a forma de pagamento e preencha os dados. Pagamento seguro pelo Mercado Pago.
+            Pagamento seguro pelo Mercado Pago.
           </p>
           <div className="min-h-[400px]">
             <Payment
@@ -215,7 +215,7 @@ export default function CheckoutPayPage() {
               }}
               locale="pt"
               onSubmit={handleSubmit}
-              onReady={() => {}}
+              onReady={() => { }}
               onError={(err) => {
                 setError(err?.message ?? "Erro no checkout.");
               }}

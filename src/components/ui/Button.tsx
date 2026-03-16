@@ -8,7 +8,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 type ButtonBaseProps = {
-  variant?: 'primary' | 'soft' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'soft' | 'outline' | 'ghost';
   colorTheme?: 'green' | 'pistachio' | 'gray' | 'white';
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
@@ -40,13 +40,19 @@ export const Button = ({
     ? "aspect-square p-2" 
     : "px-8 py-4";
 
-  // Mapeamento de Cores
-  const variantStyles = {
+  // Mapeamento de Cores (secondary = soft)
+  const variantStyles: Record<string, Record<string, string>> = {
     primary: {
       green: "bg-green-700 text-green-100 hover:bg-green-800",
       pistachio: "bg-green-200 text-green-700 hover:bg-green-800 hover:text-green-100",
       gray: "bg-gray-300 text-green-700 hover:bg-gray-400",
       white: "bg-white text-green-700 hover:bg-green-200 hover:text-green-100",
+    },
+    secondary: {
+      green: "bg-green-100 text-green-700 hover:bg-green-200",
+      pistachio: "bg-green-100 text-green-600 hover:bg-green-200",
+      gray: "bg-gray-100 text-gray-500 hover:bg-gray-200",
+      white: "bg-white/20 text-green-100 hover:bg-white/30 backdrop-blur-sm",
     },
     soft: {
       green: "bg-green-100 text-green-700 hover:bg-green-200",
@@ -68,9 +74,13 @@ export const Button = ({
     }
   };
 
+  const variantKey = variant ?? 'primary';
+  const themeKey = colorTheme ?? 'green';
+  const style = variantStyles[variantKey]?.[themeKey] ?? variantStyles.primary.green;
+
   const classes = cn(
     baseClasses,
-    variantStyles[variant][colorTheme],
+    style,
     sizeClasses,
     className
   );
