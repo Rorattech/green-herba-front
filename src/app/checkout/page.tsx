@@ -19,7 +19,7 @@ import type { ApiCoupon } from "@/src/types/api-resources";
 import type { Product } from "@/src/types/product";
 
 const SHIPPING_FREE_THRESHOLD = 50;
-const SHIPPING_COST = 10;
+const SHIPPING_COST = 0;
 
 function getItemSubtotal(item: { product: Product; quantity: number }): number {
   const price = parseFloat(String(item.product.price).replace(/[^0-9.-]+/g, "")) || 0;
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
     try {
       const order = await createOrder({
         shipping_address_id: addressId,
-        shipping_method: "standard_fixed",
+        shipping_method: "entrega_propria",
         coupon_code: couponCode.trim() || undefined,
         items: items.map((i) => ({
           product_id: Number(i.product.id),

@@ -447,8 +447,8 @@ export default function ProductInternalPage() {
                     <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                             <Truck size={32} />
-                            <h3 className="text-h5 font-heading">Frete grátis acima de R$ 50</h3>
-                            <p className="text-body-m opacity-80">Entregue na sua porta sem taxas ocultas.</p>
+                            <h3 className="text-h5 font-heading">Entrega rápida e rastreável</h3>
+                            <p className="text-body-m opacity-80">Seu pedido acompanhado do envio até a porta da sua casa.</p>
                         </div>
                         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                             <RotateCcw size={32} />
@@ -595,7 +595,7 @@ export default function ProductInternalPage() {
 
                                 <div className="flex items-center gap-2 text-body-s text-green-800/60 pt-2">
                                     <Truck size={16} />
-                                    <span>Frete grátis acima de R$ 50</span>
+                                    <span>Entrega rápida e segura em todo o Brasil</span>
                                 </div>
                             </div>
 
@@ -634,7 +634,7 @@ export default function ProductInternalPage() {
                 <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <Truck size={32} />
-                        <h3 className="text-h5 font-heading">Frete grátis acima de R$ 50</h3>
+                        <h3 className="text-h5 font-heading">Entrega rápida e rastreável</h3>
                         <p className="text-body-m opacity-80">Entregue na sua porta sem taxas ocultas.</p>
                     </div>
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">

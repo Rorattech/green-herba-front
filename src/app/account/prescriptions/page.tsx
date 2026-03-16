@@ -49,8 +49,16 @@ function PrescriptionsContent() {
       if (!productId) setError("Selecione o produto relacionado à prescrição.");
       return;
     }
-    if (!file.type.includes("pdf") && !file.type.startsWith("image/")) {
-      setError("Envie um arquivo PDF ou imagem (máx. 5MB).");
+    // Apenas PDF, até 5MB
+    const maxSizeBytes = 5 * 1024 * 1024;
+    if (!file.type.includes("pdf")) {
+      setError("Envie apenas arquivo em PDF (máx. 5MB).");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    if (file.size > maxSizeBytes) {
+      setError("O arquivo deve ter no máximo 5MB.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
     setError(null);
@@ -72,7 +80,7 @@ function PrescriptionsContent() {
     <div className="space-y-6">
       <h2 className="text-h5 font-heading text-green-800">Prescrições médicas</h2>
       <p className="text-body-m text-green-800/70 max-w-lg">
-        Envie sua prescrição médica (PDF, máx. 5MB) vinculada a um produto. Você poderá acompanhar aqui se foi aprovada.
+        Envie sua prescrição médica em PDF (máx. 5MB) vinculada a um produto. Você poderá acompanhar aqui se foi aprovada.
       </p>
 
       {missingPrescription && (
@@ -111,7 +119,7 @@ function PrescriptionsContent() {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,image/*"
+          accept=".pdf,application/pdf"
           className="hidden"
           onChange={handleFileChange}
         />
