@@ -18,17 +18,16 @@ export default function AccountEditPage() {
     e.preventDefault();
     setError(null);
     const form = e.currentTarget;
-    const firstName = (form.elements.namedItem("first-name") as HTMLInputElement)?.value?.trim();
-    const lastName = (form.elements.namedItem("last-name") as HTMLInputElement)?.value?.trim();
+    const name = (form.elements.namedItem("name") as HTMLInputElement)?.value?.trim() || "";
     const rawPhone = (form.elements.namedItem("phone") as HTMLInputElement)?.value?.trim() || "";
     const rawDoc = (form.elements.namedItem("document_number") as HTMLInputElement)?.value?.trim() || "";
     const phone = rawPhone ? rawPhone.replace(/\D/g, "") : undefined;
     const document_number = rawDoc ? rawDoc.replace(/\D/g, "") : undefined;
-    updateUser({ firstName, lastName });
     setLoading(true);
     try {
-      const updated = await updateProfile({ phone, document_number });
+      const updated = await updateProfile({ name: name || undefined, phone, document_number });
       updateUser({
+        name: updated.name,
         phone: updated.phone,
         document_number: updated.document_number,
       });
@@ -48,24 +47,15 @@ export default function AccountEditPage() {
           <p className="text-body-s text-success font-medium">Dados salvos com sucesso.</p>
         )}
         {error && <p className="text-body-s text-error font-medium">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Input
-            name="first-name"
-            id="first-name"
-            label="Nome"
-            placeholder="Seu nome"
-            colorTheme="light"
-            defaultValue={user.firstName ?? user.name?.split(" ")[0]}
-          />
-          <Input
-            name="last-name"
-            id="last-name"
-            label="Sobrenome"
-            placeholder="Seu sobrenome"
-            colorTheme="light"
-            defaultValue={user.lastName ?? user.name?.split(" ").slice(1).join(" ")}
-          />
-        </div>
+        <Input
+          name="name"
+          id="name"
+          label="Nome completo"
+          placeholder="Seu nome completo"
+          colorTheme="light"
+          defaultValue={user.name ?? ""}
+          required
+        />
         <Input
           name="email"
           id="email"

@@ -1,4 +1,5 @@
 import { apiGet, apiPost, setStoredToken, clearStoredToken } from "@/src/lib/api-client";
+import { hashPassword } from "@/src/lib/password";
 import type { ApiUser } from "@/src/types/api-resources";
 import type { User } from "@/src/types/user";
 
@@ -42,14 +43,16 @@ export interface AuthResponse {
 }
 
 export async function register(body: RegisterBody): Promise<AuthData> {
-  const res = await apiPost<AuthResponse>("/api/auth/register", body, true);
+  const password = await hashPassword(body.password);
+  const res = await apiPost<AuthResponse>("/api/auth/register", { ...body, password }, true);
   const token = res.data.token;
   setStoredToken(token);
   return { user: mapApiUserToUser(res.data.user), token };
 }
 
 export async function login(body: LoginBody): Promise<AuthData> {
-  const res = await apiPost<AuthResponse>("/api/auth/login", body, true);
+  const password = await hashPassword(body.password);
+  const res = await apiPost<AuthResponse>("/api/auth/login", { ...body, password }, true);
   const token = res.data.token;
   setStoredToken(token);
   return { user: mapApiUserToUser(res.data.user), token };
@@ -82,5 +85,11 @@ export interface ResetPasswordBody {
 }
 
 export async function resetPassword(body: ResetPasswordBody): Promise<void> {
-  await apiPost<{ message: string }>("/api/auth/reset-password", body, true);
+  const password = await hashPassword(body.password);
+  const password_confirmation = await hashPassword(body.password_confirmation);
+  await apiPost<{ message: string }>(
+    "/api/auth/reset-password",
+    { ...body, password, password_confirmation },
+    true
+  );
 }

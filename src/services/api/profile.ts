@@ -19,6 +19,7 @@ function mapApiUserToUser(api: ApiUser): User {
 }
 
 export interface UpdateProfileBody {
+  name?: string;
   phone?: string;
   document_number?: string;
 }
