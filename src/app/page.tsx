@@ -3,7 +3,7 @@ import TopProducts from "../components/top-products/TopProducts";
 import HomeCategories from "../components/home-categories/HomeCategories";
 import MainLayout from "../layouts/MainLayout";
 import { fetchHealth } from "../lib/api";
-import HomeTestimonials from "../components/home-testimonials/HomeTestimonials";
+// import HomeTestimonials from "../components/home-testimonials/HomeTestimonials";
 import AllProducts from "../components/all-products/AllProcuts";
 import { fetchProductsMapped } from "../services/api/products";
 
@@ -30,7 +30,7 @@ export default async function Home() {
         <Hero />
         <TopProducts products={topProducts} productsLoadFailed={productsLoadFailed} />
         <HomeCategories />
-        <HomeTestimonials />
+        {/* <HomeTestimonials /> */}
         <AllProducts products={allProducts} productsLoadFailed={productsLoadFailed} />
       </MainLayout>
     </>

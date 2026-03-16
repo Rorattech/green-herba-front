@@ -147,6 +147,214 @@ function AddToCartButton({ product }: { product: Product }) {
     );
 }
 
+type GalleryItem = { url: string; alt: string };
+
+function ProductGallery({
+    galleryItems,
+    effectiveProduct,
+}: {
+    galleryItems: GalleryItem[];
+    effectiveProduct: Product;
+}) {
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const mainImage = galleryItems[selectedImageIndex] ?? galleryItems[0] ?? (effectiveProduct?.image ? { url: effectiveProduct.image, alt: effectiveProduct.name } : null);
+
+    useEffect(() => {
+        if (!lightboxOpen) return;
+        const onEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setLightboxOpen(false);
+        };
+        window.addEventListener("keydown", onEscape);
+        return () => window.removeEventListener("keydown", onEscape);
+    }, [lightboxOpen]);
+
+    return (
+        <div className={galleryItems.length > 1 ? "flex flex-col gap-4" : "space-y-4"}>
+            <div
+                className={`relative block w-full bg-gray-100 overflow-hidden group ${galleryItems.length > 1 ? "aspect-4/3" : "aspect-square"}`}
+            >
+                <button
+                    type="button"
+                    onClick={() => mainImage && setLightboxOpen(true)}
+                    className={`absolute inset-0 w-full h-full text-left z-0 ${mainImage ? "cursor-zoom-in" : ""}`}
+                    aria-label="Ampliar imagem"
+                >
+                    {mainImage && (
+                        <Image
+                            src={mainImage.url}
+                            alt={mainImage.alt}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-contain p-8 md:p-12 transition-transform duration-500 group-hover:scale-105"
+                            priority
+                        />
+                    )}
+                </button>
+                {galleryItems.length > 1 && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
+                            }}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
+                            aria-label="Imagem anterior"
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
+                            }}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
+                            aria-label="Próxima imagem"
+                        >
+                            <ArrowRight size={20} />
+                        </button>
+                    </>
+                )}
+                <div className="absolute top-6 right-6 z-10 pointer-events-none">
+                    <Badge variant={effectiveProduct.badgeVariant}>
+                        {effectiveProduct.badgeLabel}
+                    </Badge>
+                </div>
+            </div>
+            {galleryItems.length > 1 && (
+                <div className="flex items-center gap-3">
+                    {galleryItems.length <= 4 ? (
+                        <div className="grid grid-cols-4 gap-3 w-full">
+                            {galleryItems.map((item, i) => (
+                                <button
+                                    key={i}
+                                    type="button"
+                                    onClick={() => setSelectedImageIndex(i)}
+                                    className={`relative aspect-square w-full overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
+                                                        }`}
+                                    aria-label={`Ver imagem ${i + 1}`}
+                                >
+                                    <Image
+                                        src={item.url}
+                                        alt={item.alt}
+                                        fill
+                                        sizes="(max-width: 768px) 22vw, 120px"
+                                        className="object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <>
+                            <Button
+                                variant="outline"
+                                colorTheme="green"
+                                isIconOnly
+                                className="prev-gallery shrink-0 w-9 h-9"
+                                aria-label="Imagens anteriores"
+                                iconLeft={<ArrowLeft size={16} />}
+                            />
+                            <Swiper
+                                modules={[Navigation]}
+                                spaceBetween={12}
+                                slidesPerView={4}
+                                navigation={{ prevEl: ".prev-gallery", nextEl: ".next-gallery" }}
+                                className="flex-1 min-w-0"
+                            >
+                                {galleryItems.map((item, i) => (
+                                    <SwiperSlide key={i}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedImageIndex(i)}
+                                            className={`relative block w-full aspect-square overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
+                                                                }`}
+                                            aria-label={`Ver imagem ${i + 1}`}
+                                        >
+                                            <Image
+                                                src={item.url}
+                                                alt={item.alt}
+                                                fill
+                                                sizes="120px"
+                                                className="object-cover"
+                                            />
+                                        </button>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                            <Button
+                                variant="outline"
+                                colorTheme="green"
+                                isIconOnly
+                                className="next-gallery shrink-0 w-9 h-9"
+                                aria-label="Próximas imagens"
+                                iconRight={<ArrowRight size={16} />}
+                            />
+                        </>
+                    )}
+                </div>
+            )}
+
+            {lightboxOpen && mainImage && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+                    onClick={() => setLightboxOpen(false)}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Visualização em tela cheia"
+                >
+                    <button
+                        type="button"
+                        onClick={() => setLightboxOpen(false)}
+                        className="absolute top-4 right-4 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                        aria-label="Fechar"
+                    >
+                        <X size={28} />
+                    </button>
+                    {galleryItems.length > 1 && (
+                        <>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
+                                }}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                                aria-label="Imagem anterior"
+                            >
+                                <ArrowLeft size={28} />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
+                                }}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
+                                aria-label="Próxima imagem"
+                            >
+                                <ArrowRight size={28} />
+                            </button>
+                        </>
+                    )}
+                    <div
+                        className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={mainImage.url}
+                            alt={mainImage.alt}
+                            className="max-w-full max-h-[85vh] w-auto h-auto object-contain"
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function ProductInternalPage() {
     const { id } = useParams<{ id: string }>();
     const slug = typeof id === "string" ? id : undefined;
@@ -163,33 +371,23 @@ export default function ProductInternalPage() {
         if (!effectiveProduct) return [];
         const base = getApiBaseUrlForResources();
         if (apiProduct?.images?.length) {
-            return apiProduct.images.map((img) => ({
-                url: img.url ?? `${base}/storage/${img.file_path}`,
-                alt: img.alt_text ?? effectiveProduct?.name ?? "Produto",
-            }));
+            return apiProduct.images.map((img) => {
+                const url = img.url ?? `${base}/storage/${img.file_path}`;
+                const normalizedUrl = url.replace(
+                    /^https:\/\/pharma-green-backend\.onrender\.com/,
+                    base
+                );
+                return {
+                    url: normalizedUrl,
+                    alt: img.alt_text ?? effectiveProduct?.name ?? "Produto",
+                };
+            });
         }
         if (effectiveProduct.image) {
             return [{ url: effectiveProduct.image, alt: effectiveProduct.name }];
         }
         return [];
-    }, [apiProduct?.images, effectiveProduct]);
-
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const [lightboxOpen, setLightboxOpen] = useState(false);
-    const mainImage = galleryItems[selectedImageIndex] ?? galleryItems[0] ?? (effectiveProduct?.image ? { url: effectiveProduct.image, alt: effectiveProduct.name } : null);
-
-    useEffect(() => {
-        setSelectedImageIndex(0);
-    }, [slug]);
-
-    useEffect(() => {
-        if (!lightboxOpen) return;
-        const onEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setLightboxOpen(false);
-        };
-        window.addEventListener("keydown", onEscape);
-        return () => window.removeEventListener("keydown", onEscape);
-    }, [lightboxOpen]);
+    }, [apiProduct, effectiveProduct]);
 
     function refetchProduct() {
         if (!slug) return;
@@ -344,188 +542,13 @@ export default function ProductInternalPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-                        <div className={galleryItems.length > 1 ? "flex flex-col gap-4" : "space-y-4"}>
-                            <div
-                                className={`relative block w-full bg-gray-100 overflow-hidden group ${galleryItems.length > 1 ? "aspect-4/3" : "aspect-square"}`}
-                            >
-                                <button
-                                    type="button"
-                                    onClick={() => mainImage && setLightboxOpen(true)}
-                                    className={`absolute inset-0 w-full h-full text-left z-0 ${mainImage ? "cursor-zoom-in" : ""}`}
-                                    aria-label="Ampliar imagem"
-                                >
-                                    {mainImage && (
-                                        <Image
-                                            src={mainImage.url}
-                                            alt={mainImage.alt}
-                                            fill
-                                            sizes="(max-width: 768px) 100vw, 50vw"
-                                            className="object-contain p-8 md:p-12 transition-transform duration-500 group-hover:scale-105"
-                                            priority
-                                        />
-                                    )}
-                                </button>
-                                {galleryItems.length > 1 && (
-                                    <>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
-                                            }}
-                                            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
-                                            aria-label="Imagem anterior"
-                                        >
-                                            <ArrowLeft size={20} />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
-                                            }}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 hover:bg-white text-green-800 shadow focus:outline-none focus:ring-2 focus:ring-green-600"
-                                            aria-label="Próxima imagem"
-                                        >
-                                            <ArrowRight size={20} />
-                                        </button>
-                                    </>
-                                )}
-                                <div className="absolute top-6 right-6 z-10 pointer-events-none">
-                                    <Badge variant={effectiveProduct.badgeVariant}>
-                                        {effectiveProduct.badgeLabel}
-                                    </Badge>
-                                </div>
-                            </div>
-                            {galleryItems.length > 1 && (
-                                <div className="flex items-center gap-3">
-                                    {galleryItems.length <= 4 ? (
-                                        <div className="grid grid-cols-4 gap-3 w-full">
-                                            {galleryItems.map((item, i) => (
-                                                <button
-                                                    key={i}
-                                                    type="button"
-                                                    onClick={() => setSelectedImageIndex(i)}
-                                                    className={`relative aspect-square w-full overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
-                                                        }`}
-                                                    aria-label={`Ver imagem ${i + 1}`}
-                                                >
-                                                    <Image
-                                                        src={item.url}
-                                                        alt={item.alt}
-                                                        fill
-                                                        sizes="(max-width: 768px) 22vw, 120px"
-                                                        className="object-cover"
-                                                    />
-                                                </button>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <Button
-                                                variant="outline"
-                                                colorTheme="green"
-                                                isIconOnly
-                                                className="prev-gallery shrink-0 w-9 h-9"
-                                                aria-label="Imagens anteriores"
-                                                iconLeft={<ArrowLeft size={16} />}
-                                            />
-                                            <Swiper
-                                                modules={[Navigation]}
-                                                spaceBetween={12}
-                                                slidesPerView={4}
-                                                navigation={{ prevEl: ".prev-gallery", nextEl: ".next-gallery" }}
-                                                className="flex-1 min-w-0"
-                                            >
-                                                {galleryItems.map((item, i) => (
-                                                    <SwiperSlide key={i}>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setSelectedImageIndex(i)}
-                                                            className={`relative block w-full aspect-square overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
-                                                                }`}
-                                                            aria-label={`Ver imagem ${i + 1}`}
-                                                        >
-                                                            <Image
-                                                                src={item.url}
-                                                                alt={item.alt}
-                                                                fill
-                                                                sizes="120px"
-                                                                className="object-cover"
-                                                            />
-                                                        </button>
-                                                    </SwiperSlide>
-                                                ))}
-                                            </Swiper>
-                                            <Button
-                                                variant="outline"
-                                                colorTheme="green"
-                                                isIconOnly
-                                                className="next-gallery shrink-0 w-9 h-9"
-                                                aria-label="Próximas imagens"
-                                                iconRight={<ArrowRight size={16} />}
-                                            />
-                                        </>
-                                    )}
-                                </div>
-                            )}
-
-                            {lightboxOpen && mainImage && (
-                                <div
-                                    className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
-                                    onClick={() => setLightboxOpen(false)}
-                                    role="dialog"
-                                    aria-modal="true"
-                                    aria-label="Visualização em tela cheia"
-                                >
-                                    <button
-                                        type="button"
-                                        onClick={() => setLightboxOpen(false)}
-                                        className="absolute top-4 right-4 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
-                                        aria-label="Fechar"
-                                    >
-                                        <X size={28} />
-                                    </button>
-                                    {galleryItems.length > 1 && (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedImageIndex((i) => (i > 0 ? i - 1 : galleryItems.length - 1));
-                                                }}
-                                                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
-                                                aria-label="Imagem anterior"
-                                            >
-                                                <ArrowLeft size={28} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedImageIndex((i) => (i < galleryItems.length - 1 ? i + 1 : 0));
-                                                }}
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 text-white hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-white"
-                                                aria-label="Próxima imagem"
-                                            >
-                                                <ArrowRight size={28} />
-                                            </button>
-                                        </>
-                                    )}
-                                    <div
-                                        className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={mainImage.url}
-                                            alt={mainImage.alt}
-                                            className="max-w-full max-h-[85vh] w-auto h-auto object-contain"
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {effectiveProduct && (
+                            <ProductGallery
+                                key={slug}
+                                galleryItems={galleryItems}
+                                effectiveProduct={effectiveProduct}
+                            />
+                        )}
 
                         <div className="flex flex-col gap-6">
                             <div className="space-y-2">

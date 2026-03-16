@@ -62,14 +62,15 @@ export interface ApiPayment {
   updated_at: string;
 }
 
+/** Amounts may be string (e.g. "150.00") or number from backend. */
 export interface ApiOrder {
   id: number;
   order_number: string;
   status: string;
-  total_items_amount: number;
-  shipping_cost: number;
-  discount_amount: number;
-  total_amount: number;
+  total_items_amount: number | string;
+  shipping_cost: number | string;
+  discount_amount: number | string;
+  total_amount: number | string;
   currency: string;
   shipping_method: string;
   coupon_code: string | null;
@@ -122,12 +123,15 @@ export interface ApiPrescriptionStatus {
 export interface ApiCoupon {
   code: string;
   description: string | null;
-  discount_type: string;
-  discount_value: number;
+  discount_type: "percentage" | "fixed";
+  discount_value: string;
   starts_at: string | null;
   ends_at: string | null;
-  min_order_amount: number;
-  max_discount: number;
+  min_order_amount: string | null;
+  max_discount: string | null;
+  max_usage: number | null;
+  usage_count: number;
+  remaining_usage: number | null;
 }
 
 /** Standard pagination (products, orders, prescriptions) */

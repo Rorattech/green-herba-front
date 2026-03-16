@@ -18,7 +18,7 @@ export const Footer = () => (
                         />
                     </Link>
 
-                    <p className="text-green-100 text-body-m font-body font-medium">Faça parte da nossa comunidade, receba conteúdos exclusivos e garanta 10% no seu primeiro pedido.</p>
+                    <p className="text-green-100 text-body-m font-body font-medium">Faça parte da nossa comunidade, receba conteúdos exclusivos e garanta 5% no seu primeiro pedido.</p>
 
                     <p className="text-[10px] text-green-100/60">
                         Ao se inscrever, você concorda com nossos <a href="#" className="underline">Termos de serviço</a> e <a href="#" className="underline">Política de privacidade</a>.

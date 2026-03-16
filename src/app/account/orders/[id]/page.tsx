@@ -7,16 +7,18 @@ import { getOrder } from "@/src/services/api/orders";
 import { formatCurrency } from "@/src/utils/format";
 import type { ApiOrder } from "@/src/types/api-resources";
 import { Button } from "@/src/components/ui/Button";
+import { OrderStatusTimeline } from "@/src/components/order/OrderStatusTimeline";
 import { ArrowLeft } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   pending: "Pendente",
-  pending_payment: "Aguardando pagamento",
-  processing: "Em processamento",
+  pending_payment: "Pagamento pendente",
+  processing: "Pronto para envio",
   shipped: "Enviado",
   delivered: "Entregue",
   cancelled: "Cancelado",
   paid: "Pago",
+  ready_to_ship: "Pronto para envio",
 };
 
 export default function OrderDetailPage() {
@@ -66,6 +68,8 @@ export default function OrderDetailPage() {
         <span className="font-medium text-green-800 uppercase">{statusLabel[order.status] ?? order.status}</span>
       </div>
 
+      <OrderStatusTimeline currentStatus={order.status} />
+
       {order.items && order.items.length > 0 && (
         <div>
           <h3 className="text-h6 font-heading text-green-800 mb-2">Itens</h3>
@@ -87,7 +91,7 @@ export default function OrderDetailPage() {
       <div className="border border-gray-200 rounded-lg p-4 space-y-2">
         <p className="text-body-s text-gray-500">Subtotal: {formatCurrency(order.total_items_amount)}</p>
         <p className="text-body-s text-gray-500">Frete: {formatCurrency(order.shipping_cost)}</p>
-        {order.discount_amount > 0 && <p className="text-body-s text-gray-500">Desconto: -{formatCurrency(order.discount_amount)}</p>}
+        {(Number(order.discount_amount) || 0) > 0 && <p className="text-body-s text-gray-500">Desconto: -{formatCurrency(order.discount_amount)}</p>}
         <p className="text-body-m font-medium text-green-800">Total: {formatCurrency(order.total_amount)}</p>
       </div>
 

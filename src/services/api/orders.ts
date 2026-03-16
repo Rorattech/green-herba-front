@@ -28,7 +28,8 @@ export async function getPaymentPreference(orderId: number): Promise<PaymentPref
 }
 
 export interface ProcessPaymentBody {
-  token: string;
+  /** Obrigatório apenas para cartão (credit/debit). PIX e boleto não usam token. */
+  token?: string;
   issuer_id?: string;
   payment_method_id: string;
   transaction_amount: number;
@@ -38,7 +39,7 @@ export interface ProcessPaymentBody {
     first_name?: string;
     identification?: { type: string; number: string };
   };
-  /** Tipo retornado pelo Brick (credit_card, debit_card, ticket, etc.) — backend deve usar para chamar a API correta do MP */
+  /** Tipo retornado pelo Brick (credit_card, debit_card, bank_transfer/pix, etc.) — backend usa para chamar a API correta do MP */
   payment_type?: string;
   /** ID do pedido (recomendado enviar no body para o backend usar como external_reference na API do MP) */
   order_id?: number;

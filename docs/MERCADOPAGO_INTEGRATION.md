@@ -105,6 +105,42 @@ Se os pagamentos ainda aparecerem como cancelados após isso, o próximo passo �
 
 ---
 
+## Proxy de CEP (boleto / ticket) — 401 na API do Mercado Libre
+
+Ao pagar com **boleto** ou **ticket**, o Brick do Mercado Pago preenche endereço e, ao sair do campo de CEP, chama internamente:
+
+```http
+GET https://api.mercadolibre.com/countries/BR/zip_codes/{cep}
+```
+
+Essa API do Mercado Libre **exige** o header `Authorization: Bearer {ACCESS_TOKEN}`. No frontend só existe a **public key**, então a chamada sai sem token e o servidor responde **401 Unauthorized** ("authorization value not present").
+
+### Solução: proxy no backend
+
+O frontend intercepta essas chamadas e redireciona para o **backend**. O backend deve expor um endpoint que faz a requisição **autenticada** ao Mercado Libre e devolve a resposta.
+
+**Endpoint que o backend deve implementar:**
+
+| Método | Path | Descrição |
+|--------|------|-----------|
+| GET | `/api/mercadolibre/zip-codes/:country/:cep` | Proxy para `https://api.mercadolibre.com/countries/:country/zip_codes/:cep` |
+
+**Exemplo:** `GET /api/mercadolibre/zip-codes/BR/17030590`
+
+**O que o backend deve fazer:**
+
+1. Receber `country` (ex.: `BR`) e `cep` (apenas dígitos, ex.: `17030590`).
+2. Chamar `GET https://api.mercadolibre.com/countries/{country}/zip_codes/{cep}` com o header:
+   ```http
+   Authorization: Bearer {MERCADO_PAGO_ACCESS_TOKEN}
+   ```
+   Use o mesmo **Access Token** (credencial privada) que já existe para criar preferências/pagamentos no Mercado Pago.
+3. Retornar o corpo da resposta do Mercado Libre com status HTTP equivalente (ex.: 200 e JSON, ou 404 se o CEP não existir).
+
+**Frontend:** Na página de pagamento (`/checkout/pay/[orderId]`), o `fetch` é interceptado: quando a URL for `api.mercadolibre.com/countries/BR/zip_codes/{cep}`, a requisição é enviada para `{origin}/api-proxy/api/mercadolibre/zip-codes/BR/{cep}` (que o Next reescreve para o backend). Assim o Brick continua funcionando e o 401 deixa de ocorrer.
+
+---
+
 ## Avaliar um pagamento específico (MCP)
 
 Se você tiver um **payment_id** do Mercado Pago (de um pagamento que veio cancelado ou com problema), pode usar a ferramenta de avaliação de qualidade do MCP Mercado Pago com esse ID para ver o diagnóstico e recomendações. No Cursor, isso pode ser feito via MCP com o `payment_id` em questão.
