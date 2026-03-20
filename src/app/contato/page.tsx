@@ -21,14 +21,13 @@ export default function ContatoPage() {
       <section className="bg-white min-h-[calc(100vh-180px)] flex flex-col md:flex-row">
         <div className="relative w-full md:w-1/2 h-[280px] sm:h-[320px] md:h-auto md:min-h-[min(100%,640px)] overflow-hidden shrink-0">
           <Image
-            src={HERO_IMAGE}
+            src="/images/about-3.png"
             alt="Natureza e bem-estar — Green Herba Pharma"
             fill
             className="object-cover"
             priority
-            sizes="(max-width: 768px) 100vw, 50vw"
           />
-          <div className="absolute inset-0 bg-green-950/25" aria-hidden />
+          <div className="absolute inset-0 bg-green-950/35" aria-hidden="true" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
             <h2 className="text-white font-heading text-h3 md:text-h2 lg:text-h1 whitespace-nowrap opacity-90 text-center drop-shadow-md">
               Green Herba Pharma &nbsp; Green Herba Pharma &nbsp; Green Herba Pharma

@@ -14,7 +14,7 @@ export default function Hero() {
   const slides = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1617101814812-3529cf87b5ce?auto=format&fit=crop&q=80&w=1920",
+      image: "/images/Banner%201.png",
       alt: "Natureza",
       title: "A saúde que você procura começa aqui.",
       description: "Extraímos da natureza o que há de mais puro, com qualidade, segurança e responsabilidade.",
@@ -23,7 +23,7 @@ export default function Hero() {
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1605040056130-38d9faad3534?auto=format&fit=crop&q=80&w=1920",
+      image: "/images/Banner%202.png",
       alt: "Yoga",
       title: "Equilíbrio e bem-estar em harmonia com a natureza.",
       description: "Conheça nossa linha à base de cannabis, desenvolvidas para promover equilíbrio e qualidade de vida.",
@@ -32,7 +32,7 @@ export default function Hero() {
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1594841061289-1d892771c607?auto=format&fit=crop&q=80&w=1920",
+      image: "/images/Banner%203.png",
       alt: "Saúde",
       title: "Ciência e natureza a favor da sua saúde.",
       description: "Extraímos da natureza o que há de mais puro, com tecnologia e controle de qualidade.",

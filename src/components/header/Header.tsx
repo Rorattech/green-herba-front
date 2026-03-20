@@ -25,9 +25,13 @@ export const Header = () => {
   return (
     <header className="w-full border-b border-gray-300 sticky top-0 z-50 bg-white">
       <div className="flex flex-row items-center justify-center gap-2 p-2 bg-green-700">
-        <h3 className="text-green-100 text-body-m font-body font-medium">
+        <Link
+          href="/products"
+          className="text-green-100 text-body-m font-body font-medium hover:text-green-200 transition-colors"
+          aria-label="Ver produtos"
+        >
           Entrega rápida e segura para todo o Brasil
-        </h3>
+        </Link>
         <ArrowRight size={16} strokeWidth={1.5} color="white" />
       </div>
 

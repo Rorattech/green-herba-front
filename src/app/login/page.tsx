@@ -50,11 +50,15 @@ export default function LoginPage() {
 
         <div className="relative w-full md:w-1/2 h-[300px] md:h-auto overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1532765488483-62ff440ee4fd?q=90&w=1920"
+            src="/images/about-3.png"
             alt="Terra Health Life"
             fill
             className="object-cover"
             priority
+          />
+          <div
+            className="absolute inset-0 bg-green-950/35"
+            aria-hidden="true"
           />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <h2 className="text-white font-heading text-h3 md:text-h2 lg:text-h1 whitespace-nowrap opacity-90">

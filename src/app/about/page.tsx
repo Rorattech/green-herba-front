@@ -16,7 +16,7 @@ export default function AboutPage() {
                     <SatisfiedCustomers variant="content" />
                     <span className="text-sub-s font-normal uppercase tracking-widest text-gray-500">Nossa abordagem</span>
                     <h1 className="text-h3 md:text-h1 font-heading text-green-800 leading-tight">
-                        Cuidado contínuo para uma saúde duradoura 
+                        Cuidado contínuo para uma saúde duradoura
                     </h1>
                     <p className="text-body-m text-green-800/70 max-w-md">
                         A Green Herba Pharma nasceu com o propósito de oferecer soluções terapêuticas seguras e baseadas em ciência. Acreditamos que o bem-estar sustentável é construído por meio de acompanhamento responsável, rigor técnico e excelência em qualidade farmacêutica.
@@ -29,7 +29,7 @@ export default function AboutPage() {
                 </div>
                 <div className="w-full md:w-1/2 relative h-100 md:h-auto">
                     <Image
-                        src="https://images.unsplash.com/photo-1625188770425-bb118b81eb4e?q=80&w=1200"
+                        src="/images/about-1.png"
                         alt="Textura de folha natural"
                         fill
                         className="object-cover"
@@ -53,7 +53,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 md:px-6 lg:px-8 flex flex-col md:flex-row gap-16 items-center">
                     <div className="w-full md:w-1/2 relative h-125 overflow-hidden">
                         <Image
-                            src="https://images.unsplash.com/photo-1536964310528-e47dd655ecf3?q=80&w=1200"
+                            src="/images/about-2.png"
                             alt="Agricultura sustentável"
                             fill
                             className="object-cover"
