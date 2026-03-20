@@ -8,7 +8,7 @@ export default function HomeCategories() {
     ];
 
     return (
-        <section className="bg-green-700 py-10 md:py-14 px-4 md:px-0">
+        <section className="bg-green-700 py-10 md:py-14 px-4 md:px-6 lg:px-8">
             <div className="container mx-auto">
                 <div className="mb-8">
                     <h2 className="font-heading text-h3 md:text-h2 text-green-100 mb-4 leading-heading">

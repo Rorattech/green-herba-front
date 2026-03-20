@@ -22,7 +22,7 @@ export default function HomeTestimonials() {
 
   return (
     <section className="bg-white py-12 md:py-20">
-      <div className="container mx-auto px-4 md:px-0">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12 items-start">
           
           <div className="flex flex-col gap-6 md:col-span-full lg:col-span-1 lg:sticky lg:pt-14 lg:top-32">

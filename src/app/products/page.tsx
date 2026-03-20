@@ -44,8 +44,8 @@ function filterProducts(products: Product[], filters: ProductFilters): Product[]
         p.category,
         ...(p.categories?.map(c => c.name) || [])
       ].filter(Boolean).map(c => c?.toLowerCase());
-      
-      return filters.categories.some(filterCat => 
+
+      return filters.categories.some(filterCat =>
         productCategories.includes(filterCat.toLowerCase())
       );
     });
@@ -80,7 +80,7 @@ function filterProducts(products: Product[], filters: ProductFilters): Product[]
 
 function sortProducts(products: Product[], sort: ProductSort): Product[] {
   const sorted = [...products];
-  
+
   switch (sort.field) {
     case 'name':
       sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -99,8 +99,18 @@ function sortProducts(products: Product[], sort: ProductSort): Product[] {
         return priceB - priceA;
       });
       break;
+    case 'bestsellers':
+      sorted.sort((a, b) => {
+        const rA = a.rating ?? 0;
+        const rB = b.rating ?? 0;
+        if (rB !== rA) return rB - rA;
+        const cA = a.reviewsCount ?? 0;
+        const cB = b.reviewsCount ?? 0;
+        return cB - cA;
+      });
+      break;
   }
-  
+
   return sorted;
 }
 
@@ -113,7 +123,8 @@ function ProductsContent() {
   const router = useRouter();
   const searchQuery = searchParams.get('q') ?? '';
   const categoryParam = searchParams.get('category') ?? '';
-  
+  const sortFromUrl = searchParams.get('sort');
+
   const {
     filters,
     sort,
@@ -130,7 +141,7 @@ function ProductsContent() {
     maxPrice: null,
     requiresPrescription: null,
   });
-  
+
   // Estado para filtros aplicados (usados na filtragem)
   const [appliedFilters, setAppliedFilters] = useState<ProductFilters>({
     categories: [],
@@ -155,6 +166,12 @@ function ProductsContent() {
     setTempFilters(filters);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (sortFromUrl === 'bestsellers') {
+      setSort({ field: 'bestsellers' });
+    }
+  }, [sortFromUrl, setSort]);
 
   // Aplicar filtros quando clicar em Apply
   const applyFilters = () => {
@@ -221,23 +238,23 @@ function ProductsContent() {
 
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = products;
-    
+
     // Primeiro filtra por categoria da URL (se houver)
     if (categoryParam) {
       filtered = filterProductsByCategory(filtered, categoryParam);
     }
-    
+
     // Depois aplica os filtros do sidebar (mobile ou desktop)
     filtered = filterProducts(filtered, activeFilters);
-    
+
     // Depois filtra por query de busca
     if (searchQuery) {
       filtered = filterProductsByQuery(filtered, searchQuery);
     }
-    
+
     // Por fim, ordena
     filtered = sortProducts(filtered, sort);
-    
+
     return filtered;
   }, [products, searchQuery, categoryParam, activeFilters, sort]);
 
@@ -282,7 +299,7 @@ function ProductsContent() {
   return (
     <MainLayout>
       <section className="bg-white min-h-screen">
-        <div className="container mx-auto px-4 md:px-0 py-10 md:py-16">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-16">
 
           <div className="mb-8 md:mb-12">
             <h1 className="text-h3 md:text-h2 font-heading text-green-800 mb-6 md:mb-8">
@@ -299,8 +316,8 @@ function ProductsContent() {
                 >
                   <SlidersHorizontal size={16} />
                   {isFilterOpen ? 'Ocultar filtros' : 'Mostrar filtros'} {(() => {
-                    const activeCount = appliedFilters.categories.length + 
-                      (appliedFilters.minRating !== null ? 1 : 0) + 
+                    const activeCount = appliedFilters.categories.length +
+                      (appliedFilters.minRating !== null ? 1 : 0) +
                       (appliedFilters.minPrice !== null || appliedFilters.maxPrice !== null ? 1 : 0);
                     return activeCount > 0 ? `(${activeCount})` : '';
                   })()}
@@ -309,14 +326,14 @@ function ProductsContent() {
                 <div className="hidden md:flex items-center gap-4">
                   {hasTempFiltersActive() && (
                     <>
-                      <button 
+                      <button
                         onClick={handleResetFilters}
                         className="text-body-s font-bold text-green-800/60 underline cursor-pointer hover:text-green-800"
                       >
                         Limpar tudo
                       </button>
-                      <Button 
-                        colorTheme="green" 
+                      <Button
+                        colorTheme="green"
                         className="px-6 py-2 h-auto"
                         onClick={applyFilters}
                       >
@@ -336,12 +353,13 @@ function ProductsContent() {
                   <ProductSearchBar />
                 </div>
                 <div className="w-full md:w-auto md:min-w-[200px]">
-                  <Select 
-                    label="Ordenar por" 
+                  <Select
+                    label="Ordenar por"
                     value={sort.field}
                     onChange={(e) => setSort({ field: e.target.value as ProductSort['field'] })}
                   >
                     <option value="name">Nome</option>
+                    <option value="bestsellers">Mais vendidos</option>
                     <option value="price-low">Preço: Menor para Maior</option>
                     <option value="price-high">Preço: Maior para Menor</option>
                   </Select>
@@ -354,7 +372,7 @@ function ProductsContent() {
               isFilterOpen ? "top-[116px] opacity-100" : "top-full opacity-0"
             )}>
               <div className="flex-1 overflow-y-auto p-6 pb-32">
-                <FilterSidebar 
+                <FilterSidebar
                   availableCategories={availableCategories}
                   priceRange={priceRange}
                   isMobile={true}
@@ -366,7 +384,7 @@ function ProductsContent() {
 
               <div className="absolute bottom-0 left-0 w-full bg-white p-6 border-t border-gray-100 flex items-center justify-between gap-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                 {hasTempFiltersActive() && (
-                  <button 
+                  <button
                     onClick={handleResetFilters}
                     className="text-body-m font-bold underline text-green-800"
                   >
@@ -383,7 +401,7 @@ function ProductsContent() {
           <div className="flex gap-8 lg:gap-12">
             {isFilterOpen && (
               <div className="hidden md:block w-[240px] lg:w-[280px] shrink-0">
-                <FilterSidebar 
+                <FilterSidebar
                   availableCategories={availableCategories}
                   priceRange={priceRange}
                   isMobile={false}
@@ -415,9 +433,9 @@ function ProductsContent() {
                 ) : (
                   <div className="col-span-full py-16 text-center">
                     <p className="text-body-m text-green-800/70">
-                      {categoryParam 
+                      {categoryParam
                         ? `Nenhum produto encontrado na categoria "${categoryParam}"${searchQuery ? ` para "${searchQuery}"` : ''}.`
-                        : searchQuery 
+                        : searchQuery
                           ? `Nenhum produto encontrado para "${searchQuery}".`
                           : 'Nenhum produto encontrado.'
                       }
@@ -448,7 +466,7 @@ function ProductsPageFallback() {
   return (
     <MainLayout>
       <section className="bg-white min-h-screen">
-        <div className="container mx-auto px-4 md:px-0 py-10 md:py-16">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-16">
           <div className="mb-8 md:mb-12">
             <h1 className="text-h3 md:text-h2 font-heading text-green-800 mb-6 md:mb-8">
               Todos os Produtos

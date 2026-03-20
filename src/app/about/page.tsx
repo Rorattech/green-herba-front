@@ -50,7 +50,7 @@ export default function AboutPage() {
 
             {/* Standards Section: Numbers and Impact */}
             <section className="py-20 bg-white">
-                <div className="container mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-16 items-center">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 flex flex-col md:flex-row gap-16 items-center">
                     <div className="w-full md:w-1/2 relative h-125 overflow-hidden">
                         <Image
                             src="https://images.unsplash.com/photo-1536964310528-e47dd655ecf3?q=80&w=1200"
@@ -83,7 +83,7 @@ export default function AboutPage() {
 
             {/* Journey Section: Timeline
             <section className="bg-green-200 py-20 text-green-800">
-                <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-20">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-20">
                     <div className="space-y-6">
                         <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Nossa jornada</span>
                         <h2 className="text-h2 font-heading leading-tight">Construído com tempo, não da noite pro dia</h2>
@@ -109,14 +109,16 @@ export default function AboutPage() {
             </section> */}
 
             {/* FAQ: Perguntas frequentes */}
-            <section className="py-20 bg-green-100">
-                <div className="container mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-20">
+            <section id="perguntas-frequentes" className="py-20 bg-green-100 scroll-mt-24">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 flex flex-col md:flex-row gap-20">
                     <div className="w-full md:w-1/3 space-y-6">
                         <h2 className="text-h2 font-heading text-green-800">Perguntas frequentes</h2>
                         <p className="text-body-m text-green-800/60">
                             Se você é novo na Green Herba Pharma, aqui está um guia rápido com informações importantes que ajudam a entender nossos produtos e nosso compromisso com a saúde.
                         </p>
-                        <Button variant="primary" colorTheme="green" className="h-12 px-8">Fale conosco</Button>
+                        <Link href="/contato">
+                            <Button variant="primary" colorTheme="green" className="h-12 px-8">Fale conosco</Button>
+                        </Link>
                     </div>
                     <div className="w-full md:w-2/3">
                         <TextAccordion title="O que torna a Green Herba Pharma diferente?" defaultOpen>

@@ -233,7 +233,7 @@ function ProductGallery({
                                     type="button"
                                     onClick={() => setSelectedImageIndex(i)}
                                     className={`relative aspect-square w-full overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
-                                                        }`}
+                                        }`}
                                     aria-label={`Ver imagem ${i + 1}`}
                                 >
                                     <Image
@@ -269,7 +269,7 @@ function ProductGallery({
                                             type="button"
                                             onClick={() => setSelectedImageIndex(i)}
                                             className={`relative block w-full aspect-square overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-1 ${selectedImageIndex === i ? "opacity-100" : "opacity-60 hover:opacity-90"
-                                                                }`}
+                                                }`}
                                             aria-label={`Ver imagem ${i + 1}`}
                                         >
                                             <Image
@@ -439,12 +439,12 @@ export default function ProductInternalPage() {
         return (
             <MainLayout>
                 <section className="bg-white py-10">
-                    <div className="container mx-auto px-4 md:px-0">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <ProductDetailSkeleton />
                     </div>
                 </section>
                 <section className="bg-green-700 py-16 text-green-100">
-                    <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                             <Truck size={32} />
                             <h3 className="text-h5 font-heading">Entrega rápida e rastreável</h3>
@@ -463,10 +463,10 @@ export default function ProductInternalPage() {
                     </div>
                 </section>
                 <section className="bg-white py-10 md:py-14 overflow-hidden">
-                    <div className="container mx-auto px-4 md:px-0">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
                     </div>
-                    <div className="container mx-auto px-4 md:px-0 overflow-visible">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8 overflow-visible">
                         <div className="flex gap-6 overflow-visible">
                             {[...Array(4)].map((_, i) => (
                                 <div key={i} className="w-full max-w-[320px] md:max-w-107.5 shrink-0">
@@ -475,7 +475,7 @@ export default function ProductInternalPage() {
                             ))}
                         </div>
                     </div>
-                    <div className="container mx-auto mt-8 px-4 md:px-0">
+                    <div className="container mx-auto mt-8 px-4 md:px-6 lg:px-8">
                         <div className="flex items-center justify-between border-gray-200">
                             <div className="w-full max-w-56.25 h-0.5 bg-gray-200 relative overflow-hidden" />
                             <div className="flex gap-3">
@@ -534,7 +534,7 @@ export default function ProductInternalPage() {
     return (
         <MainLayout>
             <section className="bg-white py-10">
-                <div className="container mx-auto px-4 md:px-0">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8">
 
                     <div className="mb-8">
                         <Breadcrumb items={breadcrumbItems} colorTheme="dark" />
@@ -631,7 +631,7 @@ export default function ProductInternalPage() {
             </section>
 
             <section className="bg-green-700 py-16 text-green-100">
-                <div className="container mx-auto px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <Truck size={32} />
                         <h3 className="text-h5 font-heading">Entrega rápida e rastreável</h3>

@@ -24,12 +24,12 @@ export default function TopProducts({ products, productsLoadFailed = false }: To
   return (
     <section className="py-10 md:py-14 overflow-hidden">
 
-      <div className="container mx-auto px-4 md:px-0">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
       </div>
 
       {hasNoProducts ? (
-        <div className="container mx-auto px-4 md:px-0 py-16 text-center">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-16 text-center">
           <p className="text-body-m text-green-800/70">
             {productsLoadFailed
               ? 'Não foi possível carregar os produtos. Tente novamente mais tarde.'
@@ -41,7 +41,7 @@ export default function TopProducts({ products, productsLoadFailed = false }: To
         </div>
       ) : (
         <>
-      <div className="container mx-auto px-4 md:px-0">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={24}
@@ -70,7 +70,7 @@ export default function TopProducts({ products, productsLoadFailed = false }: To
         </Swiper>
       </div>
 
-      <div className="container mx-auto mt-8 px-4 md:px-0">
+      <div className="container mx-auto mt-8 px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between border-gray-200">
           <div className="w-full max-w-56.25 h-0.5 bg-gray-200 relative overflow-hidden">
             <div ref={progressRef} className="custom-bar-container absolute! inset-0" />
