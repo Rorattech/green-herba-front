@@ -36,7 +36,7 @@ export default function AllProducts({ products, productsLoadFailed = false }: Al
             ))}
             <div className="relative col-span-2 aspect-square md:aspect-auto h-full min-h-70 md:min-h-100 overflow-hidden group">
               <Image
-                src="https://images.unsplash.com/photo-1498671546682-94a232c26d17?q=80&w=800"
+                src="/images/daily-care.png"
                 alt="Promoção Green Herba Pharma"
                 fill
                 sizes="(max-width: 768px) 50vw, 25vw"
