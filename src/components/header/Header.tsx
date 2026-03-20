@@ -32,7 +32,7 @@ export const Header = () => {
       </div>
 
       <div className="bg-gray-100 flex items-center justify-center">
-        <div className="container flex items-center justify-between py-6 px-4 md:px-0">
+        <div className="container flex items-center justify-between py-6 px-4 md:px-6 lg:px-8">
 
           <div className="flex lg:hidden flex-1">
             <button

@@ -9,7 +9,7 @@ export interface ProductFilters {
 }
 
 export interface ProductSort {
-  field: 'name' | 'price-low' | 'price-high';
+  field: 'name' | 'price-low' | 'price-high' | 'bestsellers';
 }
 
 const defaultFilters: ProductFilters = {

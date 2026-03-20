@@ -38,7 +38,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   return (
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] py-8 md:py-12">
-        <div className="container mx-auto px-4 md:px-0">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <h1 className="text-h4 font-heading text-green-800 mb-6 md:mb-8">Minha conta</h1>
           <div className="flex flex-col md:flex-row gap-8">
             <nav className="w-full md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-6">

@@ -15,10 +15,10 @@ export default function Loading() {
 
       {/* Top Products - mesma estrutura do carousel (Swiper), sangra à direita */}
       <section className="py-10 md:py-14 overflow-hidden">
-        <div className="container mx-auto px-4 md:px-0">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <SectionHeader title="Top Produtos" buttonText="Ver todos" buttonLink="/products" />
         </div>
-        <div className="container mx-auto px-4 md:px-0 overflow-visible">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 overflow-visible">
           <div className="flex gap-6 overflow-visible">
             {[...Array(4)].map((_, i) => (
               <div
@@ -30,7 +30,7 @@ export default function Loading() {
             ))}
           </div>
         </div>
-        <div className="container mx-auto mt-8 px-4 md:px-0">
+        <div className="container mx-auto mt-8 px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between border-gray-200">
             <div className="w-full max-w-56.25 h-0.5 bg-gray-200 relative overflow-hidden" />
             <div className="flex gap-3">
@@ -60,7 +60,7 @@ export default function Loading() {
 
       {/* Todos os produtos - mesma grid + ad no meio (como AllProducts) */}
       <section className="py-10 md:py-20 bg-white">
-        <div className="container mx-auto px-4 md:px-0">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <SectionHeader title="Todos os produtos" buttonText="Ver todos" buttonLink="/products" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12">
             {[...Array(2)].map((_, i) => (

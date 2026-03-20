@@ -199,7 +199,7 @@ export default function CheckoutPage() {
   return (
     <MainLayout>
       <section className="bg-white min-h-[calc(100vh-180px)] py-8 md:py-12">
-        <div className="container mx-auto px-4 md:px-0 max-w-3xl">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-3xl">
           <h1 className="text-h4 font-heading text-green-800 mb-8">Checkout</h1>
 
           {addresses.length === 0 && !error && (
