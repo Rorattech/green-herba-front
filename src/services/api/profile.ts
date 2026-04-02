@@ -13,6 +13,7 @@ function mapApiUserToUser(api: ApiUser): User {
     phone: api.phone ?? undefined,
     document_number: api.document_number ?? undefined,
     profile_completed: api.profile_completed,
+    email_verified_at: api.email_verified_at ?? null,
     created_at: api.created_at,
     updated_at: api.updated_at,
   };

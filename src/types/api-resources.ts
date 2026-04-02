@@ -10,6 +10,8 @@ export interface ApiUser {
   phone: string | null;
   document_number: string | null;
   profile_completed: boolean;
+  /** ISO datetime quando verificado; null/ausente se ainda não confirmou o e-mail */
+  email_verified_at?: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
