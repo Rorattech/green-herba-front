@@ -10,7 +10,9 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
-    public readonly errors?: Record<string, string[]>
+    public readonly errors?: Record<string, string[]>,
+    /** Presente em alguns 403 (ex.: checkout sem e-mail verificado) */
+    public readonly requireEmailVerification?: boolean
   ) {
     super(message);
     this.name = "ApiError";
@@ -106,14 +108,21 @@ export async function apiRequest<T>(
     const text = await res.text();
     let message = text;
     let errors: Record<string, string[]> | undefined;
+    let requireEmailVerification: boolean | undefined;
     try {
-      const json = JSON.parse(text) as { message?: string; error?: string; errors?: Record<string, string[]> };
+      const json = JSON.parse(text) as {
+        message?: string;
+        error?: string;
+        errors?: Record<string, string[]>;
+        require_email_verification?: boolean;
+      };
       message = json.message ?? json.error ?? text;
       errors = json.errors;
+      if (json.require_email_verification === true) requireEmailVerification = true;
     } catch {
       // use text as message
     }
-    throw new ApiError(message || `API error: ${res.status}`, res.status, errors);
+    throw new ApiError(message || `API error: ${res.status}`, res.status, errors, requireEmailVerification);
   }
 
   const contentType = res.headers.get("content-type");
@@ -183,14 +192,21 @@ export async function apiMultipart<T>(path: string, formData: FormData): Promise
     const text = await res.text();
     let message = text;
     let errors: Record<string, string[]> | undefined;
+    let requireEmailVerification: boolean | undefined;
     try {
-      const json = JSON.parse(text) as { message?: string; error?: string; errors?: Record<string, string[]> };
+      const json = JSON.parse(text) as {
+        message?: string;
+        error?: string;
+        errors?: Record<string, string[]>;
+        require_email_verification?: boolean;
+      };
       message = json.message ?? json.error ?? text;
       errors = json.errors;
+      if (json.require_email_verification === true) requireEmailVerification = true;
     } catch {
       // use text as message
     }
-    throw new ApiError(message || `API error: ${res.status}`, res.status, errors);
+    throw new ApiError(message || `API error: ${res.status}`, res.status, errors, requireEmailVerification);
   }
 
   return res.json() as Promise<T>;

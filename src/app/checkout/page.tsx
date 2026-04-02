@@ -14,6 +14,7 @@ import { getApprovedPrescriptionProductIds } from "@/src/services/api/prescripti
 import { createOrder } from "@/src/services/api/checkout";
 import { ApiError } from "@/src/lib/api-client";
 import { formatCurrency } from "@/src/utils/format";
+import { isUserEmailVerified } from "@/src/utils/emailVerification";
 import type { Address } from "@/src/services/api/addresses";
 import type { ApiCoupon } from "@/src/types/api-resources";
 import type { Product } from "@/src/types/product";
@@ -83,6 +84,7 @@ export default function CheckoutPage() {
   const shipping = subtotal >= SHIPPING_FREE_THRESHOLD ? 0 : SHIPPING_COST;
   const discount = appliedCouponDiscount ?? 0;
   const total = Math.max(0, subtotal + shipping - discount);
+  const emailVerified = isUserEmailVerified(user);
 
   function handleApplyCoupon() {
     const code = couponCode.trim();
@@ -162,12 +164,16 @@ export default function CheckoutPage() {
       router.push(`/checkout/pay/${order.order.id}`);
     } catch (err) {
       // 422 pode vir com errors.coupon_code ou só message (ex.: success: false, message: "Invalid or expired coupon")
-      const msg =
+      let msg =
         err instanceof ApiError
           ? (err.errors?.coupon_code?.[0] ?? err.message)
           : err instanceof Error
             ? err.message
             : "Erro ao criar pedido. Tente novamente.";
+      if (err instanceof ApiError && err.requireEmailVerification) {
+        msg =
+          "Confirme seu e-mail antes de finalizar a compra. Verifique a caixa de entrada ou spam e use o link que enviamos.";
+      }
       setError(msg);
     } finally {
       setPlacing(false);
@@ -208,6 +214,15 @@ export default function CheckoutPage() {
               <Link href="/account/addresses" className="text-body-m font-medium text-green-700 underline mt-2 inline-block">
                 Ir para endereços
               </Link>
+            </div>
+          )}
+
+          {!emailVerified && (
+            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-body-m text-green-800 font-medium">Confirme seu e-mail para continuar</p>
+              <p className="text-body-s text-green-800/80 mt-1">
+                Enviamos um link de verificação para <span className="font-medium">{user.email}</span>. Depois de confirmar, volte aqui para finalizar o pedido.
+              </p>
             </div>
           )}
 
@@ -362,7 +377,7 @@ export default function CheckoutPage() {
               variant="primary"
               colorTheme="green"
               className="w-full h-14 text-green-100"
-              disabled={placing || addresses.length === 0}
+              disabled={placing || addresses.length === 0 || !emailVerified}
             >
               {placing ? "Processando…" : "Continuar para pagamento"}
             </Button>

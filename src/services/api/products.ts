@@ -1,4 +1,5 @@
 import { apiGet, getApiBaseUrlForResources } from "@/src/lib/api-client";
+import { createRequestCache } from "@/src/lib/request-cache";
 import type {
   ApiProduct,
   ApiProductsResponse,
@@ -6,6 +7,21 @@ import type {
 } from "@/src/types/api";
 import type { Product } from "@/src/types/product";
 import { formatCurrency } from "@/src/utils/format";
+
+/** Lista/catálogo público: reutiliza resposta por um intervalo curto para cortar chamadas repetidas no cliente */
+const PRODUCTS_LIST_CACHE_TTL_MS = 60_000;
+const PRODUCT_SLUG_CACHE_TTL_MS = 60_000;
+
+const cachedProductsList = createRequestCache<ApiProductsResponse>(PRODUCTS_LIST_CACHE_TTL_MS);
+const cachedProductBySlug = createRequestCache<ApiProduct | null>(PRODUCT_SLUG_CACHE_TTL_MS);
+
+function getProductsListCacheKey(params?: GetProductsParams): string {
+  return JSON.stringify({
+    page: params?.page ?? null,
+    per_page: params?.per_page ?? null,
+    rx: params?.requires_prescription === true,
+  });
+}
 
 const PLACEHOLDER_IMAGES = [
   "/assets/products/PRODUTO-1.png",
@@ -80,14 +96,17 @@ export type GetProductsParams = {
 export async function getProducts(
   params?: GetProductsParams
 ): Promise<ApiProductsResponse> {
-  const query: Record<string, string | number | undefined> = {
-    page: params?.page,
-    per_page: params?.per_page,
-  };
-  if (params?.requires_prescription === true) {
-    query.requires_prescription = "1";
-  }
-  return apiGet<ApiProductsResponse>("/api/products", query);
+  const key = getProductsListCacheKey(params);
+  return cachedProductsList(key, () => {
+    const query: Record<string, string | number | undefined> = {
+      page: params?.page,
+      per_page: params?.per_page,
+    };
+    if (params?.requires_prescription === true) {
+      query.requires_prescription = "1";
+    }
+    return apiGet<ApiProductsResponse>("/api/products", query);
+  });
 }
 
 /**
@@ -95,12 +114,15 @@ export async function getProducts(
  * If the endpoint returns 404, returns null.
  */
 export async function getProductBySlug(slug: string): Promise<ApiProduct | null> {
-  try {
-    const res = await apiGet<ApiProductResponse>(`/api/products/${encodeURIComponent(slug)}`);
-    return res.data ?? null;
-  } catch {
-    return null;
-  }
+  const key = `slug:${encodeURIComponent(slug)}`;
+  return cachedProductBySlug(key, async () => {
+    try {
+      const res = await apiGet<ApiProductResponse>(`/api/products/${encodeURIComponent(slug)}`);
+      return res.data ?? null;
+    } catch {
+      return null;
+    }
+  });
 }
 
 /**

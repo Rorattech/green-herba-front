@@ -1,4 +1,4 @@
-import { apiGet, apiPost, setStoredToken, clearStoredToken } from "@/src/lib/api-client";
+import { apiGet, apiPost, setStoredToken, clearStoredToken, getStoredToken, ApiError } from "@/src/lib/api-client";
 import { hashPassword } from "@/src/lib/password";
 import type { ApiUser } from "@/src/types/api-resources";
 import type { User } from "@/src/types/user";
@@ -16,6 +16,7 @@ function mapApiUserToUser(api: ApiUser): User {
     phone: api.phone ?? undefined,
     document_number: api.document_number ?? undefined,
     profile_completed: api.profile_completed,
+    email_verified_at: api.email_verified_at ?? null,
     created_at: api.created_at,
     updated_at: api.updated_at,
   };
@@ -92,4 +93,51 @@ export async function resetPassword(body: ResetPasswordBody): Promise<void> {
     { ...body, password, password_confirmation },
     true
   );
+}
+
+export interface VerifyEmailApiResponse {
+  message: string;
+  data?: { user?: ApiUser };
+}
+
+/**
+ * GET na URL assinada enviada no e-mail (query `redirect` da página /verify-email).
+ */
+export async function verifyEmailWithRedirect(redirectUrl: string): Promise<VerifyEmailApiResponse> {
+  const headers: Record<string, string> = { Accept: "application/json" };
+  const token = getStoredToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(redirectUrl, {
+    method: "GET",
+    credentials: "include",
+    headers,
+    cache: "no-store",
+  });
+
+  const text = await res.text();
+  let body: {
+    message?: string;
+    data?: { user?: ApiUser };
+    require_email_verification?: boolean;
+  };
+  try {
+    body = JSON.parse(text) as typeof body;
+  } catch {
+    throw new ApiError(text.trim() || "Resposta inválida da API.", res.status);
+  }
+
+  if (!res.ok) {
+    throw new ApiError(
+      body.message ?? "Não foi possível verificar o e-mail.",
+      res.status,
+      undefined,
+      body.require_email_verification === true
+    );
+  }
+
+  return {
+    message: body.message ?? "E-mail verificado com sucesso.",
+    data: body.data,
+  };
 }

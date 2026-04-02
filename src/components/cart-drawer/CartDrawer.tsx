@@ -12,6 +12,7 @@ import { getApprovedPrescriptionProductIds } from "@/src/services/api/prescripti
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/src/utils/format";
+import { isUserEmailVerified } from "@/src/utils/emailVerification";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -23,14 +24,20 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
   const { user } = useAuth();
   const { items, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCart();
   const [checkingPrescription, setCheckingPrescription] = useState(false);
+  const [checkoutHint, setCheckoutHint] = useState<string | null>(null);
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
   async function goToCheckout() {
+    setCheckoutHint(null);
     const itemsRequiringPrescription = items.filter(
       (item) => (item.product as { requiresPrescription?: boolean }).requiresPrescription
     );
     if (itemsRequiringPrescription.length === 0) {
+      if (user && !isUserEmailVerified(user)) {
+        setCheckoutHint("Confirme seu e-mail (link que enviamos) antes de finalizar a compra.");
+        return;
+      }
       onClose();
       router.push("/checkout");
       return;
@@ -38,6 +45,10 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
     if (!user) {
       onClose();
       router.push("/login?redirect=/checkout");
+      return;
+    }
+    if (!isUserEmailVerified(user)) {
+      setCheckoutHint("Confirme seu e-mail (link que enviamos) antes de finalizar a compra.");
       return;
     }
     setCheckingPrescription(true);
@@ -185,6 +196,9 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
               <span className="text-h6 text-green-800 font-heading font-bold">{formatCurrency(totalPrice)}</span>
             </div>
 
+            {checkoutHint && (
+              <p className="text-body-s text-error font-medium text-center">{checkoutHint}</p>
+            )}
             <Button variant="primary" colorTheme="green" className="w-full" onClick={goToCheckout} disabled={checkingPrescription}>
               {checkingPrescription ? "Verificando…" : "Finalizar Compra"}
             </Button>

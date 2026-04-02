@@ -8,10 +8,17 @@ import { Button } from "@/src/components/ui/Button";
 import { getPaymentPreference, getOrder, processPayment } from "@/src/services/api/orders";
 import { initMercadoPago, Payment, StatusScreen } from "@mercadopago/sdk-react";
 import type { ProcessPaymentBody, PayerAddress } from "@/src/services/api/orders";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { isUserEmailVerified } from "@/src/utils/emailVerification";
+import { ApiError } from "@/src/lib/api-client";
+
+const EMAIL_VERIFY_PAY_MSG =
+  "Confirme seu e-mail antes de pagar. Verifique a caixa de entrada ou o spam e use o link que enviamos.";
 
 export default function CheckoutPayPage() {
   const params = useParams<{ orderId: string }>();
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   const orderId = params?.orderId ? Number(params.orderId) : NaN;
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -36,6 +43,12 @@ export default function CheckoutPayPage() {
     if (!Number.isFinite(orderId)) {
       setLoading(false);
       setError("Pedido inválido.");
+      return;
+    }
+    if (authLoading) return;
+    if (user && !isUserEmailVerified(user)) {
+      setLoading(false);
+      setError(EMAIL_VERIFY_PAY_MSG);
       return;
     }
     Promise.all([
@@ -70,11 +83,15 @@ export default function CheckoutPayPage() {
           setMpReady(true);
         }
       })
-      .catch(() => {
-        setError("Não foi possível carregar o pagamento. Tente novamente ou pague depois em Meus pedidos.");
+      .catch((err: unknown) => {
+        if (err instanceof ApiError && err.requireEmailVerification) {
+          setError(EMAIL_VERIFY_PAY_MSG);
+        } else {
+          setError("Não foi possível carregar o pagamento. Tente novamente ou pague depois em Meus pedidos.");
+        }
       })
       .finally(() => setLoading(false));
-  }, [orderId]);
+  }, [orderId, user, authLoading]);
 
   const handleSubmit = useCallback(
     async (param: unknown) => {
@@ -154,6 +171,10 @@ export default function CheckoutPayPage() {
           setPaymentSuccess({ orderNumber: result.order_number });
         }
       } catch (err) {
+        if (err instanceof ApiError && err.requireEmailVerification) {
+          setError(EMAIL_VERIFY_PAY_MSG);
+          return;
+        }
         throw err;
       }
     },
