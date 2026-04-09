@@ -121,9 +121,11 @@ export default function AboutPage() {
                         </Link>
                     </div>
                     <div className="w-full md:w-2/3">
+                        <div id="duvidas-receita-mae-terra" className="scroll-mt-28">
                         <TextAccordion title="Onde consigo uma receita para me tratar com produtos canábicos?" defaultOpen>
                             Primeiro, você precisa passar por uma consulta com um médico especializado. Em seguida, ele realizará uma avaliação minuciosa do seu caso para identificar o tratamento mais adequado e o produto ideal. Recomendamos a Associação Mãe Terra, que oferece diversas opções de médicos qualificados para ajudar a encontrar o melhor diagnóstico e direcionamento para o seu tratamento.
                         </TextAccordion>
+                        </div>
                         <TextAccordion title="O que torna a Green Herba Pharma diferente?">
                             A Green Herba Pharma se destaca por unir ciência, segurança e cuidado em cada produto. Nossas terapias à base de cannabis são desenvolvidas com controle de qualidade, garantindo soluções confiáveis para diferentes necessidades de saúde.
                         </TextAccordion>
