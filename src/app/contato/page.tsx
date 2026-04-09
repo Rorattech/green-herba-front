@@ -22,7 +22,7 @@ export default function ContatoPage() {
         <div className="relative w-full md:w-1/2 h-[280px] sm:h-[320px] md:h-auto md:min-h-[min(100%,640px)] overflow-hidden shrink-0">
           <Image
             src="/images/about-3.png"
-            alt="Natureza e bem-estar — Green Herba Pharma"
+            alt="Natureza e bem-estar — Green Herba Pharma Brasil"
             fill
             className="object-cover"
             priority
