@@ -18,7 +18,7 @@ export default function Hero() {
       alt: "Natureza",
       title: "A saúde que você procura começa aqui.",
       description: "Extraímos da natureza o que há de mais puro, com qualidade, segurança e responsabilidade.",
-      buttonText: "Conheça nosso produtos",
+      buttonText: "Conheça nossos produtos",
       buttonHref: "/products"
     },
     {
